@@ -86,21 +86,23 @@ select{background:#111;color:#fff;border:1px solid #fff;padding:6px}
 
 <!-- 名前入力モーダル -->
 <div id="nameInputModal">
-  <div>名前を入力してください<br>（次回から名前を入力すると続きから視聴できます）</div>
+  <div>名前を入力してください<br>（名前を入力すると次回再生時、続きから視聴できます）</div>
   <div style="margin-top:5px;font-size:14px;color:#ccc;">例: 洞爺 太郎</div>
   <input type="text" id="usernameInput" placeholder="例: 洞爺 太郎">
   <button onclick="setUsername()">開始</button>
 </div>
 
 <!-- 動画リスト -->
+<!-- Home Screen -->
 <div id="home">
-  <h2 style="padding:20px;color:#e50914;">動画リスト</h2>
-  <ul id="videoList">
-    <li onclick="playVideo('FARzkNhit5Q')">ノロウイルス研修動画1</li>
-    <li onclick="playVideo('ANOTHER_VIDEO_ID')">ノロウイルス研修動画2</li>
-    <!-- 他の動画も追加可能 -->
-  </ul>
+<h2 style="padding:20px;color:#e50914;">動画リスト</h2>
+<ul id="videoList">
+<li onclick="playVideo('FARzkNhit5Q')">第一回オンライン勉強会ノロウイルスの対応について</li>
+<li onclick="playVideo('VIDEO_ID2')">PPE着脱手順解説動画（配信予定）</li>
+<li onclick="playVideo('VIDEO_ID3')">未配信</li>
+</ul>
 </div>
+
 
 <!-- Video Player -->
 <div id="videoWrapper">
@@ -134,31 +136,28 @@ select{background:#111;color:#fff;border:1px solid #fff;padding:6px}
   <!-- Chapter Button -->
   <button id="chapterBtn" onclick="toggleChapters()">チャプター</button>
 
-  <!-- Chapters -->
-  <div id="chapterPanel">
-    <div class="groupTitle">本章</div>
-    <p onclick="goTo(0)">オープニング</p>
-    <p onclick="goTo(37)">はじめに・導入</p>
-    <p onclick="goTo(129)">1章のポイント確認</p>
-    <p onclick="goTo(166)">ノロウイルスの基本知識</p>
-    <p onclick="goTo(270)">2章のポイント確認</p>
-    <p onclick="goTo(312)">ノロウイルス感染予防策</p>
-    <p onclick="goTo(388)">3章のポイント確認</p>
-    <p onclick="goTo(434)">次亜塩素酸ナトリウム調製</p>
+ <!-- Chapters -->
+<div id="chapterPanel">
+<div class="groupTitle">本章</div>
+<p onclick="goTo(0)">オープニング</p>
+<p onclick="goTo(37)">はじめに・導入</p>
+<p onclick="goTo(166)">ノロウイルスの基本知識</p>
+<p onclick="goTo(312)">ノロウイルス感染予防策</p>
+<p onclick="goTo(434)">次亜塩素酸ナトリウム調製</p>
 
-    <div class="groupTitle">実践動画</div>
-    <p onclick="goTo(534)">次亜塩素酸ナトリウム調製（実践動画）</p>
-    <p onclick="goTo(680)">物品確認編</p>
-    <p onclick="goTo(781)">吐物回収編</p>
+<div class="groupTitle">実践動画</div>
+<p onclick="goTo(534)">次亜塩素酸ナトリウム調製（実践動画）</p>
+<p onclick="goTo(680)">物品確認編</p>
+<p onclick="goTo(781)">吐物回収編</p>
 
-    <div class="groupTitle">ポイント確認</div>
-    <p onclick="goTo(129)">第1章</p>
-    <p onclick="goTo(270)">第2章</p>
-    <p onclick="goTo(388)">第3章</p>
-    <p onclick="goTo(588)">第4章</p>
-    <p onclick="goTo(938)">第5章</p>
-  </div>
+<div class="groupTitle">ポイント確認</div>
+<p onclick="goTo(129)">第1章</p>
+<p onclick="goTo(270)">第2章</p>
+<p onclick="goTo(388)">第3章</p>
+<p onclick="goTo(588)">第4章</p>
+<p onclick="goTo(938)">第5章</p>
 </div>
+
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
@@ -173,7 +172,7 @@ let lastTime=0;
 // 名前セット
 function setUsername(){
   const input=document.getElementById("usernameInput").value.trim();
-  if(input===""){alert("名前を入力してください");return;}
+  if(input===""){alert("視聴する方の名前を入力してください");return;}
   username=input;
   lastTime=parseFloat(localStorage.getItem(username))||0;
   document.getElementById("nameInputModal").style.display="none";
@@ -276,3 +275,4 @@ function formatTime(t){let m=Math.floor(t/60);let s=Math.floor(t%60);if(s<10)s="
 </script>
 </body>
 </html>
+
