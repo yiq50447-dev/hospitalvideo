@@ -3,233 +3,258 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#000000">
 <meta name="apple-mobile-web-app-capable" content="yes">
 
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#000;color:#fff;font-family:sans-serif;overflow:hidden}
+body{margin:0;background:#000;font-family:sans-serif;overflow:hidden;color:#fff}
 
-#videoWrapper{
-  position:relative;
-  width:100%;
-  height:100vh;
-  background:#000;
-}
+#videoWrapper{position:relative;width:100%;height:100vh;background:#000;}
+#player{position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;}
 
-#player{
-  position:absolute;
-  top:0;left:0;
-  width:100%;
-  height:100%;
-  z-index:1;
-}
-
-/* YouTubeタップ防止レイヤー */
-#ytBlocker{
-  position:absolute;
-  top:0;left:0;
-  width:100%;
-  height:100%;
-  z-index:2;
-}
-
-/* Controls */
+/* UI */
 #controls{
-  position:absolute;
-  left:0;
-  bottom:0;
-  width:100%;
-  background:rgba(0,0,0,.7);
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:10px;
-  z-index:10;
+position:absolute;
+bottom:0;
+width:100%;
+background:linear-gradient(to top, rgba(0,0,0,.95), transparent);
+padding:20px;
+display:flex;
+align-items:center;
+gap:10px;
+z-index:10;
+transition:.3s;
 }
+
+#controls.hide{opacity:0}
 
 button{
-  background:rgba(255,255,255,.15);
-  border:1px solid #fff;
-  color:#fff;
-  padding:6px 12px;
+background:rgba(255,255,255,.15);
+border:1px solid #fff;
+color:#fff;
+padding:6px 12px;
 }
 
-#progress{flex:1}
+#progress{flex:1;accent-color:#e50914}
 
-/* Intro Skip */
+/* skip */
 #skipIntro{
-  position:absolute;
-  right:40px;
-  bottom:110px;
-  background:rgba(0,0,0,.9);
-  padding:14px 22px;
-  display:none;
-  z-index:15;
+position:absolute;
+right:30px;
+bottom:70px;
+background:rgba(0,0,0,.85);
+border:1px solid #fff;
+padding:12px 20px;
+display:none;
+z-index:20;
 }
+#skipBar{height:3px;background:#e50914;margin-top:6px;width:0%}
 
-/* Chapter */
-#chapterBtn{
-  position:fixed;
-  top:20px;
-  right:20px;
-  background:rgba(0,0,0,.6);
-  padding:8px 14px;
-  z-index:30;
-}
-
+/* chapter */
+#chapterBtn{position:fixed;top:20px;right:20px;z-index:30}
 #chapterPanel{
-  position:fixed;
-  top:0;
-  right:0;
-  height:100vh;
-  width:320px;
-  background:rgba(0,0,0,.95);
-  transform:translateX(100%);
-  transition:.3s;
-  overflow-y:auto;
-  padding:20px;
-  z-index:40;
+position:fixed;
+top:0;right:0;
+width:320px;height:100vh;
+background:#111;
+transform:translateX(100%);
+transition:.3s;
+overflow-y:auto;
+padding:20px;
+z-index:40;
 }
-
-#chapterPanel.open{
-  transform:translateX(0);
-}
-
-.groupTitle{
-  margin:18px 0 8px;
-  font-weight:bold;
-  color:#e50914;
-}
-
-#chapterPanel p{
-  margin:6px 0;
-  padding:6px 0;
-  cursor:pointer;
-  border-bottom:1px solid rgba(255,255,255,.15);
-}
+#chapterPanel.open{transform:translateX(0)}
+.groupTitle{margin:20px 0 10px;color:#e50914;font-weight:bold}
+#chapterPanel p{margin:6px 0;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.2);cursor:pointer}
 </style>
 </head>
 
 <body>
-
 <div id="videoWrapper">
-  <div id="player"></div>
-  <div id="ytBlocker" onclick="togglePlay()"></div>
 
-  <div id="skipIntro" onclick="skipIntro()">イントロをスキップ</div>
+<div id="player"></div>
 
-  <button id="chapterBtn" onclick="toggleChapters()">チャプター</button>
+<div id="skipIntro" onclick="skipIntro()">
+イントロをスキップ
+<div id="skipBar"></div>
+</div>
 
-  <div id="controls">
-    <button onclick="togglePlay()">▶ / ❚❚</button>
-    <span id="currentTime">0:00</span>
-    <input type="range" id="progress" value="0" min="0" max="100">
-    <span id="duration">0:00</span>
-  </div>
+<button id="chapterBtn" onclick="toggleChapters()">チャプター</button>
 
-  <div id="chapterPanel">
-    <div class="groupTitle">各章</div>
-    <p onclick="goTo(0)">オープニング</p>
-    <p onclick="goTo(166)">ノロウイルスの基本知識</p>
-    <p onclick="goTo(312)">感染予防策</p>
-    <p onclick="goTo(635)">吐物処理手順</p>
-  </div>
+<div id="controls">
+<button onclick="back10()">« 10秒</button>
+<button onclick="togglePlay()">▶ / ❚❚</button>
+<button onclick="forward10()">10秒 »</button>
+
+<button onclick="changeSpeed()">倍速</button>
+<span id="speedLabel">1.0x</span>
+
+<span id="currentTime">0:00</span>
+<input type="range" id="progress" value="0" min="0" max="100">
+<span id="duration">0:00</span>
+</div>
+
+<div id="chapterPanel">
+  
+<div class="groupTitle">導入</div>
+<p onclick="goTo(0)">0:00 オープニング</p>
+<p onclick="goTo(37)">0:37 はじめに・導入</p>
+
+<div class="groupTitle">第1章</div>
+<p onclick="goTo(166)">2:46 ノロウイルスの基本知識</p>
+<p onclick="goTo(129)">2:09 1章のポイント確認</p>
+
+<div class="groupTitle">第2章</div>
+<p onclick="goTo(312)">5:12 ノロウイルス感染予防策</p>
+<p onclick="goTo(270)">4:30 2章のポイント確認</p>
+
+<div class="groupTitle">第3章</div>
+<p onclick="goTo(434)">7:14 次亜塩素酸ナトリウム調製</p>
+<p onclick="goTo(388)">6:28 3章のポイント確認</p>
+
+<div class="groupTitle">実践動画</div>
+<p onclick="goTo(534)">8:54 次亜塩素酸ナトリウム調製（実践）</p>
+<p onclick="goTo(680)">11:20 物品確認編</p>
+<p onclick="goTo(781)">13:01 吐物回収編</p>
+
+<div class="groupTitle">第4章</div>
+<p onclick="goTo(635)">10:35 吐物処理手順</p>
+<p onclick="goTo(588)">9:48 4章のポイント確認</p>
+
+<div class="groupTitle">第5章</div>
+<p onclick="goTo(938)">15:38 5章のポイント確認</p>
+
+</div>
+</div>
+
 </div>
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
 let player;
 let progress=document.getElementById("progress");
+let controls=document.getElementById("controls");
+let hideTimer;
 
 function onYouTubeIframeAPIReady(){
-  player=new YT.Player('player',{
-    videoId:'FARzkNhit5Q',
-    playerVars:{
-      controls:0,
-      rel:0,
-      modestbranding:1,
-      fs:0,
-      playsinline:1,
-      disablekb:1
-    },
-    events:{
-      'onReady':init
-    }
-  });
+player=new YT.Player('player',{
+videoId:'FARzkNhit5Q',
+playerVars:{controls:0,rel:0,modestbranding:1,fs:0,playsinline:1,disablekb:1},
+events:{'onReady':init}
+});
 }
 
 function init(){
-  setInterval(updateUI,500);
+setInterval(updateUI,500);
+showControls();
 }
 
+/* UI更新 */
 function updateUI(){
-  if(!player.getDuration) return;
-  let current=player.getCurrentTime();
-  let duration=player.getDuration();
-  document.getElementById("currentTime").innerText=formatTime(current);
-  document.getElementById("duration").innerText=formatTime(duration);
-  progress.value=(current/duration)*100;
+if(!player.getDuration)return;
 
-  if(current>10 && current<36){
-    document.getElementById("skipIntro").style.display="block";
-  }else{
-    document.getElementById("skipIntro").style.display="none";
-  }
+let current=player.getCurrentTime();
+let duration=player.getDuration();
+
+document.getElementById("currentTime").innerText=formatTime(current);
+document.getElementById("duration").innerText=formatTime(duration);
+progress.value=(current/duration)*100;
+
+/* intro */
+if(current>10 && current<36){
+document.getElementById("skipIntro").style.display="block";
+let percent=((current-10)/26)*100;
+document.getElementById("skipBar").style.width=percent+"%";
+}else{
+document.getElementById("skipIntro").style.display="none";
+}
 }
 
+/* 安定seek */
 function safeSeek(time){
-  player.seekTo(time,true);
-  setTimeout(()=>{ player.playVideo(); },200);
+player.seekTo(time,true);
+setTimeout(()=>{player.playVideo();},200);
 }
 
-function skipIntro(){
-  safeSeek(36);
+/* 再生系 */
+function togglePlay(){
+let state=player.getPlayerState();
+if(state===1)player.pauseVideo();
+else player.playVideo();
+showControls();
 }
 
-function goTo(time){
-  safeSeek(time);
-  toggleChapters();
+function back10(){
+safeSeek(player.getCurrentTime()-10);
 }
 
+function forward10(){
+safeSeek(player.getCurrentTime()+10);
+}
+
+/* 倍速 */
+let speeds=[1,1.25,1.5,1.75,2];
+let speedIndex=0;
+function changeSpeed(){
+speedIndex++;
+if(speedIndex>=speeds.length)speedIndex=0;
+player.setPlaybackRate(speeds[speedIndex]);
+document.getElementById("speedLabel").innerText=speeds[speedIndex]+"x";
+}
+
+/* skip */
+function skipIntro(){safeSeek(36);}
+
+/* progress */
 progress.addEventListener("input",function(){
-  let duration=player.getDuration();
-  safeSeek((progress.value/100)*duration);
+player.pauseVideo();
+safeSeek((progress.value/100)*player.getDuration());
 });
 
-function togglePlay(){
-  let state=player.getPlayerState();
-  if(state===1) player.pauseVideo();
-  else player.playVideo();
+/* UI自動消し */
+function showControls(){
+controls.classList.remove("hide");
+clearTimeout(hideTimer);
+hideTimer=setTimeout(()=>{controls.classList.add("hide");},3000);
 }
+document.addEventListener("mousemove",showControls);
+document.addEventListener("touchstart",showControls);
 
+/* chapter */
 function toggleChapters(){
-  document.getElementById("chapterPanel").classList.toggle("open");
+document.getElementById("chapterPanel").classList.toggle("open");
+}
+function goTo(time){
+safeSeek(time);
+toggleChapters();
 }
 
-/* 右スワイプで閉じる */
+/* スワイプ閉じる */
 let startX=0;
 let panel=document.getElementById("chapterPanel");
-
-panel.addEventListener("touchstart",function(e){
-  startX=e.touches[0].clientX;
+panel.addEventListener("touchstart",e=>{startX=e.touches[0].clientX;});
+panel.addEventListener("touchmove",e=>{
+let diff=e.touches[0].clientX-startX;
+if(diff>80)panel.classList.remove("open");
 });
 
-panel.addEventListener("touchmove",function(e){
-  let diff=e.touches[0].clientX-startX;
-  if(diff>80){
-    panel.classList.remove("open");
-  }
+/* ダブルタップ早送り */
+let lastTap=0;
+document.addEventListener("touchend",function(e){
+let now=new Date().getTime();
+if(now-lastTap<300){
+forward10();
+}
+lastTap=now;
 });
 
 function formatTime(t){
-  let m=Math.floor(t/60);
-  let s=Math.floor(t%60);
-  if(s<10) s="0"+s;
-  return m+":"+s;
+let m=Math.floor(t/60);
+let s=Math.floor(t%60);
+if(s<10)s="0"+s;
+return m+":"+s;
 }
 </script>
-
 </body>
 </html>
