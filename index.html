@@ -9,39 +9,21 @@
 body,html{width:100%;height:100%;background:#000;overflow:hidden;color:#fff;}
 
 /* ロードアニメーション */
-#loader{
-  position:fixed;top:0;left:0;width:100%;height:100%;background:#111;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:100;
-}
-#loader span{
-  display:inline-block;width:12px;height:12px;margin:5px;background:#e50914;border-radius:50%;
-  animation:dot 1s infinite;
-}
+#loader{position:fixed;top:0;left:0;width:100%;height:100%;background:#111;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:100;}
+#loader span{display:inline-block;width:12px;height:12px;margin:5px;background:#e50914;border-radius:50%;animation:dot 1s infinite;}
 #loader span:nth-child(2){animation-delay:0.2s;}
 #loader span:nth-child(3){animation-delay:0.4s;}
 @keyframes dot{0%,80%,100%{transform:scale(0);}40%{transform:scale(1);}}
 
 /* 名前入力モーダル */
-#nameInputModal{
-  position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);
-  display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:101;
-  padding:20px;text-align:center;
-}
-#nameInputModal input{
-  padding:12px 20px;font-size:18px;border:none;border-radius:8px;margin-top:12px;margin-bottom:12px;width:220px;
-}
-#nameInputModal button{
-  padding:10px 20px;font-size:18px;border:none;border-radius:8px;background:#e50914;color:#fff;cursor:pointer;
-}
+#nameInputModal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:101;padding:20px;text-align:center;}
+#nameInputModal input{padding:12px 20px;font-size:18px;border:none;border-radius:8px;margin-top:12px;margin-bottom:12px;width:220px;}
+#nameInputModal button{padding:10px 20px;font-size:18px;border:none;border-radius:8px;background:#e50914;color:#fff;cursor:pointer;}
 
 /* 動画リスト */
-#home{
-  width:100%;height:100%;overflow-y:auto;display:flex;flex-direction:column;background:#000;z-index:1;
-}
+#home{width:100%;height:100%;overflow-y:auto;display:flex;flex-direction:column;background:#000;z-index:1;}
 #videoList{list-style:none;margin-top:20px;padding:0 20px;}
-#videoList li{
-  padding:12px 15px;margin-bottom:10px;background:rgba(255,255,255,0.05);border-radius:6px;cursor:pointer;
-  transition:background 0.2s;
-}
+#videoList li{padding:12px 15px;margin-bottom:10px;background:rgba(255,255,255,0.05);border-radius:6px;cursor:pointer;transition:background 0.2s;}
 #videoList li:hover{background:rgba(255,255,255,0.2);}
 
 /* Video Wrapper */
@@ -49,33 +31,20 @@ body,html{width:100%;height:100%;background:#000;overflow:hidden;color:#fff;}
 #player{position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none}
 
 /* Central Controls */
-.centralUI{
-  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-  display:flex;gap:12px;z-index:50;transition:opacity 0.3s;
-}
+.centralUI{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:flex;gap:12px;z-index:50;transition:opacity 0.3s;}
 .centralUI.hide{opacity:0;pointer-events:none;}
 .centralUI button{
-  background: rgba(255,255,255,0.2); /* 白く透かし */
-  border: none;
-  color: silver; /* 文字シルバー */
-  font-size: 14px;
-  padding: 6px 10px;
-  cursor: pointer;
-  opacity: 0.9;
-  transition: opacity 0.2s, transform 0.2s;
-  border-radius: 8px;
+  width:48px; height:48px; font-size:16px; color:silver; background:rgba(192,192,192,0.8); 
+  border:2px solid rgba(192,192,192,0.5); border-radius:50%; cursor:pointer;
+  display:flex;align-items:center;justify-content:center; transition: transform 0.2s, opacity 0.2s;
 }
-.centralUI button:hover{
-  opacity: 1;
-  transform: scale(1.2);
-}
+.centralUI button:hover{transform:scale(1.2);opacity:1;}
 
 /* Skip Intro */
 #skipIntro{
   position:absolute;left:50%;transform:translateX(-50%);
-  bottom:50px;background:rgba(0,0,0,0.85);padding:8px 14px;border-radius:4px;display:none;
-  z-index:30;text-align:center;color:#fff;
-  font-size:14px;
+  bottom:70px;background:rgba(0,0,0,0.85);padding:8px 14px;border-radius:4px;display:none;
+  z-index:30;text-align:center;color:#fff;font-size:14px;
 }
 #skipBar{height:3px;background:#e50914;width:0%;margin-top:4px;border-radius:2px}
 
@@ -91,20 +60,16 @@ select{background:#111;color:#fff;border:1px solid #fff;padding:6px}
 #chapterPanel.open{transform:translateX(0)}
 .groupTitle{margin:20px 0 10px;color:#e50914;font-weight:bold}
 #chapterPanel p{margin:6px 0;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.2);cursor:pointer}
-
 </style>
 </head>
 <body>
 
-<!-- ロード画面 -->
-<div id="loader">
-  <div style="margin-bottom:15px;">ロード中…</div>
-  <div><span></span><span></span><span></span></div>
-</div>
+<!-- ロード -->
+<div id="loader"><div style="margin-bottom:15px;">ロード中…</div><div><span></span><span></span><span></span></div></div>
 
-<!-- 名前入力モーダル -->
+<!-- 名前入力 -->
 <div id="nameInputModal">
-  <div>名前を入力してください<br>（名前を入力すると次回再生時、続きから視聴できます）</div>
+  <div>名前を入力してください<br>（次回再生時、続きから視聴できます）</div>
   <div style="margin-top:5px;font-size:14px;color:#ccc;">例: 洞爺 太郎</div>
   <input type="text" id="usernameInput" placeholder="例: 洞爺 太郎">
   <button onclick="setUsername()">開始</button>
@@ -120,23 +85,21 @@ select{background:#111;color:#fff;border:1px solid #fff;padding:6px}
 </ul>
 </div>
 
-<!-- Video Player -->
+<!-- 動画プレイヤー -->
 <div id="videoWrapper">
   <div id="player"></div>
 
-  <!-- Central Buttons -->
+  <!-- 中央ボタン -->
   <div class="centralUI" id="centralUI">
     <button id="rewindBtn" onclick="rewind10()">«10</button>
     <button id="playBtn" onclick="togglePlay()">▶</button>
     <button id="skip10Btn" onclick="forward10()">»10</button>
   </div>
 
-  <!-- Skip Intro -->
-  <div id="skipIntro" onclick="skipIntro()">イントロをスキップ
-    <div id="skipBar"></div>
-  </div>
+  <!-- イントロスキップ -->
+  <div id="skipIntro" onclick="skipIntro()">イントロをスキップ<div id="skipBar"></div></div>
 
-  <!-- Bottom Controls -->
+  <!-- 下部操作 -->
   <div id="bottomControls">
     <span id="currentTime">0:00</span>
     <input type="range" id="progress" min="0" max="100" value="0">
@@ -149,29 +112,26 @@ select{background:#111;color:#fff;border:1px solid #fff;padding:6px}
     </select>
   </div>
 
-  <!-- Chapter Button -->
+  <!-- チャプター -->
   <button id="chapterBtn" onclick="toggleChapters()">チャプター</button>
-
- <!-- Chapters -->
-<div id="chapterPanel">
-<div class="groupTitle">本章</div>
-<p onclick="goTo(0)">オープニング</p>
-<p onclick="goTo(37)">はじめに・導入</p>
-<p onclick="goTo(166)">ノロウイルスの基本知識</p>
-<p onclick="goTo(312)">ノロウイルス感染予防策</p>
-<p onclick="goTo(434)">次亜塩素酸ナトリウム調製</p>
-
-<div class="groupTitle">実践動画</div>
-<p onclick="goTo(534)">次亜塩素酸ナトリウム調製（実践動画）</p>
-<p onclick="goTo(680)">物品確認編</p>
-<p onclick="goTo(781)">吐物回収編</p>
-
-<div class="groupTitle">ポイント確認</div>
-<p onclick="goTo(129)">第1章</p>
-<p onclick="goTo(270)">第2章</p>
-<p onclick="goTo(388)">第3章</p>
-<p onclick="goTo(588)">第4章</p>
-<p onclick="goTo(938)">第5章</p>
+  <div id="chapterPanel">
+    <div class="groupTitle">本章</div>
+    <p onclick="goTo(0)">オープニング</p>
+    <p onclick="goTo(37)">はじめに・導入</p>
+    <p onclick="goTo(166)">ノロウイルスの基本知識</p>
+    <p onclick="goTo(312)">ノロウイルス感染予防策</p>
+    <p onclick="goTo(434)">次亜塩素酸ナトリウム調製</p>
+    <div class="groupTitle">実践動画</div>
+    <p onclick="goTo(534)">次亜塩素酸ナトリウム調製（実践動画）</p>
+    <p onclick="goTo(680)">物品確認編</p>
+    <p onclick="goTo(781)">吐物回収編</p>
+    <div class="groupTitle">ポイント確認</div>
+    <p onclick="goTo(129)">第1章</p>
+    <p onclick="goTo(270)">第2章</p>
+    <p onclick="goTo(388)">第3章</p>
+    <p onclick="goTo(588)">第4章</p>
+    <p onclick="goTo(938)">第5章</p>
+  </div>
 </div>
 
 <script src="https://www.youtube.com/iframe_api"></script>
@@ -181,8 +141,7 @@ const progress=document.getElementById("progress");
 const centralUI=document.getElementById("centralUI");
 const bottomControls=document.getElementById("bottomControls");
 const chapterPanel=document.getElementById("chapterPanel");
-let username="guest";
-let lastTime=0;
+let username="guest"; let lastTime=0;
 
 // 名前セット
 function setUsername(){
@@ -214,10 +173,7 @@ function showUI(){
   centralUI.classList.remove('hide');
   bottomControls.classList.remove('hide');
   clearTimeout(uiTimer);
-  uiTimer=setTimeout(()=>{
-    centralUI.classList.add('hide');
-    bottomControls.classList.add('hide');
-  },3000);
+  uiTimer=setTimeout(()=>{centralUI.classList.add('hide'); bottomControls.classList.add('hide');},3000);
 }
 
 // UI再表示
@@ -243,6 +199,10 @@ function updateUI(){
     clearTimeout(skip.timeoutId);
     skip.timeoutId=setTimeout(()=>{skip.style.display="none";},5000);
   } else skip.style.display="none";
+
+  // 再生ボタン切替
+  const playBtn=document.getElementById("playBtn");
+  playBtn.textContent=player.getPlayerState()===1?"❚❚":"▶";
 }
 
 // シーク
@@ -259,33 +219,30 @@ function skipIntro(){player.seekTo(36,true);}
 // チャプター操作
 function toggleChapters(){
 chapterPanel.classList.toggle("open");
-if(chapterPanel.classList.contains("open")) centralUI.classList.add('hide');
-else showUI();
+if(chapterPanel.classList.contains("open")) centralUI.classList.add('hide'); else showUI();
 }
 function goTo(t){player.seekTo(t,true);toggleChapters();}
 
 // 再生速度
 function changeSpeed(rate){player.setPlaybackRate(parseFloat(rate));}
 
-// ダブルタップで左右スキップ
+// ダブルタップ左右スキップ
 document.addEventListener("touchend",function(e){
-let now=new Date().getTime();
-let tapLength=now-lastTapTime;
+let now=new Date().getTime();let tapLength=now-lastTapTime;
 if(tapLength<300&&tapLength>0){
 let x=e.changedTouches[0].clientX,w=window.innerWidth;
-if(x<w/3){rewind10();}
-else if(x>w*2/3){forward10();}
-else{togglePlay();}
+if(x<w/3){rewind10();} else if(x>w*2/3){forward10();} else{togglePlay();}
 }
 lastTapTime=now;
 });
 
-// 横スワイプでチャプター閉じる
+// チャプターパネル左右スワイプ
 let startX=0;
-chapterPanel.addEventListener("touchstart", e=>{startX=e.touches[0].clientX;});
-chapterPanel.addEventListener("touchend", e=>{
+chapterPanel.addEventListener("touchstart",e=>{startX=e.touches[0].clientX;});
+chapterPanel.addEventListener("touchend",e=>{
 let endX=e.changedTouches[0].clientX;
 if(endX < startX - 50){chapterPanel.classList.remove("open"); showUI();}
+else if(endX > startX + 50){chapterPanel.classList.add("open"); centralUI.classList.add('hide');}
 });
 
 // 時間フォーマット
