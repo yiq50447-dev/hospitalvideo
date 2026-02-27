@@ -27,8 +27,8 @@ li{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.2);cursor:pointer;}
 #progress{flex:1;accent-color:#e50914}
 
 /* Skip Intro */
-#skipIntro{position:absolute;bottom:70px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.85);padding:12px 20px;display:none;z-index:30;text-align:center}
-#skipBar{height:3px;background:#e50914;width:0%;margin-top:6px}
+#skipIntro{position:absolute;right:20px;bottom:60px;background:rgba(0,0,0,.85);padding:10px 16px;border-radius:4px;display:none;z-index:30;text-align:center}
+#skipBar{height:3px;background:#e50914;width:0%;margin-top:4px;border-radius:2px}
 
 /* Chapter Panel */
 #chapterBtn{position:fixed;top:20px;right:20px;z-index:40}
@@ -37,10 +37,10 @@ li{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.2);cursor:pointer;}
 .groupTitle{margin:20px 0 10px;color:#e50914;font-weight:bold}
 #chapterPanel p{margin:6px 0;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.2);cursor:pointer}
 
-/* Tap Effects */
-.tapEffect{position:absolute;top:50%;font-size:40px;font-weight:bold;opacity:0;transition:.3s;z-index:50;user-select:none}
-#tapLeft{left:15%;transform:translateY(-50%)}
-#tapRight{right:15%;transform:translateY(-50%)}
+/* Tap Effects (中央オーバーレイ) */
+.tapEffect{position:absolute;top:50%;font-size:60px;font-weight:bold;opacity:0;transition:.2s;z-index:50;user-select:none}
+#tapLeft{left:20%;transform:translateY(-50%)}
+#tapRight{right:20%;transform:translateY(-50%)}
 #tapCenter{left:50%;transform:translate(-50%,-50%)}
 </style>
 </head>
@@ -52,7 +52,7 @@ li{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.2);cursor:pointer;}
 <h2 style="padding:20px;color:#e50914;">動画リスト</h2>
 <ul id="videoList">
 <li onclick="playVideo('FARzkNhit5Q')">第一回オンライン勉強会ノロウイルスの対応について</li>
-<li onclick="playVideo('VIDEO_ID2')">未配信</li>
+<li onclick="playVideo('VIDEO_ID2')">PPE着脱手順解説動画（配信予定）</li>
 <li onclick="playVideo('VIDEO_ID3')">未配信</li>
 </ul>
 </div>
@@ -62,11 +62,14 @@ li{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.2);cursor:pointer;}
 
 <div id="player"></div>
 
+<!-- Intro Skip -->
 <div id="skipIntro" onclick="skipIntro()">イントロをスキップ
 <div id="skipBar"></div></div>
 
+<!-- Chapter Button -->
 <button id="chapterBtn" onclick="toggleChapters()">チャプター</button>
 
+<!-- Controls -->
 <div id="controls">
 <button onclick="back10()">« 10秒</button>
 <button onclick="togglePlay()">▶ / ❚❚</button>
@@ -78,6 +81,7 @@ li{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.2);cursor:pointer;}
 <span id="duration">0:00</span>
 </div>
 
+<!-- Chapters -->
 <div id="chapterPanel">
 <div class="groupTitle">本章</div>
 <p onclick="goTo(0)">オープニング</p>
@@ -99,6 +103,7 @@ li{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.2);cursor:pointer;}
 <p onclick="goTo(938)">第5章</p>
 </div>
 
+<!-- Central Tap Effects -->
 <div id="tapLeft" class="tapEffect">« 10</div>
 <div id="tapRight" class="tapEffect">10 »</div>
 <div id="tapCenter" class="tapEffect">▶</div>
@@ -107,8 +112,7 @@ li{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.2);cursor:pointer;}
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-let player;
-let hideTimer;
+let player,hideTimer;
 let speeds=[1,1.25,1.5,1.75,2],speedIndex=0;
 let lastTapTime=0;
 let progress=document.getElementById("progress");
@@ -131,7 +135,6 @@ let c=player.getCurrentTime(),d=player.getDuration();
 document.getElementById("currentTime").innerText=formatTime(c);
 document.getElementById("duration").innerText=formatTime(d);
 progress.value=(c/d)*100;
-
 /* Intro Skip 10~36秒 */
 let skip=document.getElementById("skipIntro");
 let bar=document.getElementById("skipBar");
@@ -154,7 +157,7 @@ document.addEventListener("touchstart",showControls);
 
 function toggleChapters(){document.getElementById("chapterPanel").classList.toggle("open");}
 
-/* ダブルタップスキップ 10/20/30秒 */
+/* ダブルタップスキップ 10秒/20秒/30秒 */
 document.addEventListener("touchend",function(e){
 let now=new Date().getTime();
 let tapLength=now-lastTapTime;
