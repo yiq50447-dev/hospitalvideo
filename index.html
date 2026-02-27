@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="院内動画">
+
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+
+<title>院内動画</title>
+
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#000;color:#fff;font-family:sans-serif;overflow:hidden}
+#videoWrapper{position:relative;width:100%;height:100vh;background:#000}
+#player{width:100%;height:100%}
+
+.ui{opacity:1;transition:opacity .3s ease;}
+.ui.hide{opacity:0;pointer-events:none;}
+
+#controls{position:absolute;left:0;bottom:0;width:100%;background:rgba(0,0,0,.7);display:flex;align-items:center;gap:10px;padding:10px;z-index:20;}
+button{background:rgba(255,255,255,.15);border:1px solid #fff;color:#fff;padding:6px 12px;cursor:pointer;}
+button:hover{background:rgba(255,255,255,.25)}
+#progress{flex:1}
+select{background:#111;color:#fff;border:1px solid #fff;padding:6px 8px}
+
+#skipIntro{position:absolute;right:40px;bottom:110px;background:rgba(0,0,0,.9);padding:14px 22px;display:none;cursor:pointer;z-index:21;}
+#skipBar{position:absolute;left:0;bottom:0;height:4px;width:0%;background:#e50914;}
+
+#chapterBtn{position:absolute;top:20px;right:20px;background:rgba(0,0,0,.6);padding:8px 14px;z-index:21;}
+#chapterPanel{position:absolute;top:0;right:0;height:100%;width:320px;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);transform:translateX(100%);transition:.3s;overflow-y:auto;padding:20px;z-index:22;}
+#chapterPanel.open{transform:translateX(0)}
+.groupTitle{margin:18px 0 8px;font-weight:bold;color:#e50914;}
+#chapterPanel p{margin:6px 0;padding:6px 0;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.15);}
+#chapterPanel p:hover{color:#e50914;}
+</style>
+</head>
+
+<body>
+
+<div id="videoWrapper" onmousemove="showUI()" ontouchstart="showUI()" ontouchend="tapVideo(event)">
+  <div id="player"></div>
+
+  <div id="skipIntro" onclick="skipIntro()">
+    イントロをスキップ
+    <div id="skipBar"></div>
+  </div>
+
+  <button id="chapterBtn" class="ui" onclick="toggleChapters()">チャプター</button>
+
+  <div id="controls" class="ui">
+    <button onclick="togglePlay()">▶ / ❚❚</button>
+    <span id="currentTime">0:00</span>
+    <input type="range" id="progress" value="0" min="0" max="100">
+    <span id="duration">0:00</span>
+
+    <select onchange="changeSpeed(this.value)">
+      <option value="1">1x</option>
+      <option value="1.25">1.25x</option>
+      <option value="1.5">1.5x</option>
+      <option value="2">2x</option>
+    </select>
+
+    <button onclick="toggleFullscreen()">⛶</button>
+  </div>
+
+  <div id="chapterPanel">
+    <div class="groupTitle">各章</div>
+    <p onclick="goTo(0)">オープニング</p>
+    <p onclick="goTo(37)">はじめに・導入</p>
+    <p onclick="goTo(166)">ノロウイルスの基本知識</p>
+    <p onclick="goTo(312)">感染予防策</p>
+    <p onclick="goTo(434)">次亜塩素酸ナトリウム調製</p>
+    <p onclick="goTo(635)">吐物処理手順</p>
+
+    <div class="groupTitle">実践動画</div>
+    <p onclick="goTo(534)">次亜塩素酸ナトリウム調製（実践）</p>
+    <p onclick="goTo(680)">物品確認編</p>
+    <p onclick="goTo(781)">吐物回収編</p>
+
+    <div class="groupTitle">ポイント確認</div>
+    <p onclick="goTo(129)">第1章</p>
+    <p onclick="goTo(270)">第2章</p>
+    <p onclick="goTo(388)">第3章</p>
+    <p onclick="goTo(588)">第4章</p>
+    <p onclick="goTo(938)">第5章</p>
+  </div>
+</div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+<script>
+let player,progress=document.getElementById("progress"),skipShown=false,uiTimer,lastTap=0;
+
+function onYouTubeIframeAPIReady(){
+  player=new YT.Player('player',{
+    videoId:'FARzkNhit5Q',
+    playerVars:{controls:1,rel:0,fs:0,playsinline:1},
+    events:{'onReady':()=>setInterval(updateUI,500)}
+  });
+}
+
+function showUI(){
+  document.querySelectorAll('.ui').forEach(e=>e.classList.remove('hide'));
+  clearTimeout(uiTimer);
+  uiTimer=setTimeout(()=>{
+    if(player.getPlayerState()===1){
+      document.querySelectorAll('.ui').forEach(e=>e.classList.add('hide'));
+    }
+  },3000);
+}
+
+function tapVideo(e){
+  let current=Date.now();
+  if(current-lastTap<300){
+    let rect=e.target.getBoundingClientRect();
+    let x=e.changedTouches[0].clientX-rect.left;
+    if(x<rect.width/2) player.seekTo(player.getCurrentTime()-10,true);
+    else player.seekTo(player.getCurrentTime()+10,true);
+  } else togglePlay();
+  lastTap=current;
+}
+
+function updateUI(){
+  if(!player.getDuration) return;
+  let c=player.getCurrentTime(),d=player.getDuration();
+  document.getElementById("currentTime").innerText=formatTime(c);
+  document.getElementById("duration").innerText=formatTime(d);
+  progress.value=(c/d)*100;
+  if(c>=10 && c<=36) showSkip(); else hideSkip();
+}
+
+function showSkip(){
+  let skip=document.getElementById("skipIntro");
+  let bar=document.getElementById("skipBar");
+  skip.style.display="block";
+  bar.style.width=((player.getCurrentTime()-10)/26*100)+"%";
+}
+function hideSkip(){document.getElementById("skipIntro").style.display="none";}
+function skipIntro(){player.seekTo(36,true);hideSkip();}
+
+progress.addEventListener("input",()=>player.seekTo((progress.value/100)*player.getDuration(),true));
+function togglePlay(){player.getPlayerState()===1?player.pauseVideo():player.playVideo();}
+function changeSpeed(r){player.setPlaybackRate(parseFloat(r));}
+
+let isFull=false;
+function toggleFullscreen(){
+  let w=document.getElementById("videoWrapper");
+  if(!isFull){w.style.position="fixed";w.style.inset="0";w.style.zIndex="9999";}
+  else{w.style.position="relative";w.style.height="100vh";}
+  isFull=!isFull;
+}
+
+function toggleChapters(){document.getElementById("chapterPanel").classList.toggle("open");}
+function goTo(t){player.seekTo(t,true);toggleChapters();}
+function formatTime(t){let m=Math.floor(t/60),s=Math.floor(t%60);return m+":"+(s<10?"0"+s:s);}
+</script>
+
+<script>
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("service-worker.js");
+}
+</script>
+
+</body>
+</html>
