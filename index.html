@@ -6,7 +6,6 @@
 <meta name="theme-color" content="#000000">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>動画アプリ</title>
-
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:sans-serif}
 body{background:#000;color:#fff;overflow:hidden;}
@@ -19,22 +18,26 @@ li{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.2);cursor:pointer}
 #videoWrapper{background:#000;}
 #player{position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none}
 
+/* Central Controls */
+.centralUI{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:flex;gap:20px;z-index:50}
+.centralUI button{background:rgba(0,0,0,.5);border:none;color:#fff;font-size:40px;padding:10px 20px;border-radius:50%;cursor:pointer;opacity:0.8}
+.centralUI button:hover{opacity:1}
+
 /* Skip Intro */
-#skipIntro{position:absolute;right:20px;bottom:60px;background:rgba(0,0,0,.85);padding:10px 16px;border-radius:4px;display:none;z-index:30;text-align:center}
+#skipIntro{position:absolute;right:20px;bottom:80px;background:rgba(0,0,0,.85);padding:10px 16px;border-radius:4px;display:none;z-index:30;text-align:center}
 #skipBar{height:3px;background:#e50914;width:0%;margin-top:4px;border-radius:2px}
 
+/* Bottom Controls */
+#bottomControls{position:absolute;bottom:0;width:100%;background:rgba(0,0,0,.6);display:flex;align-items:center;gap:10px;padding:8px 12px;z-index:40}
+#progress{flex:1}
+select{background:#111;color:#fff;border:1px solid #fff;padding:6px}
+
 /* Chapter Panel */
-#chapterBtn{position:fixed;top:20px;right:20px;z-index:40}
-#chapterPanel{position:fixed;top:0;right:0;width:300px;height:100vh;background:rgba(0,0,0,.7);backdrop-filter:blur(5px);transform:translateX(100%);transition:.3s;overflow-y:auto;padding:20px;z-index:41;}
+#chapterBtn{position:fixed;top:20px;right:20px;z-index:41}
+#chapterPanel{position:fixed;top:0;right:0;width:300px;height:100vh;background:rgba(0,0,0,.7);backdrop-filter:blur(5px);transform:translateX(100%);transition:.3s;overflow-y:auto;padding:20px;z-index:42;}
 #chapterPanel.open{transform:translateX(0)}
 .groupTitle{margin:20px 0 10px;color:#e50914;font-weight:bold}
 #chapterPanel p{margin:6px 0;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.2);cursor:pointer}
-
-/* Central Tap Effects */
-.tapEffect{position:absolute;top:50%;font-size:60px;font-weight:bold;opacity:0.7;transition:.2s;z-index:50;user-select:none}
-#tapLeft{left:20%;transform:translateY(-50%)}
-#tapRight{right:20%;transform:translateY(-50%)}
-#tapCenter{left:50%;transform:translate(-50%,-50%)}
 </style>
 </head>
 
@@ -55,9 +58,28 @@ li{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.2);cursor:pointer}
 <div id="videoWrapper" class="hidden">
 <div id="player"></div>
 
-<!-- Intro Skip -->
+<!-- Central Buttons -->
+<div class="centralUI">
+<button id="playBtn" onclick="togglePlay()">▶</button>
+<button id="skip10Btn" onclick="forward10()">»10</button>
+</div>
+
+<!-- Skip Intro -->
 <div id="skipIntro" onclick="skipIntro()">イントロをスキップ
 <div id="skipBar"></div></div>
+
+<!-- Bottom Controls -->
+<div id="bottomControls">
+<span id="currentTime">0:00</span>
+<input type="range" id="progress" min="0" max="100" value="0">
+<span id="duration">0:00</span>
+<select onchange="changeSpeed(this.value)">
+<option value="1">1x</option>
+<option value="1.25">1.25x</option>
+<option value="1.5">1.5x</option>
+<option value="2">2x</option>
+</select>
+</div>
 
 <!-- Chapter Button -->
 <button id="chapterBtn" onclick="toggleChapters()">チャプター</button>
@@ -85,18 +107,10 @@ li{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.2);cursor:pointer}
 </div>
 
 
-<!-- Central Tap Effects -->
-<div id="tapLeft" class="tapEffect">« 10</div>
-<div id="tapRight" class="tapEffect">10 »</div>
-<div id="tapCenter" class="tapEffect">▶</div>
-
-</div>
-
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
 let player,lastTapTime=0;
-
-// 再生開始
+const progress=document.getElementById("progress");
 function playVideo(videoId){
 document.getElementById("home").classList.add("hidden");
 document.getElementById("videoWrapper").classList.remove("hidden");
@@ -107,40 +121,59 @@ events:{'onReady':init}
 });
 }
 
+// 初期化
 function init(){setInterval(updateUI,500);}
 
-// UI更新・イントロスキップ
+// UI更新
 function updateUI(){
 if(!player.getDuration())return;
 let c=player.getCurrentTime();
-let skip=document.getElementById("skipIntro");
-let bar=document.getElementById("skipBar");
-if(c>10&&c<36){skip.style.display="block";bar.style.width=((c-10)/26*100)+"%";}
+let d=player.getDuration();
+document.getElementById("currentTime").innerText=formatTime(c);
+document.getElementById("duration").innerText=formatTime(d);
+progress.value=(c/d*100);
+
+// イントロスキップ表示 10~36秒
+const skip=document.getElementById("skipIntro");
+const bar=document.getElementById("skipBar");
+if(c>10 && c<36){skip.style.display="block";bar.style.width=((c-10)/26*100)+"%";}
 else{skip.style.display="none";}
 }
 
-// 安全にシーク
-function safeSeek(t){player.seekTo(t,true);setTimeout(()=>{player.playVideo()},200);}
-function togglePlay(){let s=player.getPlayerState();if(s===1)player.pauseVideo();else player.playVideo();}
-function back10(){safeSeek(player.getCurrentTime()-10);}
-function forward10(){safeSeek(player.getCurrentTime()+10);}
-function skipIntro(){safeSeek(36);}
-function goTo(t){safeSeek(t);toggleChapters();}
-function toggleChapters(){document.getElementById("chapterPanel").classList.toggle("open");}
+// シーク
+progress.addEventListener("input",()=>{player.seekTo(progress.value/100*player.getDuration(),true);});
 
-// ダブルタップ再生/スキップ
+// 再生/停止
+function togglePlay(){
+let state=player.getPlayerState();
+if(state===1)player.pauseVideo();
+else player.playVideo();
+}
+
+// 10秒スキップ
+function forward10(){player.seekTo(player.getCurrentTime()+10,true);}
+function skipIntro(){player.seekTo(36,true);}
+
+// チャプター操作
+function toggleChapters(){document.getElementById("chapterPanel").classList.toggle("open");}
+function goTo(t){player.seekTo(t,true);toggleChapters();}
+
+// 再生速度
+function changeSpeed(rate){player.setPlaybackRate(parseFloat(rate));}
+
+// タップで中央ボタンアニメーション（PCも対応）
+document.addEventListener("click",()=>{togglePlay();});
 document.addEventListener("touchend",function(e){
 let now=new Date().getTime();
 let tapLength=now-lastTapTime;
 if(tapLength<300&&tapLength>0){
 let x=e.changedTouches[0].clientX,w=window.innerWidth;
-if(x<w/3){back10();showTap("tapLeft");}
-else if(x>w*2/3){forward10();showTap("tapRight");}
-else{togglePlay();showTap("tapCenter");}
+if(x<w/3){player.seekTo(player.getCurrentTime()-10,true);}
+else if(x>w*2/3){player.seekTo(player.getCurrentTime()+10,true);}
+else{togglePlay();}
 }
 lastTapTime=now;
 });
-function showTap(id){let el=document.getElementById(id);el.style.opacity=1;setTimeout(()=>{el.style.opacity=0},400);}
 
 // 🔥 横スワイプでチャプター閉じる
 let startX=0;
@@ -148,12 +181,13 @@ const panel=document.getElementById("chapterPanel");
 panel.addEventListener("touchstart", e=>{startX=e.touches[0].clientX;});
 panel.addEventListener("touchend", e=>{
 let endX=e.changedTouches[0].clientX;
-if(endX < startX - 50){ // 左に50pxスワイプで閉じる
-panel.classList.remove("open");
-}
+if(endX < startX - 50){panel.classList.remove("open");}
 });
-</script>
 
+// 時間フォーマット
+function formatTime(t){let m=Math.floor(t/60);let s=Math.floor(t%60);if(s<10)s="0"+s;return m+":"+s;}
+</script>
 </body>
 </html>
+
 
