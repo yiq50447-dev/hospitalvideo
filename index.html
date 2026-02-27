@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -12,19 +12,12 @@
 body{background:#000;color:#fff;overflow:hidden;}
 #home,#videoWrapper{width:100vw;height:100vh;position:relative;}
 .hidden{display:none;}
-button{background:rgba(255,255,255,.15);color:#fff;border:1px solid #fff;padding:6px 12px;cursor:pointer;margin:2px;}
-button:hover{background:rgba(255,255,255,.25);}
 ul{list-style:none;padding:20px;}
-li{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.2);cursor:pointer;}
+li{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.2);cursor:pointer}
 
 /* Video Wrapper */
 #videoWrapper{background:#000;}
 #player{position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none}
-
-/* Controls */
-#controls{position:absolute;bottom:0;width:100%;background:linear-gradient(to top, rgba(0,0,0,.95), transparent);display:flex;align-items:center;gap:10px;padding:10px;z-index:20;transition:.3s}
-#controls.hide{opacity:0}
-#progress{flex:1;accent-color:#e50914}
 
 /* Skip Intro */
 #skipIntro{position:absolute;right:20px;bottom:60px;background:rgba(0,0,0,.85);padding:10px 16px;border-radius:4px;display:none;z-index:30;text-align:center}
@@ -37,8 +30,8 @@ li{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.2);cursor:pointer;}
 .groupTitle{margin:20px 0 10px;color:#e50914;font-weight:bold}
 #chapterPanel p{margin:6px 0;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.2);cursor:pointer}
 
-/* Tap Effects (中央オーバーレイ) */
-.tapEffect{position:absolute;top:50%;font-size:60px;font-weight:bold;opacity:0;transition:.2s;z-index:50;user-select:none}
+/* Central Tap Effects */
+.tapEffect{position:absolute;top:50%;font-size:60px;font-weight:bold;opacity:0.7;transition:.2s;z-index:50;user-select:none}
 #tapLeft{left:20%;transform:translateY(-50%)}
 #tapRight{right:20%;transform:translateY(-50%)}
 #tapCenter{left:50%;transform:translate(-50%,-50%)}
@@ -46,6 +39,7 @@ li{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.2);cursor:pointer;}
 </head>
 
 <body>
+
 
 <!-- Home Screen -->
 <div id="home">
@@ -59,7 +53,6 @@ li{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.2);cursor:pointer;}
 
 <!-- Video Player -->
 <div id="videoWrapper" class="hidden">
-
 <div id="player"></div>
 
 <!-- Intro Skip -->
@@ -68,18 +61,6 @@ li{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.2);cursor:pointer;}
 
 <!-- Chapter Button -->
 <button id="chapterBtn" onclick="toggleChapters()">チャプター</button>
-
-<!-- Controls -->
-<div id="controls">
-<button onclick="back10()">« 10秒</button>
-<button onclick="togglePlay()">▶ / ❚❚</button>
-<button onclick="forward10()">10秒 »</button>
-<button onclick="changeSpeed()">倍速</button>
-<span id="speedLabel">1.0x</span>
-<span id="currentTime">0:00</span>
-<input type="range" id="progress" value="0" min="0" max="100">
-<span id="duration">0:00</span>
-</div>
 
 <!-- Chapters -->
 <div id="chapterPanel">
@@ -103,6 +84,7 @@ li{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.2);cursor:pointer;}
 <p onclick="goTo(938)">第5章</p>
 </div>
 
+
 <!-- Central Tap Effects -->
 <div id="tapLeft" class="tapEffect">« 10</div>
 <div id="tapRight" class="tapEffect">10 »</div>
@@ -112,11 +94,9 @@ li{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.2);cursor:pointer;}
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-let player,hideTimer;
-let speeds=[1,1.25,1.5,1.75,2],speedIndex=0;
-let lastTapTime=0;
-let progress=document.getElementById("progress");
+let player,lastTapTime=0;
 
+// 再生開始
 function playVideo(videoId){
 document.getElementById("home").classList.add("hidden");
 document.getElementById("videoWrapper").classList.remove("hidden");
@@ -127,53 +107,53 @@ events:{'onReady':init}
 });
 }
 
-function init(){setInterval(updateUI,500);showControls();}
+function init(){setInterval(updateUI,500);}
 
+// UI更新・イントロスキップ
 function updateUI(){
-if(!player.getDuration()) return;
-let c=player.getCurrentTime(),d=player.getDuration();
-document.getElementById("currentTime").innerText=formatTime(c);
-document.getElementById("duration").innerText=formatTime(d);
-progress.value=(c/d)*100;
-/* Intro Skip 10~36秒 */
+if(!player.getDuration())return;
+let c=player.getCurrentTime();
 let skip=document.getElementById("skipIntro");
 let bar=document.getElementById("skipBar");
-if(c>10 && c<36){skip.style.display="block";bar.style.width=((c-10)/26*100)+"%";}
+if(c>10&&c<36){skip.style.display="block";bar.style.width=((c-10)/26*100)+"%";}
 else{skip.style.display="none";}
 }
 
+// 安全にシーク
 function safeSeek(t){player.seekTo(t,true);setTimeout(()=>{player.playVideo()},200);}
-function togglePlay(){let s=player.getPlayerState();if(s===1)player.pauseVideo();else player.playVideo();showControls();}
+function togglePlay(){let s=player.getPlayerState();if(s===1)player.pauseVideo();else player.playVideo();}
 function back10(){safeSeek(player.getCurrentTime()-10);}
 function forward10(){safeSeek(player.getCurrentTime()+10);}
-function changeSpeed(){speedIndex++;if(speedIndex>=speeds.length)speedIndex=0;player.setPlaybackRate(speeds[speedIndex]);document.getElementById("speedLabel").innerText=speeds[speedIndex]+"x";}
 function skipIntro(){safeSeek(36);}
 function goTo(t){safeSeek(t);toggleChapters();}
-
-progress.addEventListener("input",()=>{player.pauseVideo();safeSeek(progress.value/100*player.getDuration());});
-function showControls(){document.getElementById("controls").classList.remove("hide");clearTimeout(hideTimer);hideTimer=setTimeout(()=>{document.getElementById("controls").classList.add("hide")},3000);}
-document.addEventListener("mousemove",showControls);
-document.addEventListener("touchstart",showControls);
-
 function toggleChapters(){document.getElementById("chapterPanel").classList.toggle("open");}
 
-/* ダブルタップスキップ 10秒/20秒/30秒 */
+// ダブルタップ再生/スキップ
 document.addEventListener("touchend",function(e){
 let now=new Date().getTime();
 let tapLength=now-lastTapTime;
-if(tapLength<300 && tapLength>0){
-let x=e.changedTouches[0].clientX;
-let w=window.innerWidth;
+if(tapLength<300&&tapLength>0){
+let x=e.changedTouches[0].clientX,w=window.innerWidth;
 if(x<w/3){back10();showTap("tapLeft");}
 else if(x>w*2/3){forward10();showTap("tapRight");}
 else{togglePlay();showTap("tapCenter");}
 }
 lastTapTime=now;
 });
-
 function showTap(id){let el=document.getElementById(id);el.style.opacity=1;setTimeout(()=>{el.style.opacity=0},400);}
-function formatTime(t){let m=Math.floor(t/60);let s=Math.floor(t%60);if(s<10)s="0"+s;return m+":"+s;}
+
+// 🔥 横スワイプでチャプター閉じる
+let startX=0;
+const panel=document.getElementById("chapterPanel");
+panel.addEventListener("touchstart", e=>{startX=e.touches[0].clientX;});
+panel.addEventListener("touchend", e=>{
+let endX=e.changedTouches[0].clientX;
+if(endX < startX - 50){ // 左に50pxスワイプで閉じる
+panel.classList.remove("open");
+}
+});
 </script>
 
 </body>
 </html>
+
