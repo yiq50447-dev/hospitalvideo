@@ -12,16 +12,14 @@ body,html{width:100%;height:100%;background:#000;overflow:hidden;color:#fff;}
 #loader{
 position:fixed;top:0;left:0;width:100%;height:100%;
 background:#111;display:flex;align-items:center;justify-content:center;
-flex-direction:column;z-index:100;
+z-index:100;
 }
 
 #nameInputModal{
 position:fixed;top:0;left:0;width:100%;height:100%;
 background:rgba(0,0,0,0.95);
 display:flex;align-items:center;justify-content:center;
-flex-direction:column;z-index:101;
-text-align:center;
-padding:20px;
+flex-direction:column;z-index:101;text-align:center;padding:20px;
 }
 #nameInputModal input{
 padding:12px;font-size:16px;border-radius:8px;border:none;margin:10px;
@@ -45,8 +43,7 @@ border-radius:6px;cursor:pointer;
 .centralUI{
 position:absolute;top:50%;left:50%;
 transform:translate(-50%,-50%);
-display:flex;gap:20px;z-index:50;
-transition:.3s;
+display:flex;gap:20px;z-index:50;transition:.3s;
 }
 .centralUI button{
 font-size:22px;padding:14px;
@@ -58,11 +55,9 @@ border:none;color:#fff;border-radius:6px;
 position:absolute;bottom:0;width:100%;
 background:rgba(0,0,0,.6);
 display:flex;align-items:center;
-padding:8px;gap:8px;z-index:40;
-transition:.3s;
+padding:8px;gap:8px;z-index:40;transition:.3s;
 }
 #progress{flex:1;}
-
 .hideUI{opacity:0;pointer-events:none;}
 
 #resumeInline{
@@ -77,25 +72,19 @@ z-index:60;text-align:center;
 position:absolute;right:15px;bottom:90px;
 background:rgba(0,0,0,.9);
 padding:10px 16px;border-radius:6px;
-display:none;z-index:55;
-overflow:hidden;
+display:none;z-index:55;overflow:hidden;
 }
 #skipBar{
 position:absolute;bottom:0;left:0;height:4px;
 background:#e50914;width:100%;
-animation:shrink 5s linear forwards;
 }
-@keyframes shrink{
-from{width:100%;}
-to{width:0%;}
-}
+@keyframes shrink{from{width:100%;}to{width:0%;}}
 
 #chapterBtn{
 position:absolute;top:20px;right:20px;
 z-index:70;background:#e50914;
 border:none;color:#fff;padding:8px 12px;border-radius:6px;
 }
-
 #chapterPanel{
 position:absolute;top:0;right:-320px;
 width:320px;height:100%;
@@ -127,12 +116,8 @@ transition:.3s;z-index:65;
 ノロウイルスの対応について
 <div class="viewedDate"></div>
 </li>
-<li class="locked">
-PPEの着脱手順（配信日未定）
-</li>
-<li class="locked">
-未配信
-</li>
+<li class="locked">PPEの着脱手順（配信日未定）</li>
+<li class="locked">未配信</li>
 </ul>
 </div>
 
@@ -164,7 +149,6 @@ PPEの着脱手順（配信日未定）
 
 <button id="chapterBtn" onclick="toggleChapters()">チャプター</button>
 
-<!-- Chapters -->
 <div id="chapterPanel">
 <div class="groupTitle">本章</div>
 <p onclick="goTo(0)">オープニング</p>
@@ -191,7 +175,9 @@ PPEの着脱手順（配信日未定）
 <script>
 let player,username="guest",currentVideoId="";
 let resumeTime=0,resumePromptShown=false;
-let uiTimer=null,chapterOpen=false,introActive=false;
+let uiTimer=null,chapterOpen=false;
+let introShown=false,introTimeout=null;
+let uiInterval=null;
 
 function setUsername(){
 username=usernameInput.value.trim();
@@ -209,12 +195,19 @@ resumePromptShown=false;
 home.style.display="none";
 videoWrapper.style.display="block";
 
+if(uiInterval) clearInterval(uiInterval);
+
 player=new YT.Player('player',{
 videoId:id,
 playerVars:{controls:0,rel:0,modestbranding:1,fs:0,playsinline:1},
 events:{
-onReady:()=>{setInterval(updateUI,500);showUI();},
-onStateChange:(e)=>{if(e.data===1)startUITimer();}
+onReady:()=>{
+uiInterval=setInterval(updateUI,500);
+showUI();
+},
+onStateChange:(e)=>{
+if(e.data===YT.PlayerState.PLAYING) startUITimer();
+}
 }
 });
 }
@@ -231,25 +224,41 @@ else{player.playVideo();playBtn.innerText="❚❚";}
 showUI();
 }
 
-function resumeFrom(){player.seekTo(resumeTime,true);player.playVideo();resumeInline.style.display="none";}
-function startFromBeginning(){localStorage.removeItem(username+"_"+currentVideoId);player.seekTo(0,true);player.playVideo();resumeInline.style.display="none";}
+function resumeFrom(){
+player.seekTo(resumeTime,true);
+player.playVideo();
+resumeInline.style.display="none";
+}
+function startFromBeginning(){
+localStorage.removeItem(username+"_"+currentVideoId);
+player.seekTo(0,true);
+player.playVideo();
+resumeInline.style.display="none";
+}
 
 function updateUI(){
-if(!player.getDuration())return;
-let c=player.getCurrentTime(),d=player.getDuration();
+if(!player.getDuration()) return;
+
+let c=player.getCurrentTime();
+let d=player.getDuration();
+
 currentTime.innerText=formatTime(c);
 duration.innerText=formatTime(d);
 progress.value=c/d*100;
+
 localStorage.setItem(username+"_"+currentVideoId,c);
 localStorage.setItem(username+"_date_"+currentVideoId,new Date().toLocaleDateString());
 
-if(!introActive && c>=10){
-introActive=true;
+if(c>=10 && c<=15 && !introShown){
+introShown=true;
 skipIntro.style.display="block";
 skipBar.style.animation="none";
 void skipBar.offsetWidth;
 skipBar.style.animation="shrink 5s linear forwards";
-setTimeout(()=>{skipIntro.style.display="none";introActive=false;},5000);
+introTimeout=setTimeout(()=>{
+skipIntro.style.display="none";
+introShown=false;
+},5000);
 }
 }
 
@@ -262,22 +271,48 @@ player.seekTo(e.target.value/100*player.getDuration(),true);
 showUI();
 });
 
-function hideUI(){centralUI.classList.add("hideUI");bottomControls.classList.add("hideUI");}
-function showUI(){centralUI.classList.remove("hideUI");bottomControls.classList.remove("hideUI");startUITimer();}
-function startUITimer(){clearTimeout(uiTimer);uiTimer=setTimeout(()=>{if(!chapterOpen)hideUI();},3000);}
+function hideUI(){
+centralUI.classList.add("hideUI");
+bottomControls.classList.add("hideUI");
+}
+function showUI(){
+centralUI.classList.remove("hideUI");
+bottomControls.classList.remove("hideUI");
+startUITimer();
+}
+function startUITimer(){
+clearTimeout(uiTimer);
+uiTimer=setTimeout(()=>{
+if(!chapterOpen && player.getPlayerState()===1){
+hideUI();
+}
+},3000);
+}
 
 videoWrapper.addEventListener("click",()=>{showUI();});
 
-function goTo(sec){player.seekTo(sec,true);showUI();}
+function goTo(sec){
+player.seekTo(sec,true);
+showUI();
+}
 function toggleChapters(){
-if(chapterPanel.style.right==="0px"){chapterPanel.style.right="-320px";chapterOpen=false;startUITimer();}
-else{chapterPanel.style.right="0px";chapterOpen=true;hideUI();}
+if(chapterPanel.style.right==="0px"){
+chapterPanel.style.right="-320px";
+chapterOpen=false;
+startUITimer();
+}else{
+chapterPanel.style.right="0px";
+chapterOpen=true;
+hideUI();
+}
 }
 
 function updateViewedDates(){
 const id="FARzkNhit5Q";
 const date=localStorage.getItem(username+"_date_"+id);
-if(date)document.querySelector("#video_"+id+" .viewedDate").innerText="視聴済み："+date;
+if(date){
+document.querySelector("#video_"+id+" .viewedDate").innerText="視聴済み："+date;
+}
 }
 </script>
 </body>
