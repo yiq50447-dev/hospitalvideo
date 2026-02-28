@@ -68,17 +68,23 @@ padding:12px 20px;border-radius:8px;
 z-index:60;text-align:center;
 }
 
+/* 🔥 イントロスキップ */
 #skipIntro{
 position:absolute;right:15px;bottom:90px;
 background:rgba(0,0,0,.9);
 padding:10px 16px;border-radius:6px;
-display:none;z-index:55;overflow:hidden;
+display:none;z-index:999;
+overflow:hidden;
+cursor:pointer;
 }
 #skipBar{
 position:absolute;bottom:0;left:0;height:4px;
-background:#e50914;width:100%;
+background:#e50914;width:0%;
 }
-@keyframes shrink{from{width:100%;}to{width:0%;}}
+@keyframes grow{
+from{width:0%;}
+to{width:100%;}
+}
 
 #chapterBtn{
 position:absolute;top:20px;right:20px;
@@ -103,7 +109,7 @@ transition:.3s;z-index:65;
 <div id="nameInputModal">
 <h3>視聴する方の名前を入力してください</h3>
 <p style="margin-top:8px;font-size:14px;color:#aaa;">
-次回視聴時、続きから再生できます。
+（次回視聴時、続きから再生できます。）
 </p>
 <input id="usernameInput">
 <button onclick="setUsername()">開始</button>
@@ -136,7 +142,7 @@ transition:.3s;z-index:65;
 <button onclick="startFromBeginning()">初めから見る</button>
 </div>
 
-<div id="skipIntro">
+<div id="skipIntro" onclick="skipIntroClick(event)">
 イントロをスキップ
 <div id="skipBar"></div>
 </div>
@@ -176,8 +182,7 @@ transition:.3s;z-index:65;
 let player,username="guest",currentVideoId="";
 let resumeTime=0,resumePromptShown=false;
 let uiTimer=null,chapterOpen=false;
-let introShown=false,introTimeout=null;
-let uiInterval=null;
+let introActive=false,uiInterval=null;
 
 function setUsername(){
 username=usernameInput.value.trim();
@@ -249,15 +254,15 @@ progress.value=c/d*100;
 localStorage.setItem(username+"_"+currentVideoId,c);
 localStorage.setItem(username+"_date_"+currentVideoId,new Date().toLocaleDateString());
 
-if(c>=10 && c<=15 && !introShown){
-introShown=true;
+if(c>=10 && c<=15 && !introActive){
+introActive=true;
 skipIntro.style.display="block";
 skipBar.style.animation="none";
 void skipBar.offsetWidth;
-skipBar.style.animation="shrink 5s linear forwards";
-introTimeout=setTimeout(()=>{
+skipBar.style.animation="grow 5s linear forwards";
+setTimeout(()=>{
 skipIntro.style.display="none";
-introShown=false;
+introActive=false;
 },5000);
 }
 }
@@ -289,7 +294,17 @@ hideUI();
 },3000);
 }
 
-videoWrapper.addEventListener("click",()=>{showUI();});
+videoWrapper.addEventListener("click",(e)=>{
+if(e.target.id==="skipIntro"||e.target.id==="skipBar") return;
+showUI();
+});
+
+function skipIntroClick(e){
+e.stopPropagation();
+player.seekTo(36,true);
+skipIntro.style.display="none";
+introActive=false;
+}
 
 function goTo(sec){
 player.seekTo(sec,true);
