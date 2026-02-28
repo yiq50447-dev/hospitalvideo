@@ -14,19 +14,20 @@ position:fixed;top:0;left:0;width:100%;height:100%;
 background:#111;display:flex;align-items:center;justify-content:center;
 flex-direction:column;z-index:100;
 }
-#loader span{
-width:12px;height:12px;margin:5px;background:#e50914;border-radius:50%;
-display:inline-block;animation:dot 1s infinite;
-}
-#loader span:nth-child(2){animation-delay:.2s;}
-#loader span:nth-child(3){animation-delay:.4s;}
-@keyframes dot{0%,80%,100%{transform:scale(0);}40%{transform:scale(1);}}
 
 #nameInputModal{
 position:fixed;top:0;left:0;width:100%;height:100%;
-background:rgba(0,0,0,0.9);
+background:rgba(0,0,0,0.95);
 display:flex;align-items:center;justify-content:center;
 flex-direction:column;z-index:101;
+text-align:center;
+padding:20px;
+}
+#nameInputModal input{
+padding:12px;font-size:16px;border-radius:8px;border:none;margin:10px;
+}
+#nameInputModal button{
+padding:10px 20px;background:#e50914;color:#fff;border:none;border-radius:8px;
 }
 
 #home{width:100%;height:100%;overflow-y:auto;}
@@ -35,7 +36,8 @@ flex-direction:column;z-index:101;
 padding:12px;margin-bottom:10px;background:rgba(255,255,255,0.05);
 border-radius:6px;cursor:pointer;
 }
-.locked{opacity:.5;cursor:default;}
+.locked{opacity:.4;cursor:default;}
+.viewedDate{font-size:12px;color:#aaa;margin-top:4px;}
 
 #videoWrapper{width:100vw;height:100vh;position:relative;display:none;}
 #player{position:absolute;width:100%;height:100%;pointer-events:none;}
@@ -62,66 +64,58 @@ transition:.3s;
 #progress{flex:1;}
 
 .hideUI{opacity:0;pointer-events:none;}
-.showUI{opacity:1;pointer-events:auto;}
 
 #resumeInline{
-position:absolute;
-top:60%;
-left:50%;
+position:absolute;top:60%;left:50%;
 transform:translateX(-50%);
-display:none;
-background:rgba(0,0,0,.9);
-padding:12px 20px;
-border-radius:8px;
-z-index:60;
-text-align:center;
+display:none;background:rgba(0,0,0,.9);
+padding:12px 20px;border-radius:8px;
+z-index:60;text-align:center;
 }
 
 #skipIntro{
-position:absolute;right:20px;bottom:100px;
+position:absolute;right:15px;bottom:90px;
 background:rgba(0,0,0,.9);
-padding:8px 14px;border-radius:4px;
+padding:10px 16px;border-radius:6px;
 display:none;z-index:55;
+overflow:hidden;
+}
+#skipBar{
+position:absolute;bottom:0;left:0;height:4px;
+background:#e50914;width:100%;
+animation:shrink 5s linear forwards;
+}
+@keyframes shrink{
+from{width:100%;}
+to{width:0%;}
 }
 
 #chapterBtn{
-position:absolute;
-top:20px;
-right:20px;
-z-index:70;
-background:#e50914;
-color:#fff;
-border:none;
-padding:8px 12px;
-border-radius:6px;
+position:absolute;top:20px;right:20px;
+z-index:70;background:#e50914;
+border:none;color:#fff;padding:8px 12px;border-radius:6px;
 }
 
 #chapterPanel{
-position:absolute;
-top:0;
-right:-320px;
-width:320px;
-height:100%;
+position:absolute;top:0;right:-320px;
+width:320px;height:100%;
 background:rgba(0,0,0,0.95);
-overflow-y:auto;
-padding:20px;
-transition:.3s;
-z-index:65;
+overflow-y:auto;padding:20px;
+transition:.3s;z-index:65;
 }
-
 #chapterPanel p{margin:8px 0;cursor:pointer;}
 .groupTitle{margin-top:15px;font-weight:bold;color:#e50914;}
 </style>
 </head>
 <body>
 
-<div id="loader">
-<div>ロード中…</div>
-<div><span></span><span></span><span></span></div>
-</div>
+<div id="loader">ロード中…</div>
 
 <div id="nameInputModal">
-<div>名前を入力してください</div>
+<h3>視聴する方の名前を入力してください</h3>
+<p style="margin-top:8px;font-size:14px;color:#aaa;">
+次回視聴時、続きから再生できます。
+</p>
 <input id="usernameInput">
 <button onclick="setUsername()">開始</button>
 </div>
@@ -129,8 +123,9 @@ z-index:65;
 <div id="home">
 <h2 style="padding:20px;color:#e50914;">動画リスト</h2>
 <ul id="videoList">
-<li onclick="playVideo('FARzkNhit5Q')">
+<li onclick="playVideo('FARzkNhit5Q')" id="video_FARzkNhit5Q">
 ノロウイルスの対応について
+<div class="viewedDate"></div>
 </li>
 <li class="locked">
 PPEの着脱手順（配信日未定）
@@ -144,7 +139,7 @@ PPEの着脱手順（配信日未定）
 <div id="videoWrapper">
 <div id="player"></div>
 
-<div class="centralUI showUI" id="centralUI">
+<div class="centralUI" id="centralUI">
 <button onclick="rewind10()">«10</button>
 <button id="playBtn" onclick="togglePlay()">▶</button>
 <button onclick="forward10()">»10</button>
@@ -156,9 +151,12 @@ PPEの着脱手順（配信日未定）
 <button onclick="startFromBeginning()">初めから見る</button>
 </div>
 
-<div id="skipIntro" onclick="skipIntro()">イントロをスキップ</div>
+<div id="skipIntro">
+イントロをスキップ
+<div id="skipBar"></div>
+</div>
 
-<div id="bottomControls" class="showUI">
+<div id="bottomControls">
 <span id="currentTime">0:00</span>
 <input type="range" id="progress" min="0" max="100" value="0">
 <span id="duration">0:00</span>
@@ -187,20 +185,20 @@ PPEの着脱手順（配信日未定）
 <p onclick="goTo(588)">第4章</p>
 <p onclick="goTo(938)">第5章</p>
 </div>
-
 </div>
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
 let player,username="guest",currentVideoId="";
 let resumeTime=0,resumePromptShown=false;
-let uiTimer=null,uiVisible=true,chapterOpen=false;
+let uiTimer=null,chapterOpen=false,introActive=false;
 
 function setUsername(){
 username=usernameInput.value.trim();
 if(!username)return;
 nameInputModal.style.display="none";
 loader.style.display="none";
+updateViewedDates();
 }
 
 function playVideo(id){
@@ -214,16 +212,17 @@ videoWrapper.style.display="block";
 player=new YT.Player('player',{
 videoId:id,
 playerVars:{controls:0,rel:0,modestbranding:1,fs:0,playsinline:1},
-events:{onReady:()=>setInterval(updateUI,500)}
+events:{
+onReady:()=>{setInterval(updateUI,500);showUI();},
+onStateChange:(e)=>{if(e.data===1)startUITimer();}
+}
 });
-startUITimer();
 }
 
 function togglePlay(){
 if(!resumePromptShown && resumeTime>5){
 resumeInline.style.display="block";
 resumePromptShown=true;
-setTimeout(()=>resumeInline.style.display="none",5000);
 return;
 }
 let state=player.getPlayerState();
@@ -233,7 +232,7 @@ showUI();
 }
 
 function resumeFrom(){player.seekTo(resumeTime,true);player.playVideo();resumeInline.style.display="none";}
-function startFromBeginning(){player.seekTo(0,true);player.playVideo();resumeInline.style.display="none";}
+function startFromBeginning(){localStorage.removeItem(username+"_"+currentVideoId);player.seekTo(0,true);player.playVideo();resumeInline.style.display="none";}
 
 function updateUI(){
 if(!player.getDuration())return;
@@ -242,32 +241,43 @@ currentTime.innerText=formatTime(c);
 duration.innerText=formatTime(d);
 progress.value=c/d*100;
 localStorage.setItem(username+"_"+currentVideoId,c);
+localStorage.setItem(username+"_date_"+currentVideoId,new Date().toLocaleDateString());
 
-if(c>=10 && c<15){skipIntro.style.display="block";}
-else{skipIntro.style.display="none";}
+if(!introActive && c>=10){
+introActive=true;
+skipIntro.style.display="block";
+skipBar.style.animation="none";
+void skipBar.offsetWidth;
+skipBar.style.animation="shrink 5s linear forwards";
+setTimeout(()=>{skipIntro.style.display="none";introActive=false;},5000);
+}
 }
 
 function rewind10(){player.seekTo(player.getCurrentTime()-10,true);showUI();}
 function forward10(){player.seekTo(player.getCurrentTime()+10,true);showUI();}
-function skipIntro(){player.seekTo(36,true);skipIntro.style.display="none";}
+function formatTime(t){let m=Math.floor(t/60),s=Math.floor(t%60);if(s<10)s="0"+s;return m+":"+s;}
 
 progress.addEventListener("input",e=>{
 player.seekTo(e.target.value/100*player.getDuration(),true);
 showUI();
 });
 
-function formatTime(t){let m=Math.floor(t/60),s=Math.floor(t%60);if(s<10)s="0"+s;return m+":"+s;}
-
-function hideUI(){centralUI.classList.add("hideUI");bottomControls.classList.add("hideUI");uiVisible=false;}
-function showUI(){centralUI.classList.remove("hideUI");bottomControls.classList.remove("hideUI");uiVisible=true;startUITimer();}
+function hideUI(){centralUI.classList.add("hideUI");bottomControls.classList.add("hideUI");}
+function showUI(){centralUI.classList.remove("hideUI");bottomControls.classList.remove("hideUI");startUITimer();}
 function startUITimer(){clearTimeout(uiTimer);uiTimer=setTimeout(()=>{if(!chapterOpen)hideUI();},3000);}
 
-videoWrapper.addEventListener("click",()=>{if(!uiVisible)showUI();});
+videoWrapper.addEventListener("click",()=>{showUI();});
 
 function goTo(sec){player.seekTo(sec,true);showUI();}
 function toggleChapters(){
 if(chapterPanel.style.right==="0px"){chapterPanel.style.right="-320px";chapterOpen=false;startUITimer();}
 else{chapterPanel.style.right="0px";chapterOpen=true;hideUI();}
+}
+
+function updateViewedDates(){
+const id="FARzkNhit5Q";
+const date=localStorage.getItem(username+"_date_"+id);
+if(date)document.querySelector("#video_"+id+" .viewedDate").innerText="視聴済み："+date;
 }
 </script>
 </body>
