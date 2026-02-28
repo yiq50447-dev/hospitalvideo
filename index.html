@@ -60,6 +60,16 @@ padding:8px;gap:8px;z-index:40;transition:.3s;
 #progress{flex:1;}
 .hideUI{opacity:0;pointer-events:none;}
 
+#speedBtn{
+background:rgba(255,255,255,0.15);
+border:none;
+color:#fff;
+padding:6px 10px;
+border-radius:6px;
+font-size:14px;
+min-width:55px;
+}
+
 #resumeInline{
 position:absolute;top:60%;left:50%;
 transform:translateX(-50%);
@@ -68,14 +78,11 @@ padding:12px 20px;border-radius:8px;
 z-index:60;text-align:center;
 }
 
-/* 🔥 イントロスキップ */
 #skipIntro{
 position:absolute;right:15px;bottom:90px;
 background:rgba(0,0,0,.9);
 padding:10px 16px;border-radius:6px;
-display:none;z-index:999;
-overflow:hidden;
-cursor:pointer;
+display:none;z-index:999;overflow:hidden;cursor:pointer;
 }
 #skipBar{
 position:absolute;bottom:0;left:0;height:4px;
@@ -109,7 +116,7 @@ transition:.3s;z-index:65;
 <div id="nameInputModal">
 <h3>視聴する方の名前を入力してください</h3>
 <p style="margin-top:8px;font-size:14px;color:#aaa;">
-（次回視聴時、続きから再生できます。）
+次回視聴時、続きから再生できます。
 </p>
 <input id="usernameInput">
 <button onclick="setUsername()">開始</button>
@@ -119,7 +126,7 @@ transition:.3s;z-index:65;
 <h2 style="padding:20px;color:#e50914;">動画リスト</h2>
 <ul id="videoList">
 <li onclick="playVideo('FARzkNhit5Q')" id="video_FARzkNhit5Q">
-ノロウイルスの対応について
+第一回オンライン勉強会　ノロウイルスの対応について
 <div class="viewedDate"></div>
 </li>
 <li class="locked">PPEの着脱手順（配信日未定）</li>
@@ -151,6 +158,7 @@ transition:.3s;z-index:65;
 <span id="currentTime">0:00</span>
 <input type="range" id="progress" min="0" max="100" value="0">
 <span id="duration">0:00</span>
+<button id="speedBtn" onclick="changeSpeed()">1.0x</button>
 </div>
 
 <button id="chapterBtn" onclick="toggleChapters()">チャプター</button>
@@ -183,6 +191,18 @@ let player,username="guest",currentVideoId="";
 let resumeTime=0,resumePromptShown=false;
 let uiTimer=null,chapterOpen=false;
 let introActive=false,uiInterval=null;
+
+let speeds=[1,1.25,1.5,1.75,2];
+let speedIndex=0;
+
+function changeSpeed(){
+speedIndex++;
+if(speedIndex>=speeds.length) speedIndex=0;
+let newSpeed=speeds[speedIndex];
+player.setPlaybackRate(newSpeed);
+document.getElementById("speedBtn").innerText=newSpeed+"x";
+showUI();
+}
 
 function setUsername(){
 username=usernameInput.value.trim();
@@ -229,28 +249,15 @@ else{player.playVideo();playBtn.innerText="❚❚";}
 showUI();
 }
 
-function resumeFrom(){
-player.seekTo(resumeTime,true);
-player.playVideo();
-resumeInline.style.display="none";
-}
-function startFromBeginning(){
-localStorage.removeItem(username+"_"+currentVideoId);
-player.seekTo(0,true);
-player.playVideo();
-resumeInline.style.display="none";
-}
+function resumeFrom(){player.seekTo(resumeTime,true);player.playVideo();resumeInline.style.display="none";}
+function startFromBeginning(){localStorage.removeItem(username+"_"+currentVideoId);player.seekTo(0,true);player.playVideo();resumeInline.style.display="none";}
 
 function updateUI(){
 if(!player.getDuration()) return;
-
-let c=player.getCurrentTime();
-let d=player.getDuration();
-
+let c=player.getCurrentTime(),d=player.getDuration();
 currentTime.innerText=formatTime(c);
 duration.innerText=formatTime(d);
 progress.value=c/d*100;
-
 localStorage.setItem(username+"_"+currentVideoId,c);
 localStorage.setItem(username+"_date_"+currentVideoId,new Date().toLocaleDateString());
 
@@ -276,15 +283,8 @@ player.seekTo(e.target.value/100*player.getDuration(),true);
 showUI();
 });
 
-function hideUI(){
-centralUI.classList.add("hideUI");
-bottomControls.classList.add("hideUI");
-}
-function showUI(){
-centralUI.classList.remove("hideUI");
-bottomControls.classList.remove("hideUI");
-startUITimer();
-}
+function hideUI(){centralUI.classList.add("hideUI");bottomControls.classList.add("hideUI");}
+function showUI(){centralUI.classList.remove("hideUI");bottomControls.classList.remove("hideUI");startUITimer();}
 function startUITimer(){
 clearTimeout(uiTimer);
 uiTimer=setTimeout(()=>{
@@ -306,10 +306,7 @@ skipIntro.style.display="none";
 introActive=false;
 }
 
-function goTo(sec){
-player.seekTo(sec,true);
-showUI();
-}
+function goTo(sec){player.seekTo(sec,true);showUI();}
 function toggleChapters(){
 if(chapterPanel.style.right==="0px"){
 chapterPanel.style.right="-320px";
