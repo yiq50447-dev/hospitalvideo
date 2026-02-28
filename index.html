@@ -124,14 +124,9 @@ overflow:auto
 <button onclick="setUsername()">開始</button>
 </div>
 
-<!-- Home Screen -->
 <div id="home">
-<h2 style="padding:20px;color:#e50914;">動画リスト</h2>
-<ul id="videoList">
-<li onclick="playVideo('FARzkNhit5Q')">第一回オンライン勉強会ノロウイルスの対応について</li>
-<li onclick="playVideo('VIDEO_ID2')">PPE着脱手順解説動画（配信予定）</li>
-<li onclick="playVideo('VIDEO_ID3')">未配信</li>
-</ul>
+<h2>動画リスト</h2>
+<li onclick="loadVideo()">第一回オンライン勉強会</li>
 </div>
 
 <div id="videoWrapper">
@@ -277,3 +272,4 @@ function format(t){let m=Math.floor(t/60);let s=Math.floor(t%60);if(s<10)s="0"+s
 
 </body>
 </html>
+
