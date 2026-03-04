@@ -137,6 +137,20 @@ align-items:center;
 justify-content:center;
 z-index:300;
 }
+  <!-- 追加CSS（</style>の上に追加でもOK） -->
+#backBtn{
+position:absolute;
+top:20px;
+left:20px;
+z-index:80;
+background:#e50914;
+border:none;
+color:#fff;
+padding:8px 14px;
+border-radius:6px;
+font-size:14px;
+}
+  
 </style>
 </head>
 <body>
@@ -151,24 +165,24 @@ z-index:300;
 
 <div id="nameInputModal">
 <h3>視聴する方の名前を入力してください</h3>
+
+<p style="margin-top:6px;font-size:13px;color:#e50914;">
+β版 Ver <span id="versionText"></span>
+</p>
+
 <p style="margin-top:8px;font-size:14px;color:#aaa;">
 次回視聴時、続きから再生できます。
 </p>
 
 <input id="usernameInput" placeholder="例：洞爺 太郎">
 
-<p id="nameError" style="
-color:#ff4d4d;
-font-size:13px;
-display:none;
-margin-top:6px;
-">
+<p id="nameError" style="color:#ff4d4d;font-size:13px;display:none;margin-top:6px;">
 名前を入力してください
 </p>
 
 <button onclick="setUsername()">開始</button>
 </div>
-
+  
 <div id="home">
 <h2 style="padding:20px;color:#e50914;">動画リスト</h2>
 <ul id="videoList">
@@ -182,6 +196,7 @@ margin-top:6px;
 </div>
 
 <div id="videoWrapper">
+<button id="backBtn" onclick="goBack()">← 戻る</button>
 <div id="player"></div>
 
 <div class="centralUI" id="centralUI">
@@ -243,7 +258,9 @@ margin-top:6px;
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
 const APP_VERSION = "0.9.1 β";
-
+document.addEventListener("DOMContentLoaded", function(){
+document.getElementById("versionText").innerText = APP_VERSION;
+});
 const UPDATE_MESSAGE = `
 ・UI調整
 ・視聴者表示追加
@@ -279,7 +296,6 @@ document.getElementById("nameError").style.display="none";
 nameInputModal.style.display="none";
 loader.style.display="none";
 
-updateHeader();
 updateViewedDates();
 }
 
@@ -397,11 +413,7 @@ if(date){
 document.querySelector("#video_"+id+" .viewedDate").innerText="視聴済み："+date;
 }
 }
-function updateHeader(){
-document.getElementById("versionText").innerText="Ver " + APP_VERSION;
-document.getElementById("userStatus").innerText=
-username + "さんが視聴中";
-}
+
 
 function checkVersion(){
 const saved=localStorage.getItem("app_version");
@@ -420,10 +432,17 @@ function closeUpdateModal(){
 document.getElementById("updateModal").style.display="none";
 location.reload();
 }
-
+function goBack(){
+if(player){
+player.destroy();
+}
+videoWrapper.style.display="none";
+home.style.display="block";
+}
 checkVersion();
 </script>
 </body>
 </html>
+
 
 
