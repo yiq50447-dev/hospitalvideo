@@ -139,11 +139,23 @@ color:#fff;
 padding:8px 14px;
 border-radius:6px;
 font-size:14px;
+transition:.3s;
 }
   
+#topVersion{
+position:fixed;
+top:15px;
+right:20px;
+z-index:500;
+font-size:18px;
+font-weight:bold;
+color:#e50914;
+letter-spacing:1px;
+}  
 </style>
 </head>
 <body>
+<div id="topVersion"></div>
   
 <div id="loader">ロード中…</div>
 
@@ -243,7 +255,7 @@ font-size:14px;
 <script>
 const APP_VERSION = "0.9.1 β";
 document.addEventListener("DOMContentLoaded", function(){
-document.getElementById("versionText").innerText = APP_VERSION;
+document.getElementById("topVersion").innerText = "Ver " + APP_VERSION;
 });
 const UPDATE_MESSAGE = `
 ・UI調整
@@ -354,8 +366,17 @@ player.seekTo(e.target.value/100*player.getDuration(),true);
 showUI();
 });
 
-function hideUI(){centralUI.classList.add("hideUI");bottomControls.classList.add("hideUI");}
-function showUI(){centralUI.classList.remove("hideUI");bottomControls.classList.remove("hideUI");startUITimer();}
+function hideUI(){
+centralUI.classList.add("hideUI");
+bottomControls.classList.add("hideUI");
+backBtn.classList.add("hideUI");
+}
+function showUI(){
+centralUI.classList.remove("hideUI");
+bottomControls.classList.remove("hideUI");
+backBtn.classList.remove("hideUI");
+startUITimer();
+}
 function startUITimer(){
 clearTimeout(uiTimer);
 uiTimer=setTimeout(()=>{
@@ -427,6 +448,7 @@ checkVersion();
 </script>
 </body>
 </html>
+
 
 
 
