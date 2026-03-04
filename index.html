@@ -112,17 +112,7 @@ transition:.3s;z-index:65;
 }
 #chapterPanel p{margin:8px 0;cursor:pointer;}
 .groupTitle{margin-top:15px;font-weight:bold;color:#e50914;}
-  /* 右上ヘッダー */
-#appHeader{
-position:fixed;
-top:10px;
-right:15px;
-z-index:200;
-text-align:right;
-font-size:13px;
-color:#aaa;
-line-height:1.4;
-}
+
 
 /* 更新モーダル */
 #updateModal{
@@ -137,7 +127,7 @@ align-items:center;
 justify-content:center;
 z-index:300;
 }
-  <!-- 追加CSS（</style>の上に追加でもOK） -->
+  
 #backBtn{
 position:absolute;
 top:20px;
@@ -154,12 +144,6 @@ font-size:14px;
 </style>
 </head>
 <body>
-  
-<div id="appHeader">
-<div>院内動画アプリ β版</div>
-<div id="versionText"></div>
-<div id="userStatus"></div>
-</div>
   
 <div id="loader">ロード中…</div>
 
@@ -443,6 +427,7 @@ checkVersion();
 </script>
 </body>
 </html>
+
 
 
 
