@@ -112,10 +112,41 @@ transition:.3s;z-index:65;
 }
 #chapterPanel p{margin:8px 0;cursor:pointer;}
 .groupTitle{margin-top:15px;font-weight:bold;color:#e50914;}
+  /* 右上ヘッダー */
+#appHeader{
+position:fixed;
+top:10px;
+right:15px;
+z-index:200;
+text-align:right;
+font-size:13px;
+color:#aaa;
+line-height:1.4;
+}
+
+/* 更新モーダル */
+#updateModal{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.7);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:300;
+}
 </style>
 </head>
 <body>
-
+  
+<div id="appHeader">
+<div>院内動画アプリ β版</div>
+<div id="versionText"></div>
+<div id="userStatus"></div>
+</div>
+  
 <div id="loader">ロード中…</div>
 
 <div id="nameInputModal">
@@ -123,7 +154,18 @@ transition:.3s;z-index:65;
 <p style="margin-top:8px;font-size:14px;color:#aaa;">
 次回視聴時、続きから再生できます。
 </p>
-<input id="usernameInput">
+
+<input id="usernameInput" placeholder="例：洞爺 太郎">
+
+<p id="nameError" style="
+color:#ff4d4d;
+font-size:13px;
+display:none;
+margin-top:6px;
+">
+名前を入力してください
+</p>
+
 <button onclick="setUsername()">開始</button>
 </div>
 
@@ -189,9 +231,24 @@ transition:.3s;z-index:65;
 <p onclick="goTo(938)">第5章</p>
 </div>
 </div>
-
+  
+<div id="updateModal">
+<div style="background:#111;padding:25px;border-radius:12px;max-width:320px;text-align:left;">
+<h3 style="color:#e50914;margin-bottom:10px;">アップデート情報</h3>
+<p id="updateMessage" style="white-space:pre-line;font-size:14px;"></p>
+<button onclick="closeUpdateModal()" style="margin-top:15px;background:#e50914;color:#fff;border:none;padding:8px 16px;border-radius:6px;">OK</button>
+</div>
+</div>
+  
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
+const APP_VERSION = "0.9.1 β";
+
+const UPDATE_MESSAGE = `
+・UI調整
+・視聴者表示追加
+・戻るボタン追加
+`;
 let player,username="guest",currentVideoId="";
 let resumeTime=0,resumePromptShown=false;
 let uiTimer=null,chapterOpen=false;
@@ -211,9 +268,18 @@ showUI();
 
 function setUsername(){
 username=usernameInput.value.trim();
-if(!username)return;
+
+if(!username){
+document.getElementById("nameError").style.display="block";
+return;
+}
+
+document.getElementById("nameError").style.display="none";
+
 nameInputModal.style.display="none";
 loader.style.display="none";
+
+updateHeader();
 updateViewedDates();
 }
 
@@ -331,7 +397,33 @@ if(date){
 document.querySelector("#video_"+id+" .viewedDate").innerText="視聴済み："+date;
 }
 }
+function updateHeader(){
+document.getElementById("versionText").innerText="Ver " + APP_VERSION;
+document.getElementById("userStatus").innerText=
+username + "さんが視聴中";
+}
+
+function checkVersion(){
+const saved=localStorage.getItem("app_version");
+
+if(saved && saved!==APP_VERSION){
+document.getElementById("updateMessage").innerText=
+"Ver "+APP_VERSION+" に更新されました。\n\n更新内容:\n"+UPDATE_MESSAGE;
+
+document.getElementById("updateModal").style.display="flex";
+}
+
+localStorage.setItem("app_version",APP_VERSION);
+}
+
+function closeUpdateModal(){
+document.getElementById("updateModal").style.display="none";
+location.reload();
+}
+
+checkVersion();
 </script>
 </body>
 </html>
+
 
