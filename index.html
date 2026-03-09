@@ -488,15 +488,27 @@ introActive=false;
 
 function goTo(sec){
 
-if(!adminMode &&
-!localStorage.getItem(username+"_complete_"+currentVideoId) &&
-sec > maxWatchedTime+5){
-
-alert("まだ視聴していない場所には移動できません");
+// 管理者は制限なし
+if(adminMode){
+player.seekTo(sec,true);
+showUI();
 return;
-
 }
 
+// 視聴済み動画なら制限なし
+if(localStorage.getItem(username+"_complete_"+currentVideoId)){
+player.seekTo(sec,true);
+showUI();
+return;
+}
+
+// まだ見ていない章
+if(sec > maxWatchedTime+5){
+showToast("この章はまだ視聴していません");
+return;
+}
+
+// 視聴済み章
 player.seekTo(sec,true);
 showUI();
 
@@ -577,6 +589,7 @@ adminTapCount=0;
 </script>
 </body>
 </html>
+
 
 
 
