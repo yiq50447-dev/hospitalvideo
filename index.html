@@ -521,7 +521,25 @@ if(date){
 document.querySelector("#video_"+id+" .viewedDate").innerText="視聴済み："+date;
 }
 }
+function toggleChapters(){
 
+if(chapterPanel.style.right==="0px"){
+
+chapterPanel.style.right="-320px";
+chapterOpen=false;
+startUITimer();
+
+}else{
+
+chapterPanel.style.right="0px";
+chapterOpen=true;
+
+centralUI.classList.add("hideUI");
+bottomControls.classList.add("hideUI");
+
+}
+
+}
 
 function checkVersion(){
 const saved=localStorage.getItem("app_version");
@@ -589,6 +607,7 @@ adminTapCount=0;
 </script>
 </body>
 </html>
+
 
 
 
