@@ -276,14 +276,17 @@ z-index:999;
   
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "0.9.1 β";
+const APP_VERSION = "0.9.2 β";
 document.addEventListener("DOMContentLoaded", function(){
 document.getElementById("topVersion").innerText = "Ver " + APP_VERSION;
 });
 const UPDATE_MESSAGE = `
+【機能追加】
+・チャプター制限機能
+
+【改善】
 ・UI調整
-・視聴者表示追加
-・戻るボタン追加
+・戻るボタン表示改善
 `;
 let player,username="guest",currentVideoId="";
 let resumeTime=0,resumePromptShown=false;
@@ -559,11 +562,17 @@ document.getElementById("updateModal").style.display="none";
 location.reload();
 }
 function goBack(){
+
 if(player){
 player.destroy();
 }
+
 videoWrapper.style.display="none";
 home.style.display="block";
+
+chapterPanel.style.right="-320px";
+chapterOpen=false;
+
 }
 checkVersion();
 const versionArea = document.getElementById("topVersion");
@@ -590,6 +599,8 @@ const viewer = document.getElementById("viewerStatus");
 viewer.innerText = "管理者として視聴中";
 viewer.style.display = "block";
 
+updateViewedDates();  // ←追加
+
 alert("管理者モードON");
 
 }
@@ -607,6 +618,7 @@ adminTapCount=0;
 </script>
 </body>
 </html>
+
 
 
 
