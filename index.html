@@ -272,31 +272,123 @@ background:#fff;
 border-radius:50%;
 display:none;
 }
+#toyaBG{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+z-index:-1;
+overflow:hidden;
+}
+
+#toyaImage{
+position:absolute;
+bottom:0;
+width:100%;
+}
+
+#skyObjects{
+position:absolute;
+top:0;
+left:0;
+width:100%;
+height:100%;
+}
+
+/* 太陽 */
+#sun{
+position:absolute;
+top:80px;
+left:80px;
+width:70px;
+height:70px;
+background:#FFD54A;
+border-radius:50%;
+display:none;
+}
+
+/* 月 */
+#moon{
+position:absolute;
+top:80px;
+left:80px;
+width:60px;
+height:60px;
+background:#FFF6C2;
+border-radius:50%;
+display:none;
+}
+
+/* 雲 */
+.cloud{
+position:absolute;
+width:120px;
+height:40px;
+background:white;
+border-radius:50px;
+display:none;
+}
+
+.c1{top:120px;left:25%;}
+.c2{top:160px;left:60%;}
+
+/* 星 */
+.star{
+position:absolute;
+width:3px;
+height:3px;
+background:white;
+display:none;
+}
+
+.s1{top:90px;left:40%;}
+.s2{top:130px;left:70%;}
+
+/* 流れ星 */
+#shootingStar{
+position:absolute;
+top:100px;
+left:-100px;
+width:120px;
+height:2px;
+background:white;
+transform:rotate(20deg);
+display:none;
+animation:shoot 6s linear infinite;
+}
+
+@keyframes shoot{
+0%{left:-100px;opacity:0;}
+20%{opacity:1;}
+100%{left:120%;opacity:0;}
+}
 </style>
 </head>
 <body>
-<div id="topVersion"></div>
-  
-<div id="toast"></div>
-  
+<div id="toyaBG">
+
+<img src="toya.png" id="toyaImage">
+
+<div id="skyObjects">
+
+<div id="sun"></div>
+<div id="moon"></div>
+
+<div class="cloud c1"></div>
+<div class="cloud c2"></div>
+
+<div class="star s1"></div>
+<div class="star s2"></div>
+
+<div id="shootingStar"></div>
+
+</div>
+
+</div>  
 <div id="loader">ロード中…</div>
 
 <div id="nameInputModal">
-  <div id="toyaScene">
-<div class="sky"></div>
-
-<div class="mountain m1"></div>
-<div class="mountain m2"></div>
-<div class="mountain m3"></div>
-
-<div class="lake"></div>
-<div class="island"></div>
-
-<div class="sun"></div>
-<div class="moon"></div>
-<div class="star"></div>
-</div>
-
 <h3>視聴する方の名前を入力してください</h3>
   
 <p style="margin-top:8px;font-size:14px;color:#aaa;">
@@ -756,9 +848,45 @@ document.querySelector(".star").style.display="block";
 }
 
 setToyaTime();
+function setSky(){
+
+const hour = new Date().getHours();
+
+const sun=document.getElementById("sun");
+const moon=document.getElementById("moon");
+const clouds=document.querySelectorAll(".cloud");
+const stars=document.querySelectorAll(".star");
+const shooting=document.getElementById("shootingStar");
+
+if(hour >=5 && hour <10){
+
+sun.style.display="block";
+
+}
+else if(hour >=10 && hour <18){
+
+sun.style.display="block";
+
+clouds.forEach(c=>{c.style.display="block";});
+
+}
+else{
+
+moon.style.display="block";
+
+stars.forEach(s=>{s.style.display="block";});
+
+shooting.style.display="block";
+
+}
+
+}
+
+document.addEventListener("DOMContentLoaded",setSky);
 </script>
 </body>
 </html>
+
 
 
 
