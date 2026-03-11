@@ -174,15 +174,13 @@ z-index:999;
 }
   /* 背景シーン */
 #toyaBG{
-position:fixed;
+position:absolute;
 top:0;
 left:0;
 width:100%;
 height:100%;
-z-index:0;
-overflow:hidden;
+z-index:-1;
 }
-
 #toyaImage{
 position:absolute;
 bottom:0;
@@ -269,10 +267,15 @@ animation:shoot 6s linear infinite;
 <body>
 
 <div id="topVersion"></div>
+  
+<div id="loader">ロード中…</div>
+
+<div id="nameInputModal">
 
 <div id="toyaBG">
 
 <img src="toya.png" id="toyaImage">
+
 <div id="skyObjects">
 
 <div id="sun"></div>
@@ -285,13 +288,12 @@ animation:shoot 6s linear infinite;
 <div class="star s2"></div>
 
 <div id="shootingStar"></div>
-</div>
-</div>
-  
-<div id="loader">ロード中…</div>
 
-<div id="nameInputModal">
+</div>
+</div>
+
 <h3>視聴する方の名前を入力してください</h3>
+
   
 <p style="margin-top:8px;font-size:14px;color:#aaa;">
 次回視聴時、続きから再生できます。
@@ -762,6 +764,7 @@ document.addEventListener("DOMContentLoaded",setSky);
 </script>
 </body>
 </html>
+
 
 
 
