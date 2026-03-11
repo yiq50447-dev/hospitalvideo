@@ -180,13 +180,8 @@ left:0;
 width:100%;
 height:100%;
 z-index:-1;
+overflow:hidden;
 }
-#toyaImage{
-position:absolute;
-bottom:0;
-width:100%;
-}
-
 #skyObjects{
 position:absolute;
 top:0;
@@ -262,6 +257,15 @@ animation:shoot 6s linear infinite;
 20%{opacity:1;}
 100%{left:120%;opacity:0;}
 }
+#toyaBG{
+position:absolute;
+top:0;
+left:0;
+width:100%;
+height:100%;
+z-index:-1;
+overflow:hidden;
+}
 </style>
 </head>
 <body>
@@ -274,7 +278,50 @@ animation:shoot 6s linear infinite;
 
 <div id="toyaBG">
 
-<img src="toya.png" id="toyaImage">
+<svg id="toyaMountains" viewBox="0 0 1000 400" preserveAspectRatio="none">
+
+<!-- 空 -->
+<rect x="0" y="0" width="1000" height="400" fill="#6ec6ff"/>
+
+<!-- 山（洞爺湖っぽい形） -->
+<path d="
+M0 260
+L120 210
+L200 240
+L320 180
+L420 210
+L520 160
+L620 200
+L720 170
+L820 210
+L920 180
+L1000 210
+L1000 400
+L0 400
+Z"
+fill="#2b2b2b"/>
+
+<!-- 湖 -->
+<rect x="0" y="260" width="1000" height="140" fill="#1c4e80"/>
+
+</svg>
+
+<div id="skyObjects">
+
+<div id="sun"></div>
+<div id="moon"></div>
+
+<div class="cloud c1"></div>
+<div class="cloud c2"></div>
+
+<div class="star s1"></div>
+<div class="star s2"></div>
+
+<div id="shootingStar"></div>
+
+</div>
+
+</div>
 
 <div id="skyObjects">
 
@@ -764,6 +811,7 @@ document.addEventListener("DOMContentLoaded",setSky);
 </script>
 </body>
 </html>
+
 
 
 
