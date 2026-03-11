@@ -257,15 +257,7 @@ animation:shoot 6s linear infinite;
 20%{opacity:1;}
 100%{left:120%;opacity:0;}
 }
-#toyaBG{
-position:absolute;
-top:0;
-left:0;
-width:100%;
-height:100%;
-z-index:-1;
-overflow:hidden;
-}
+
 </style>
 </head>
 <body>
@@ -323,21 +315,6 @@ fill="#2b2b2b"/>
 
 </div>
 
-<div id="skyObjects">
-
-<div id="sun"></div>
-<div id="moon"></div>
-
-<div class="cloud c1"></div>
-<div class="cloud c2"></div>
-
-<div class="star s1"></div>
-<div class="star s2"></div>
-
-<div id="shootingStar"></div>
-
-</div>
-</div>
 
 <h3>視聴する方の名前を入力してください</h3>
 
@@ -433,17 +410,13 @@ fill="#2b2b2b"/>
   
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "0.9.2 β";
+const APP_VERSION = "0.9.3 β";
 document.addEventListener("DOMContentLoaded", function(){
 document.getElementById("topVersion").innerText = "Ver " + APP_VERSION;
 });
 const UPDATE_MESSAGE = `
 【機能追加】
-・チャプター制限機能
-
-【改善】
-・UI調整
-・戻るボタン表示改善
+・ヘッダーのイラスト追加
 `;
 let player,username="guest",currentVideoId="";
 let resumeTime=0,resumePromptShown=false;
@@ -811,6 +784,7 @@ document.addEventListener("DOMContentLoaded",setSky);
 </script>
 </body>
 </html>
+
 
 
 
