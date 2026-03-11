@@ -172,6 +172,106 @@ opacity:0;
 transition:0.3s;
 z-index:999;
 }
+  /* 背景シーン */
+
+#toyaScene{
+position:absolute;
+top:0;
+left:0;
+width:100%;
+height:100%;
+overflow:hidden;
+z-index:-1;
+}
+
+/* 空 */
+
+.sky{
+position:absolute;
+width:100%;
+height:100%;
+background:linear-gradient(#2c3e50,#4ca1af);
+}
+
+/* 山 */
+
+.mountain{
+position:absolute;
+bottom:140px;
+width:0;
+height:0;
+border-left:90px solid transparent;
+border-right:90px solid transparent;
+border-bottom:140px solid #222;
+}
+
+.m1{left:20%;}
+.m2{left:45%; border-bottom-color:#333;}
+.m3{left:70%;}
+
+/* 洞爺湖 */
+
+.lake{
+position:absolute;
+bottom:0;
+width:100%;
+height:140px;
+background:linear-gradient(#1e3c72,#2a5298);
+}
+
+/* 中島 */
+
+.island{
+position:absolute;
+bottom:90px;
+left:50%;
+width:40px;
+height:20px;
+background:#1b5e20;
+border-radius:50%;
+transform:translateX(-50%);
+}
+
+/* 太陽 */
+
+.sun{
+position:absolute;
+top:80px;
+left:50%;
+width:70px;
+height:70px;
+background:#ffcc55;
+border-radius:50%;
+transform:translateX(-50%);
+display:none;
+}
+
+/* 月 */
+
+.moon{
+position:absolute;
+top:80px;
+left:50%;
+width:60px;
+height:60px;
+background:#eee;
+border-radius:50%;
+transform:translateX(-50%);
+display:none;
+}
+
+/* 星 */
+
+.star{
+position:absolute;
+top:40px;
+left:30%;
+width:4px;
+height:4px;
+background:#fff;
+border-radius:50%;
+display:none;
+}
 </style>
 </head>
 <body>
@@ -182,9 +282,23 @@ z-index:999;
 <div id="loader">ロード中…</div>
 
 <div id="nameInputModal">
+  <div id="toyaScene">
+<div class="sky"></div>
+
+<div class="mountain m1"></div>
+<div class="mountain m2"></div>
+<div class="mountain m3"></div>
+
+<div class="lake"></div>
+<div class="island"></div>
+
+<div class="sun"></div>
+<div class="moon"></div>
+<div class="star"></div>
+</div>
+
 <h3>視聴する方の名前を入力してください</h3>
-
-
+  
 <p style="margin-top:8px;font-size:14px;color:#aaa;">
 次回視聴時、続きから再生できます。
 </p>
@@ -615,9 +729,37 @@ adminTapCount=0;
 },2000);
 
 });
+  
+function setToyaTime(){
+
+const hour = new Date().getHours();
+
+if(hour >= 5 && hour < 10){
+
+document.querySelector(".sun").style.display="block";
+
+}
+
+else if(hour >= 10 && hour < 18){
+
+document.querySelector(".sun").style.display="block";
+
+}
+
+else{
+
+document.querySelector(".moon").style.display="block";
+document.querySelector(".star").style.display="block";
+
+}
+
+}
+
+setToyaTime();
 </script>
 </body>
 </html>
+
 
 
 
