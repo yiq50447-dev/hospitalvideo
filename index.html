@@ -206,7 +206,7 @@ z-index:999;
 <h2 style="padding:20px;color:#e50914;">動画リスト</h2>
 <ul id="videoList">
   
-<li onclick="playVideo('M1rVY-oIrAo')" id="video_FARzkNhit5Q">
+<li onclick="playVideo('HyyeZRsWGkw')" id="video_HyyeZRsWGkw">
 第一回オンライン勉強会　ノロウイルスの対応について
 <div class="viewedDate"></div>
 </li>
@@ -277,13 +277,13 @@ z-index:999;
   
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "0.9.4 β";
+const APP_VERSION = "0.9.5 β";
 document.addEventListener("DOMContentLoaded", function(){
 document.getElementById("topVersion").innerText = "Ver " + APP_VERSION;
 });
 const UPDATE_MESSAGE = `
 【機能追加】
-・新しい動画の追加
+・動画の修正箇所の更新
 `;
 let player,username="guest",currentVideoId="";
 let resumeTime=0,resumePromptShown=false;
@@ -515,7 +515,7 @@ showUI();
 }
 
 function updateViewedDates(){
-const id="M1rVY-oIrAo";
+const id="HyyeZRsWGkw";
 const date=localStorage.getItem(username+"_date_"+id);
 if(date){
 document.querySelector("#video_"+id+" .viewedDate").innerText="視聴済み："+date;
@@ -617,6 +617,7 @@ adminTapCount=0;
 <div id="toast"></div>  
 </body>
 </html>
+
 
 
 
