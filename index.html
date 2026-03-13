@@ -99,9 +99,16 @@ to{width:100%;}
 }
 
 #chapterBtn{
-position:absolute;top:20px;right:20px;
-z-index:70;background:#e50914;
-border:none;color:#fff;padding:8px 12px;border-radius:6px;
+position:absolute;
+top:20px;
+right:20px;
+z-index:70;
+background:rgba(229,9,20,0.6);
+border:none;
+color:#fff;
+padding:8px 14px;
+border-radius:8px;
+backdrop-filter:blur(6px);
 }
 #chapterPanel{
 position:absolute;top:0;right:-320px;
@@ -172,6 +179,15 @@ opacity:0;
 transition:0.3s;
 z-index:999;
 }
+#logoutBtn{
+margin:10px 20px;
+padding:8px 14px;
+border:none;
+border-radius:6px;
+background:#444;
+color:#fff;
+font-size:14px;
+}
 
 </style>
 </head>
@@ -202,6 +218,7 @@ z-index:999;
 <div id="home">
 
 <div id="viewerStatus"></div>
+<button id="logoutBtn" onclick="logout()">ログアウト</button>
 
 <h2 style="padding:20px;color:#e50914;">動画リスト</h2>
 <ul id="videoList">
@@ -437,7 +454,11 @@ progress.value = maxWatchedTime/player.getDuration()*100;
 return;
 
 }
-player.seekTo(target,true);
+player.seekTo(sec,true);
+
+chapterPanel.style.right="-320px";
+chapterOpen=false;
+
 showUI();
 
 });
@@ -458,13 +479,16 @@ function hideUI(){
 centralUI.classList.add("hideUI");
 bottomControls.classList.add("hideUI");
 backBtn.classList.add("hideUI");
+chapterBtn.classList.add("hideUI");
 }
 function showUI(){
 centralUI.classList.remove("hideUI");
 bottomControls.classList.remove("hideUI");
 backBtn.classList.remove("hideUI");
+chapterBtn.classList.remove("hideUI");
 startUITimer();
 }
+
 function startUITimer(){
 clearTimeout(uiTimer);
 uiTimer=setTimeout(()=>{
@@ -610,13 +634,23 @@ clearTimeout(adminTapTimer);
 adminTapTimer=setTimeout(()=>{
 adminTapCount=0;
 },2000);
+function logout(){
 
+username="guest";
+
+document.getElementById("viewerStatus").style.display="none";
+
+home.style.display="none";
+nameInputModal.style.display="flex";
+
+}
 });
 
 </script>
 <div id="toast"></div>  
 </body>
 </html>
+
 
 
 
