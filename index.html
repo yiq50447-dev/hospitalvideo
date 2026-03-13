@@ -172,45 +172,40 @@ opacity:0;
 transition:0.3s;
 z-index:999;
 }
-  /* 背景シーン */
-#toyaBG{
+/* 空背景 */
+#skyScene{
 position:absolute;
 top:0;
 left:0;
 width:100%;
 height:100%;
+background:#87CEEB;
 z-index:-1;
 overflow:hidden;
-}
-#skyObjects{
-position:absolute;
-top:0;
-left:0;
-width:100%;
-height:100%;
 }
 
 /* 太陽 */
 #sun{
 position:absolute;
-top:80px;
-left:80px;
-width:70px;
-height:70px;
-background:#FFD54A;
+top:40px;
+right:40px;
+width:80px;
+height:80px;
+background:red;
 border-radius:50%;
 display:none;
 }
 
-/* 月 */
+/* 月（三日月） */
 #moon{
 position:absolute;
-top:80px;
-left:80px;
-width:60px;
-height:60px;
-background:#FFF6C2;
+top:40px;
+right:40px;
+width:70px;
+height:70px;
+background:yellow;
 border-radius:50%;
+box-shadow:-20px 0 0 0 black;
 display:none;
 }
 
@@ -222,40 +217,50 @@ height:40px;
 background:white;
 border-radius:50px;
 display:none;
+animation:cloudMove 5s linear infinite;
 }
 
-.c1{top:120px;left:25%;}
-.c2{top:160px;left:60%;}
+.c1{top:120px;}
+.c2{top:180px;}
+.c3{top:240px;}
+
+@keyframes cloudMove{
+0%{left:110%;}
+100%{left:-150px;}
+}
 
 /* 星 */
-.star{
+.stars{
 position:absolute;
-width:3px;
-height:3px;
-background:white;
+width:100%;
+height:100%;
+background:
+radial-gradient(2px 2px at 20% 30%, yellow, transparent),
+radial-gradient(2px 2px at 50% 60%, yellow, transparent),
+radial-gradient(2px 2px at 70% 20%, yellow, transparent),
+radial-gradient(2px 2px at 80% 50%, yellow, transparent),
+radial-gradient(2px 2px at 30% 70%, yellow, transparent);
 display:none;
 }
-
-.s1{top:90px;left:40%;}
-.s2{top:130px;left:70%;}
 
 /* 流れ星 */
 #shootingStar{
 position:absolute;
-top:100px;
-left:-100px;
+top:-50px;
+right:-50px;
 width:120px;
 height:2px;
 background:white;
-transform:rotate(20deg);
-display:none;
-animation:shoot 6s linear infinite;
+transform:rotate(-40deg);
+opacity:0;
+animation:shooting 6s linear infinite;
 }
 
-@keyframes shoot{
-0%{left:-100px;opacity:0;}
-20%{opacity:1;}
-100%{left:120%;opacity:0;}
+@keyframes shooting{
+0%{top:-50px;right:-50px;opacity:0;}
+10%{opacity:1;}
+40%{top:60%;right:60%;}
+100%{opacity:0;}
 }
 
 </style>
@@ -267,49 +272,20 @@ animation:shoot 6s linear infinite;
 <div id="loader">ロード中…</div>
 
 <div id="nameInputModal">
-
-<div id="toyaBG">
-
-<svg id="toyaMountains" viewBox="0 0 1000 400" preserveAspectRatio="none">
-
-<!-- 空 -->
-<rect x="0" y="0" width="1000" height="400" fill="#6ec6ff"/>
-
-<!-- 山（洞爺湖っぽい形） -->
-<path d="
-M0 260
-L150 200
-L300 230
-L450 170
-L600 210
-L750 180
-L900 220
-L1000 200
-L1000 400
-L0 400
-Z"
-fill="#2b2b2b"/>
-
-<!-- 湖 -->
-<rect x="0" y="260" width="1000" height="140" fill="#1c4e80"/>
-
-</svg>
-
-<div id="skyObjects">
+  
+<div id="skyScene">
 
 <div id="sun"></div>
 <div id="moon"></div>
 
 <div class="cloud c1"></div>
 <div class="cloud c2"></div>
+<div class="cloud c3"></div>
 
-<div class="star s1"></div>
-<div class="star s2"></div>
-
+<div class="stars"></div>
 <div id="shootingStar"></div>
 
 </div>
-
 </div>
 
 
@@ -750,27 +726,33 @@ const hour = new Date().getHours();
 const sun=document.getElementById("sun");
 const moon=document.getElementById("moon");
 const clouds=document.querySelectorAll(".cloud");
-const stars=document.querySelectorAll(".star");
+const stars=document.querySelector(".stars");
 const shooting=document.getElementById("shootingStar");
+const scene=document.getElementById("skyScene");
 
-if(hour >=5 && hour <10){
+if(hour>=5 && hour<10){
 
+scene.style.background="#87CEEB";
 sun.style.display="block";
 
 }
-else if(hour >=10 && hour <18){
 
+else if(hour>=10 && hour<18){
+
+scene.style.background="#87CEEB";
 sun.style.display="block";
 
-clouds.forEach(c=>{c.style.display="block";});
+clouds.forEach(c=>{
+c.style.display="block";
+});
 
 }
+
 else{
 
+scene.style.background="black";
 moon.style.display="block";
-
-stars.forEach(s=>{s.style.display="block";});
-
+stars.style.display="block";
 shooting.style.display="block";
 
 }
@@ -782,6 +764,7 @@ document.addEventListener("DOMContentLoaded",setSky);
 <div id="toast"></div>  
 </body>
 </html>
+
 
 
 
