@@ -172,96 +172,6 @@ opacity:0;
 transition:0.3s;
 z-index:999;
 }
-/* 空背景 */
-#skyScene{
-position:absolute;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:#87CEEB;
-z-index:-1;
-overflow:hidden;
-}
-
-/* 太陽 */
-#sun{
-position:absolute;
-top:40px;
-right:40px;
-width:80px;
-height:80px;
-background:red;
-border-radius:50%;
-display:none;
-}
-
-/* 月（三日月） */
-#moon{
-position:absolute;
-top:40px;
-right:40px;
-width:70px;
-height:70px;
-background:yellow;
-border-radius:50%;
-box-shadow:-20px 0 0 0 black;
-display:none;
-}
-
-/* 雲 */
-.cloud{
-position:absolute;
-width:120px;
-height:40px;
-background:white;
-border-radius:50px;
-display:none;
-animation:cloudMove 5s linear infinite;
-}
-
-.c1{top:120px;}
-.c2{top:180px;}
-.c3{top:240px;}
-
-@keyframes cloudMove{
-0%{left:110%;}
-100%{left:-150px;}
-}
-
-/* 星 */
-.stars{
-position:absolute;
-width:100%;
-height:100%;
-background:
-radial-gradient(2px 2px at 20% 30%, yellow, transparent),
-radial-gradient(2px 2px at 50% 60%, yellow, transparent),
-radial-gradient(2px 2px at 70% 20%, yellow, transparent),
-radial-gradient(2px 2px at 80% 50%, yellow, transparent),
-radial-gradient(2px 2px at 30% 70%, yellow, transparent);
-display:none;
-}
-
-/* 流れ星 */
-#shootingStar{
-position:absolute;
-top:-50px;
-right:-50px;
-width:120px;
-height:2px;
-background:white;
-transform:rotate(-40deg);
-opacity:0;
-animation:shooting 6s linear infinite;
-}
-
-@keyframes shooting{
-0%{top:-50px;right:-50px;opacity:0;}
-10%{opacity:1;}
-40%{top:60%;right:60%;}
-100%{opacity:0;}
-}
 
 </style>
 </head>
@@ -273,22 +183,6 @@ animation:shooting 6s linear infinite;
 
 <div id="nameInputModal">
   
-<div id="skyScene">
-
-<div id="sun"></div>
-<div id="moon"></div>
-
-<div class="cloud c1"></div>
-<div class="cloud c2"></div>
-<div class="cloud c3"></div>
-
-<div class="stars"></div>
-<div id="shootingStar"></div>
-
-</div>
-</div>
-
-
 <h3>視聴する方の名前を入力してください</h3>
 
   
@@ -718,52 +612,12 @@ adminTapCount=0;
 },2000);
 
 });
-  
-function setSky(){
 
-const hour = new Date().getHours();
-
-const sun=document.getElementById("sun");
-const moon=document.getElementById("moon");
-const clouds=document.querySelectorAll(".cloud");
-const stars=document.querySelector(".stars");
-const shooting=document.getElementById("shootingStar");
-const scene=document.getElementById("skyScene");
-
-if(hour>=5 && hour<10){
-
-scene.style.background="#87CEEB";
-sun.style.display="block";
-
-}
-
-else if(hour>=10 && hour<18){
-
-scene.style.background="#87CEEB";
-sun.style.display="block";
-
-clouds.forEach(c=>{
-c.style.display="block";
-});
-
-}
-
-else{
-
-scene.style.background="black";
-moon.style.display="block";
-stars.style.display="block";
-shooting.style.display="block";
-
-}
-
-}
-
-document.addEventListener("DOMContentLoaded",setSky);
 </script>
 <div id="toast"></div>  
 </body>
 </html>
+
 
 
 
