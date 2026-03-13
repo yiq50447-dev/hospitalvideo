@@ -433,7 +433,7 @@ return;
 
 }
 
-player.seekTo(target,true);
+player.seekTo(sec,true);
 showUI();
 
 }
@@ -454,11 +454,8 @@ progress.value = maxWatchedTime/player.getDuration()*100;
 return;
 
 }
-player.seekTo(sec,true);
 
-chapterPanel.style.right="-320px";
-chapterOpen=false;
-
+player.seekTo(target,true);
 showUI();
 
 });
@@ -534,6 +531,10 @@ return;
 
 // 視聴済み章
 player.seekTo(sec,true);
+
+chapterPanel.style.right="-320px";
+chapterOpen=false;
+
 showUI();
 
 }
@@ -634,6 +635,8 @@ clearTimeout(adminTapTimer);
 adminTapTimer=setTimeout(()=>{
 adminTapCount=0;
 },2000);
+
+});
 function logout(){
 
 username="guest";
@@ -644,12 +647,11 @@ home.style.display="none";
 nameInputModal.style.display="flex";
 
 }
-});
-
 </script>
 <div id="toast"></div>  
 </body>
 </html>
+
 
 
 
