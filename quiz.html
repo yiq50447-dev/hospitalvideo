@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>ノロウイルス研修テスト</title>
+
+<style>
+body{
+font-family:sans-serif;
+background:#111;
+color:#fff;
+padding:30px;
+line-height:1.7;
+}
+
+h1{
+color:#e50914;
+margin-bottom:10px;
+}
+
+.question{
+margin-top:25px;
+padding:15px;
+background:#1a1a1a;
+border-radius:8px;
+}
+
+button{
+margin-top:30px;
+padding:12px 25px;
+background:#e50914;
+border:none;
+color:#fff;
+border-radius:6px;
+font-size:16px;
+cursor:pointer;
+}
+
+#result{
+margin-top:30px;
+font-size:20px;
+color:#0f0;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>ノロウイルス対応研修　確認テスト</h1>
+
+<p id="username"></p>
+
+<form id="quizForm">
+
+<div class="question">
+<b>問1 ノロウイルスの潜伏期間</b><br>
+<label><input type="radio" name="q1" value="A">6〜12時間</label><br>
+<label><input type="radio" name="q1" value="B">12〜24時間</label><br>
+<label><input type="radio" name="q1" value="C">24〜48時間</label><br>
+<label><input type="radio" name="q1" value="D">3〜5日</label>
+</div>
+
+<div class="question">
+<b>問2 感染力が強い期間</b><br>
+<label><input type="radio" name="q2" value="A">発症前</label><br>
+<label><input type="radio" name="q2" value="B">発症後約3日間</label><br>
+<label><input type="radio" name="q2" value="C">症状消失後1週間</label><br>
+<label><input type="radio" name="q2" value="D">症状消失後1ヶ月</label>
+</div>
+
+<div class="question">
+<b>問3 最も重要な対策</b><br>
+<label><input type="radio" name="q3" value="A">アルコール消毒</label><br>
+<label><input type="radio" name="q3" value="B">石けんと流水による手洗い</label><br>
+<label><input type="radio" name="q3" value="C">水拭き</label><br>
+<label><input type="radio" name="q3" value="D">手袋のみ</label>
+</div>
+
+<div class="question">
+<b>問4 PPE</b><br>
+<label><input type="radio" name="q4" value="A">手袋のみ</label><br>
+<label><input type="radio" name="q4" value="B">手袋とマスク</label><br>
+<label><input type="radio" name="q4" value="C">手袋・マスク・ガウン</label><br>
+<label><input type="radio" name="q4" value="D">フルPPE</label>
+</div>
+
+<div class="question">
+<b>問5 次亜塩素酸ナトリウム0.1%</b><br>
+<label><input type="radio" name="q5" value="A">水1000ml＋ヤクラックス100ml</label><br>
+<label><input type="radio" name="q5" value="B">水1500ml＋ヤクラックス100ml</label><br>
+<label><input type="radio" name="q5" value="C">水1800ml＋ヤクラックス200ml</label><br>
+<label><input type="radio" name="q5" value="D">水2000ml＋ヤクラックス100ml</label>
+</div>
+
+<button type="button" onclick="submitQuiz()">回答する</button>
+
+</form>
+
+<div id="result"></div>
+
+<script>
+
+document.getElementById("username").innerText =
+"受講者："+localStorage.getItem("quizUser");
+
+const answers={
+q1:"C",
+q2:"B",
+q3:"B",
+q4:"C",
+q5:"D"
+};
+
+function submitQuiz(){
+
+let score=0;
+
+for(let q in answers){
+
+let ans=document.querySelector('input[name="'+q+'"]:checked');
+
+if(ans && ans.value===answers[q]) score++;
+
+}
+
+document.getElementById("result").innerText =
+"結果："+score+" / "+Object.keys(answers).length+" 正解";
+
+}
+
+</script>
+
+</body>
+</html>
