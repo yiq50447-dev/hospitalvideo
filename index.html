@@ -422,8 +422,15 @@ maxWatchedTime = c;
 }
 
 if(c >= d-2){
+
 localStorage.setItem(username+"_complete_"+currentVideoId,true);
+
+localStorage.setItem("quizUser",username);
+
+window.location.href="quiz.html";
+
 }
+
 currentTime.innerText=formatTime(c);
 duration.innerText=formatTime(d);
 progress.value=c/d*100;
