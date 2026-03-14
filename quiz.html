@@ -334,6 +334,80 @@ document.getElementById("quizForm").style.display="block";
 
 }
 
+let time = 600; // 10分
+
+function startTimer(){
+
+const timer = document.getElementById("timer");
+
+const interval = setInterval(function(){
+
+time--;
+
+let m = Math.floor(time / 60);
+let s = time % 60;
+
+if(s < 10) s = "0" + s;
+
+timer.innerText = m + ":" + s;
+
+if(time <= 0){
+
+clearInterval(interval);
+
+alert("時間終了です。回答を送信します。");
+
+submitQuiz();
+
+}
+
+},1000);
+
+}
+
+startTimer();
+
+
+document.querySelectorAll("input[type=radio]").forEach(function(radio){
+
+radio.addEventListener("change", function(){
+
+let q = this.name.replace("q","");
+
+let btn = document.querySelectorAll(".navBtn")[q-1];
+
+if(btn){
+btn.classList.add("answered");
+}
+
+});
+
+});
+
+
+const totalQuestions = 13;
+
+const nav = document.getElementById("nav");
+
+for(let i=1;i<=totalQuestions;i++){
+
+let btn = document.createElement("div");
+
+btn.innerText = "Q"+i;
+
+btn.className = "navBtn";
+
+btn.onclick = function(){
+
+document.querySelectorAll(".question")[i-1].scrollIntoView({
+behavior:"smooth"
+});
+
+};
+
+nav.appendChild(btn);
+
+}
 </script>
 
 </body>
