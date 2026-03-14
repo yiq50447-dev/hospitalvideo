@@ -205,9 +205,23 @@ background:#4caf50;
 <label><input type="radio" name="q13" value="D">変わらない</label>
 </div>
 
-<button type="button" onclick="submitQuiz()">回答を送信</button>
+<button type="button" onclick="saveAnswers()">回答を保存</button>
 
 </form>
+  
+<div id="confirmScreen" style="display:none; padding:30px;">
+
+<h2>回答確認</h2>
+
+<div id="confirmList" style="margin:20px 0;"></div>
+
+<button onclick="submitQuiz()">回答を送信</button>
+
+<button onclick="backToEdit()" style="background:#666;">
+戻って修正
+</button>
+
+</div>
 
 <div id="result"></div>
 
@@ -272,6 +286,51 @@ html+="<p><b>問"+i+"</b><br>"+explanations["q"+i]+"</p>";
 document.getElementById("result").innerHTML=html;
 
 window.scrollTo(0,0);
+
+}
+function saveAnswers(){
+
+let html="";
+let unanswered=[];
+
+for(let i=1;i<=13;i++){
+
+let ans=document.querySelector('input[name="q'+i+'"]:checked');
+
+if(ans){
+
+html+="問"+i+" ： "+ans.value+"<br>";
+
+}else{
+
+html+="問"+i+" ： 未回答<br>";
+unanswered.push(i);
+
+}
+
+}
+
+if(unanswered.length>0){
+
+alert("未回答の問題があります\n問"+unanswered.join(" , "));
+
+}
+
+document.getElementById("confirmList").innerHTML=html;
+
+document.getElementById("quizForm").style.display="none";
+
+document.getElementById("confirmScreen").style.display="block";
+
+window.scrollTo(0,0);
+
+}
+
+function backToEdit(){
+
+document.getElementById("confirmScreen").style.display="none";
+
+document.getElementById("quizForm").style.display="block";
 
 }
 
