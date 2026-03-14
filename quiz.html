@@ -45,44 +45,58 @@ cursor:pointer;
 }
 
 /* 左パネル */
-
 #sidePanel{
 position:fixed;
-left:20px;
-top:50%;
-transform:translateY(-50%);
-width:150px;
+left:10px;
+top:20px;
+width:120px;
 background:white;
-border:2px solid #ddd;
-border-radius:10px;
-padding:15px;
+border:1px solid #ccc;
+border-radius:8px;
+padding:10px;
+font-size:12px;
+z-index:999;
 }
 
 #timer{
 font-weight:bold;
 color:red;
 text-align:center;
-margin-bottom:15px;
+margin-bottom:6px;
 }
 
 #nav{
 display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:6px;
+grid-template-columns:repeat(8,1fr);
+gap:3px;
+margin-bottom:6px;
 }
 
 .navBtn{
-background:#e50914;
-color:white;
+background:#ccc;
+color:#000;
+font-size:11px;
+padding:3px;
+border-radius:3px;
 text-align:center;
-padding:6px;
-border-radius:4px;
-cursor:pointer;
 }
 
 .answered{
 background:#4caf50;
+color:white;
 }
+
+#saveBtn{
+width:100%;
+font-size:12px;
+padding:6px;
+background:#e50914;
+color:white;
+border:none;
+border-radius:4px;
+cursor:pointer;
+}
+
 
 </style>
 </head>
@@ -93,12 +107,14 @@ background:#4caf50;
 
 <div id="sidePanel">
 
-<div id="timer">10:00</div>
+<div id="timer">残り10:00</div>
 
 <div id="nav"></div>
 
-</div>
+<button id="saveBtn" onclick="saveAnswers()">回答一時保存</button>
 
+</div>
+  
 <form id="quizForm">
 
 <div class="question">
@@ -279,9 +295,13 @@ let html="<h2>結果："+point+"点 ("+score+"/"+total+")</h2><hr>";
 
 for(let i=1;i<=total;i++){
 
-html+="<p><b>問"+i+"</b><br>"+explanations["q"+i]+"</p>";
-
+html+="<div style='margin-bottom:20px'>";
+html+="<b>問"+i+" 正解："+answers["q"+i]+"</b><br>";
+html+=explanations["q"+i];
+html+="</div>";
 }
+
+document.getElementById("confirmScreen").style.display="none";
 
 document.getElementById("result").innerHTML=html;
 
@@ -290,8 +310,11 @@ window.scrollTo(0,0);
 }
 function saveAnswers(){
 
-let html="";
 let unanswered=[];
+
+let html="<table border='1' style='border-collapse:collapse;width:300px'>";
+
+html+="<tr><th>問題</th><th>回答</th></tr>";
 
 for(let i=1;i<=13;i++){
 
@@ -299,16 +322,18 @@ let ans=document.querySelector('input[name="q'+i+'"]:checked');
 
 if(ans){
 
-html+="問"+i+" ： "+ans.value+"<br>";
+html+="<tr><td>問"+i+"</td><td>"+ans.value+"</td></tr>";
 
 }else{
 
-html+="問"+i+" ： 未回答<br>";
+html+="<tr><td>問"+i+"</td><td>未回答</td></tr>";
 unanswered.push(i);
 
 }
 
 }
+
+html+="</table>";
 
 if(unanswered.length>0){
 
@@ -349,7 +374,8 @@ let s = time % 60;
 
 if(s < 10) s = "0" + s;
 
-timer.innerText = m + ":" + s;
+timer.innerText = "残り " + m + "分" + s + "秒";
+
 
 if(time <= 0){
 
@@ -358,6 +384,7 @@ clearInterval(interval);
 alert("時間終了です。回答を送信します。");
 
 submitQuiz();
+
 
 }
 
@@ -393,7 +420,7 @@ for(let i=1;i<=totalQuestions;i++){
 
 let btn = document.createElement("div");
 
-btn.innerText = "Q"+i;
+btn.innerText = i;
 
 btn.className = "navBtn";
 
