@@ -263,24 +263,48 @@ font-size:14px;
 <button id="chapterBtn" onclick="toggleChapters()">チャプター</button>
 
 <div id="chapterPanel">
-<div class="groupTitle">本章</div>
+
+<div class="groupTitle">📚 本章</div>
 <p onclick="goTo(0)">オープニング</p>
-<p onclick="goTo(37)">はじめに・導入</p>
-<p onclick="goTo(166)">ノロウイルスの基本知識</p>
-<p onclick="goTo(312)">ノロウイルス感染予防策</p>
-<p onclick="goTo(434)">次亜塩素酸ナトリウム調製</p>
+<p onclick="goTo(58)">第1章　はじめに</p>
+<p onclick="goTo(146)">第2章　ノロウィルスの基本知識</p>
+<p onclick="goTo(327)">第3章　ノロウィルス感染予防</p>
+<p onclick="goTo(424)">第4章　次亜塩素酸ナトリウム調整</p>
+<p onclick="goTo(666)">第5章　吐物処理手順</p>
+<p onclick="goTo(1047)">第6章　トイレ清拭手順</p>
+<p onclick="goTo(1420)">第7章　リネンの取扱い</p>
+<p onclick="goTo(1805)">第8章　高頻度接触面・物品管理</p>
+<p onclick="goTo(1966)">エンディング</p>
 
-<div class="groupTitle">実践動画</div>
-<p onclick="goTo(534)">次亜塩素酸ナトリウム調製（実践動画）</p>
-<p onclick="goTo(680)">物品確認編</p>
-<p onclick="goTo(781)">吐物回収編</p>
 
-<div class="groupTitle">ポイント確認</div>
-<p onclick="goTo(129)">第1章</p>
-<p onclick="goTo(270)">第2章</p>
-<p onclick="goTo(388)">第3章</p>
-<p onclick="goTo(588)">第4章</p>
-<p onclick="goTo(938)">第5章</p>
+<div class="groupTitle">🎬 実践動画</div>
+<p onclick="goTo(550)">次亜塩素酸ナトリウム調整</p>
+<p onclick="goTo(722)">吐物処理物品確認編</p>
+<p onclick="goTo(834)">吐物処理回収編</p>
+<p onclick="goTo(936)">吐物処理消毒編</p>
+<p onclick="goTo(1133)">トイレ清拭物品確認編</p>
+<p onclick="goTo(1238)">トイレ清拭清拭編</p>
+<p onclick="goTo(1498)">リネン実践動画</p>
+<p onclick="goTo(1498)">リネン実践動画</p>
+
+
+<div class="groupTitle">⭐ ポイント</div>
+<p onclick="goTo(260)">第2章ポイント</p>
+<p onclick="goTo(604)">第4章ポイント</p>
+<p onclick="goTo(987)">第5章ポイント</p>
+<p onclick="goTo(1348)">第6章ポイント</p>
+<p onclick="goTo(1707)">第7章ポイント</p>
+<p onclick="goTo(1901)">第8章ポイント</p>
+
+
+<div class="groupTitle">🧠 thinking time</div>
+<p onclick="goTo(287)">第2章</p>
+<p onclick="goTo(628)">第4章</p>
+<p onclick="goTo(1009)">第5章</p>
+<p onclick="goTo(1376)">第6章</p>
+<p onclick="goTo(1737)">第7章</p>
+<p onclick="goTo(1930)">第8章</p>
+
 </div>
 </div>
   
@@ -406,7 +430,7 @@ progress.value=c/d*100;
 localStorage.setItem(username+"_"+currentVideoId,c);
 localStorage.setItem(username+"_date_"+currentVideoId,new Date().toLocaleDateString());
 
-if(c>=10 && c<=15 && !introActive){
+if(c>=22 && c<=27 && !introActive){
 introActive=true;
 skipIntro.style.display="block";
 skipBar.style.animation="none";
@@ -502,7 +526,7 @@ showUI();
 
 function skipIntroClick(e){
 e.stopPropagation();
-player.seekTo(36,true);
+player.seekTo(57,true);
 skipIntro.style.display="none";
 introActive=false;
 }
