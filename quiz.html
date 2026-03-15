@@ -9,21 +9,39 @@
 body{
 font-family:-apple-system,BlinkMacSystemFont,"Segoe UI";
 background:#f2f4f8;
-margin-left:200px;
+margin:0;
 line-height:1.8;
 }
 
-h1{
-text-align:center;
-margin-top:20px;
+/* タイマー */
+
+#timer{
+position:fixed;
+top:10px;
+left:10px;
+font-weight:bold;
+color:red;
+background:white;
+padding:8px 12px;
+border-radius:6px;
+z-index:999;
 }
 
+/* 問題 */
+
 .question{
-background:white;
 padding:25px;
 margin:20px;
 border-radius:10px;
 box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+
+.question:nth-child(odd){
+background:#d9eef2;
+}
+
+.question:nth-child(even){
+background:white;
 }
 
 label{
@@ -32,93 +50,85 @@ padding:8px;
 cursor:pointer;
 }
 
-button{
-display:block;
-margin:40px auto;
-padding:14px 40px;
-font-size:16px;
-background:#e50914;
-border:none;
-color:white;
-border-radius:6px;
-cursor:pointer;
-}
+/* 下パネル */
 
-/* 左パネル */
-#sidePanel{
+#bottomPanel{
 position:fixed;
-left:10px;
-top:20px;
-width:120px;
+bottom:0;
+left:0;
+width:100%;
 background:white;
-border:1px solid #ccc;
-border-radius:8px;
-padding:10px;
-font-size:12px;
-z-index:999;
-}
-
-#timer{
-font-weight:bold;
-color:red;
-text-align:center;
-margin-bottom:6px;
+border-top:2px solid #ccc;
+padding:15px;
 }
 
 #nav{
 display:grid;
 grid-template-columns:repeat(8,1fr);
-gap:3px;
-margin-bottom:6px;
+gap:6px;
+margin-bottom:10px;
 }
 
 .navBtn{
-background:#ccc;
-color:#000;
-font-size:11px;
-padding:3px;
-border-radius:3px;
+background:silver;
+border-radius:4px;
+padding:6px;
 text-align:center;
+font-size:12px;
 }
 
 .answered{
-background:#4caf50;
+background:#4CAF50;
 color:white;
 }
 
-#saveBtn{
-width:100%;
-font-size:12px;
-padding:6px;
-background:#e50914;
-color:white;
+button{
+padding:10px 20px;
 border:none;
-border-radius:4px;
+border-radius:6px;
+background:#1976d2;
+color:white;
 cursor:pointer;
+margin:5px;
 }
 
+/* 確認ページ */
+
+#confirmScreen{
+display:none;
+padding:20px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+th,td{
+border:1px solid #ccc;
+padding:10px;
+text-align:center;
+}
+
+th{
+background:#eee;
+}
 
 </style>
 </head>
 
 <body>
 
-<h1>ノロウイルス対応研修　確認テスト</h1>
+<div id="timer">残り 10:00</div>
 
-<div id="sidePanel">
+<h2 style="text-align:center;margin-top:50px">
+ノロウイルス対応研修 確認テスト
+</h2>
 
-<div id="timer">残り10:00</div>
-
-<div id="nav"></div>
-
-<button id="saveBtn" onclick="saveAnswers()">回答一時保存</button>
-
-</div>
-  
 <form id="quizForm">
 
 <div class="question">
-<b>問1 ノロウイルスの潜伏期間として正しいものはどれですか。</b>
+<b>問1 ノロウイルスの潜伏期間は？</b>
 <label><input type="radio" name="q1" value="A">6〜12時間</label>
 <label><input type="radio" name="q1" value="B">12〜24時間</label>
 <label><input type="radio" name="q1" value="C">24〜48時間</label>
@@ -126,120 +136,76 @@ cursor:pointer;
 </div>
 
 <div class="question">
-<b>問2 人から人への感染で感染力が特に強い期間はどれですか。</b>
+<b>問2 感染力が最も強い期間は？</b>
 <label><input type="radio" name="q2" value="A">発症前</label>
-<label><input type="radio" name="q2" value="B">発症後約3日間</label>
-<label><input type="radio" name="q2" value="C">症状消失後1週間</label>
-<label><input type="radio" name="q2" value="D">症状消失後1ヶ月</label>
+<label><input type="radio" name="q2" value="B">発症後約3日</label>
+<label><input type="radio" name="q2" value="C">1週間後</label>
+<label><input type="radio" name="q2" value="D">1ヶ月後</label>
 </div>
 
 <div class="question">
-<b>問3 ノロウイルス対策として最も重要なものはどれですか。</b>
-<label><input type="radio" name="q3" value="A">アルコール消毒</label>
-<label><input type="radio" name="q3" value="B">石けんと流水による手洗い</label>
+<b>問3 最も重要な対策は？</b>
+<label><input type="radio" name="q3" value="A">アルコール</label>
+<label><input type="radio" name="q3" value="B">石けん手洗い</label>
 <label><input type="radio" name="q3" value="C">水拭き</label>
 <label><input type="radio" name="q3" value="D">手袋のみ</label>
 </div>
 
 <div class="question">
-<b>問4 嘔吐物処理時に着用するPPEとして正しいものはどれですか。</b>
+<b>問4 PPEは？</b>
 <label><input type="radio" name="q4" value="A">手袋のみ</label>
-<label><input type="radio" name="q4" value="B">手袋とマスク</label>
-<label><input type="radio" name="q4" value="C">手袋・マスク・ガウン</label>
+<label><input type="radio" name="q4" value="B">手袋＋マスク</label>
+<label><input type="radio" name="q4" value="C">ガウン＋マスク</label>
 <label><input type="radio" name="q4" value="D">フルPPE</label>
-</div>
-
-<div class="question">
-<b>問5 0.1％次亜塩素酸ナトリウム溶液の調製方法として正しいものはどれですか。</b>
-<label><input type="radio" name="q5" value="A">水1000ml＋ヤクラックス100ml</label>
-<label><input type="radio" name="q5" value="B">水1500ml＋ヤクラックス100ml</label>
-<label><input type="radio" name="q5" value="C">水1800ml＋ヤクラックス200ml</label>
-<label><input type="radio" name="q5" value="D">水2000ml＋ヤクラックス100ml</label>
-</div>
-
-<div class="question">
-<b>問6 嘔吐物回収時の対応として正しいものはどれですか。</b>
-<label><input type="radio" name="q6" value="A">強くこすって拭く</label>
-<label><input type="radio" name="q6" value="B">ペーパーで覆い静かに回収</label>
-<label><input type="radio" name="q6" value="C">水で流す</label>
-<label><input type="radio" name="q6" value="D">モップで拭く</label>
-</div>
-
-<div class="question">
-<b>問7 嘔吐物処理時の消毒範囲として適切なものはどれですか。</b>
-<label><input type="radio" name="q7" value="A">30cm</label>
-<label><input type="radio" name="q7" value="B">1m</label>
-<label><input type="radio" name="q7" value="C">半径2m以上</label>
-<label><input type="radio" name="q7" value="D">吐物部分のみ</label>
-</div>
-
-<div class="question">
-<b>問8 消毒の接触時間として適切なものはどれですか。</b>
-<label><input type="radio" name="q8" value="A">1分</label>
-<label><input type="radio" name="q8" value="B">5分</label>
-<label><input type="radio" name="q8" value="C">10分</label>
-<label><input type="radio" name="q8" value="D">30分</label>
-</div>
-
-<div class="question">
-<b>問9 当院リネンの浸漬時間はどれですか。</b>
-<label><input type="radio" name="q9" value="A">5分</label>
-<label><input type="radio" name="q9" value="B">10分</label>
-<label><input type="radio" name="q9" value="C">30〜60分</label>
-<label><input type="radio" name="q9" value="D">2時間</label>
-</div>
-
-<div class="question">
-<b>問10 高頻度接触面の清拭頻度は？</b>
-<label><input type="radio" name="q10" value="A">1日1回</label>
-<label><input type="radio" name="q10" value="B">1日2回以上</label>
-<label><input type="radio" name="q10" value="C">1日3回</label>
-<label><input type="radio" name="q10" value="D">週1回</label>
-</div>
-
-<div class="question">
-<b>問11 ゾーニングについて正しいものはどれか。</b>
-<label><input type="radio" name="q11" value="A">赤は清潔</label>
-<label><input type="radio" name="q11" value="B">赤は汚染エリア</label>
-<label><input type="radio" name="q11" value="C">色は任意</label>
-<label><input type="radio" name="q11" value="D">病室のみ</label>
-</div>
-
-<div class="question">
-<b>問12 感染性廃棄物ダンボール配置で正しいものは？</b>
-<label><input type="radio" name="q12" value="A">廊下に置く</label>
-<label><input type="radio" name="q12" value="B">廊下配置は感染拡大の恐れ</label>
-<label><input type="radio" name="q12" value="C">清潔なら廊下OK</label>
-<label><input type="radio" name="q12" value="D">自由</label>
-</div>
-
-<div class="question">
-<b>問13 汚染エリアの範囲は？</b>
-<label><input type="radio" name="q13" value="A">廊下側</label>
-<label><input type="radio" name="q13" value="B">室内側</label>
-<label><input type="radio" name="q13" value="C">黄色テープのみ</label>
-<label><input type="radio" name="q13" value="D">変わらない</label>
 </div>
 
 <button type="button" onclick="saveAnswers()">回答を保存</button>
 
 </form>
-  
-<div id="confirmScreen" style="display:none; padding:30px;">
+
+<!-- 確認ページ -->
+
+<div id="confirmScreen">
 
 <h2>回答確認</h2>
 
-<div id="confirmList" style="margin:20px 0;"></div>
+<table id="confirmTable">
 
-<button onclick="submitQuiz()">回答を送信</button>
+<tr>
+<th>問題</th>
+<th>解答状況</th>
+<th>あなたの解答</th>
+</tr>
 
-<button onclick="backToEdit()" style="background:#666;">
-戻って修正
+</table>
+
+<br>
+
+<div style="text-align:center">
+
+<button onclick="backToEdit()" style="background:#999">
+受験画面に戻る
+</button>
+
+<button onclick="submitQuiz()">
+解答を送信して受験を終了する
 </button>
 
 </div>
 
+</div>
+
 <div id="result"></div>
+
+<!-- 下ナビ -->
+
+<div id="bottomPanel">
+
+<div id="nav"></div>
+
+<button onclick="saveAnswers()">回答一時保存</button>
+
+</div>
 
 <script>
 
@@ -247,33 +213,116 @@ const answers={
 q1:"C",
 q2:"B",
 q3:"B",
-q4:"D",
-q5:"C",
-q6:"B",
-q7:"C",
-q8:"C",
-q9:"C",
-q10:"B",
-q11:"B",
-q12:"B",
-q13:"B"
+q4:"D"
 };
 
 const explanations={
-q1:"ノロウイルスの潜伏期間は24〜48時間です。",
-q2:"発症後約3日間が最も感染力が強い時期です。",
-q3:"アルコールは効きにくいため石けん手洗いが重要です。",
-q4:"嘔吐物処理ではフルPPEが必要です。",
-q5:"水1800ml＋ヤクラックス200mlで0.1％になります。",
-q6:"嘔吐物はペーパーで覆い静かに回収します。",
-q7:"吐物中心から半径2m以上消毒します。",
-q8:"10分の接触時間が必要です。",
-q9:"30〜60分浸漬します。",
-q10:"1日2回以上清拭します。",
-q11:"赤は汚染エリアです。",
-q12:"廊下配置は感染拡大の恐れがあります。",
-q13:"赤線より室内側が汚染エリアです。"
+q1:"潜伏期間は24〜48時間です。",
+q2:"発症後3日が感染力ピークです。",
+q3:"石けん手洗いが重要です。",
+q4:"嘔吐物処理ではフルPPEです。"
 };
+
+/* ナビ生成 */
+
+const nav=document.getElementById("nav");
+
+for(let i=1;i<=4;i++){
+
+let btn=document.createElement("div");
+
+btn.className="navBtn";
+
+btn.innerText=i;
+
+btn.onclick=function(){
+
+document.querySelectorAll(".question")[i-1]
+.scrollIntoView({behavior:"smooth"});
+
+};
+
+nav.appendChild(btn);
+
+}
+
+/* 回答検知 */
+
+document.querySelectorAll("input").forEach(r=>{
+
+r.addEventListener("change",function(){
+
+let q=this.name.replace("q","");
+
+document.querySelectorAll(".navBtn")[q-1]
+.classList.add("answered");
+
+});
+
+});
+
+/* 保存 */
+
+function saveAnswers(){
+
+let html="";
+
+for(let i=1;i<=4;i++){
+
+let ans=document.querySelector('input[name="q'+i+'"]:checked');
+
+if(ans){
+
+html+=`
+<tr>
+<td>${i}</td>
+<td>解答済み</td>
+<td>${ans.value}</td>
+</tr>
+`;
+
+}else{
+
+html+=`
+<tr>
+<td>${i}</td>
+<td style="color:red">未回答</td>
+<td>-</td>
+</tr>
+`;
+
+}
+
+}
+
+document.getElementById("confirmTable").innerHTML=
+`
+<tr>
+<th>問題</th>
+<th>解答状況</th>
+<th>あなたの解答</th>
+</tr>
+`+html;
+
+document.getElementById("quizForm").style.display="none";
+
+document.getElementById("confirmScreen").style.display="block";
+
+window.scrollTo(0,0);
+
+}
+
+/* 戻る */
+
+function backToEdit(){
+
+document.getElementById("confirmScreen").style.display="none";
+
+document.getElementById("quizForm").style.display="block";
+
+}
+
+/* 採点 */
 
 function submitQuiz(){
 
@@ -287,158 +336,54 @@ if(ans && ans.value===answers[q]) score++;
 
 }
 
-let total=Object.keys(answers).length;
+let html="<h2>結果 "+score+" / 4</h2><hr>";
 
-let point=Math.round(score/total*100);
+for(let i=1;i<=4;i++){
 
-let html="<h2>結果："+point+"点 ("+score+"/"+total+")</h2><hr>";
+html+=`
+<b>問${i} 正解 ${answers["q"+i]}</b><br>
+${explanations["q"+i]}<br><br>
+`;
 
-for(let i=1;i<=total;i++){
-
-html+="<div style='margin-bottom:20px'>";
-html+="<b>問"+i+" 正解："+answers["q"+i]+"</b><br>";
-html+=explanations["q"+i];
-html+="</div>";
 }
 
 document.getElementById("confirmScreen").style.display="none";
+document.getElementById("bottomPanel").style.display="none";
+document.getElementById("timer").style.display="none";
 
 document.getElementById("result").innerHTML=html;
 
-window.scrollTo(0,0);
-
-}
-function saveAnswers(){
-
-let unanswered=[];
-
-let html="<table border='1' style='border-collapse:collapse;width:300px'>";
-
-html+="<tr><th>問題</th><th>回答</th></tr>";
-
-for(let i=1;i<=13;i++){
-
-let ans=document.querySelector('input[name="q'+i+'"]:checked');
-
-if(ans){
-
-html+="<tr><td>問"+i+"</td><td>"+ans.value+"</td></tr>";
-
-}else{
-
-html+="<tr><td>問"+i+"</td><td>未回答</td></tr>";
-unanswered.push(i);
-
 }
 
-}
+/* タイマー */
 
-html+="</table>";
+let time=600;
 
-if(unanswered.length>0){
-
-alert("未回答の問題があります\n問"+unanswered.join(" , "));
-
-}
-
-document.getElementById("confirmList").innerHTML=html;
-
-document.getElementById("quizForm").style.display="none";
-
-document.getElementById("confirmScreen").style.display="block";
-
-window.scrollTo(0,0);
-
-}
-
-function backToEdit(){
-
-document.getElementById("confirmScreen").style.display="none";
-
-document.getElementById("quizForm").style.display="block";
-
-}
-
-let time = 600; // 10分
-
-function startTimer(){
-
-const timer = document.getElementById("timer");
-
-const interval = setInterval(function(){
+setInterval(function(){
 
 time--;
 
-let m = Math.floor(time / 60);
-let s = time % 60;
+let m=Math.floor(time/60);
+let s=time%60;
 
-if(s < 10) s = "0" + s;
+if(s<10)s="0"+s;
 
-timer.innerText = "残り " + m + "分" + s + "秒";
+document.getElementById("timer").innerText=
+"残り "+m+"分"+s+"秒";
 
+if(time<=0){
 
-if(time <= 0){
-
-clearInterval(interval);
-
-alert("時間終了です。回答を送信します。");
+alert("時間終了");
 
 submitQuiz();
-
 
 }
 
 },1000);
 
-}
-
-startTimer();
-
-
-document.querySelectorAll("input[type=radio]").forEach(function(radio){
-
-radio.addEventListener("change", function(){
-
-let q = this.name.replace("q","");
-
-let btn = document.querySelectorAll(".navBtn")[q-1];
-
-if(btn){
-btn.classList.add("answered");
-}
-
-});
-
-});
-
-
-const totalQuestions = 13;
-
-const nav = document.getElementById("nav");
-
-for(let i=1;i<=totalQuestions;i++){
-
-let btn = document.createElement("div");
-
-btn.innerText = i;
-
-btn.className = "navBtn";
-
-btn.onclick = function(){
-
-document.querySelectorAll(".question")[i-1].scrollIntoView({
-behavior:"smooth"
-});
-
-};
-
-nav.appendChild(btn);
-
-}
 </script>
 
 </body>
 </html>
-
 
 
