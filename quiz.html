@@ -428,16 +428,34 @@ if(ans && ans.value===answers[q]) score++;
 
 }
 
-let html="<h2>結果 "+score+" / 4</h2><hr>";
+let total=Object.keys(answers).length;
 
-for(let i=1;i<=4;i++){
+let point=Math.round(score/total*100);
 
-html+=`
-<b>問${i} 正解 ${answers["q"+i]}</b><br>
-${explanations["q"+i]}<br><br>
-`;
+/* ←ここに判定コード */
+let grade="";
 
+if(point==100){
+grade="ⓐ";
+}else if(point>=80){
+grade="A";
+}else if(point>=60){
+grade="B";
+}else{
+grade="C";
 }
+
+/* ←ここに追加 */
+let name=localStorage.getItem("quizUser");
+
+let html="";
+
+html+="<h2>結果</h2>";
+html+="<p>受講者："+name+"</p>";
+html+="<p>判定："+grade+"</p>";
+html+="<p>点数："+point+"点</p>";
+html+="<hr>";
+
 
 document.getElementById("confirmScreen").style.display="none";
 document.getElementById("bottomPanel").style.display="none";
