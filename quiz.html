@@ -281,7 +281,6 @@ background:#eee;
 <script>
 
 const answers={
-const answers={
 q1:"C",
 q2:"B",
 q3:"B",
@@ -319,7 +318,7 @@ q13:"赤線より室内側が汚染エリアです。"
 
 const nav=document.getElementById("nav");
 
-for(let i=1;i<=4;i++){
+for(let i=1;i<=13;i++){
 
 let btn=document.createElement("div");
 
@@ -359,7 +358,7 @@ function saveAnswers(){
 
 let html="";
 
-for(let i=1;i<=4;i++){
+for(let i=1;i<=13;i++){
 
 let ans=document.querySelector('input[name="q'+i+'"]:checked');
 
@@ -455,6 +454,14 @@ html+="<p>受講者："+name+"</p>";
 html+="<p>判定："+grade+"</p>";
 html+="<p>点数："+point+"点</p>";
 html+="<hr>";
+for(let i=1;i<=13;i++){
+
+html+="<div style='margin-bottom:20px'>";
+html+="<b>問"+i+" 正解："+answers["q"+i]+"</b><br>";
+html+=explanations["q"+i];
+html+="</div>";
+
+}
 
 
 document.getElementById("confirmScreen").style.display="none";
