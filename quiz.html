@@ -937,10 +937,14 @@ document.getElementById("bottomPanel").style.display="block";
 
 }
 /* 採点 */
-
 function submitQuiz(){
 
+if(!confirm("解答を送信すると受験は終了し、解答の変更はできません。\n送信して受験を終了しますか？")){
+return;
+}
+
 document.getElementById("bottomPanel").style.display="none";
+
 
 let score=0;
 
