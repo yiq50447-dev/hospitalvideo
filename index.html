@@ -188,6 +188,22 @@ background:#444;
 color:#fff;
 font-size:14px;
 }
+.quizBtn{
+margin-top:8px;
+padding:6px 10px;
+font-size:13px;
+background:#e50914;
+border:none;
+color:white;
+border-radius:6px;
+cursor:pointer;
+}
+
+.quizBtn.locked{
+background:#555;
+cursor:default;
+opacity:0.5;
+}
 
 </style>
 </head>
@@ -223,10 +239,20 @@ font-size:14px;
 <h2 style="padding:20px;color:#e50914;">動画リスト</h2>
 <ul id="videoList">
   
-<li onclick="playVideo('HyyeZRsWGkw')" id="video_HyyeZRsWGkw">
+<li id="video_HyyeZRsWGkw">
+
+<div onclick="playVideo('HyyeZRsWGkw')">
 第一回オンライン勉強会　ノロウイルスの対応について
+</div>
+
+<button class="quizBtn" onclick="startQuiz('HyyeZRsWGkw')">
+確認テストを実施する
+</button>
+
 <div class="viewedDate"></div>
+
 </li>
+
 <li class="locked">PPEの着脱手順（配信日未定）</li>
 <li class="locked">未配信</li>
 </ul>
@@ -571,12 +597,27 @@ showUI();
 }
 
 function updateViewedDates(){
+
 const id="HyyeZRsWGkw";
+
 const date=localStorage.getItem(username+"_date_"+id);
+
 if(date){
 document.querySelector("#video_"+id+" .viewedDate").innerText="視聴済み："+date;
 }
+
+const btn=document.querySelector("#video_"+id+" .quizBtn");
+
+if(!localStorage.getItem(username+"_complete_"+id)){
+btn.classList.add("locked");
+btn.innerText="確認テスト（動画視聴後）";
+}else{
+btn.classList.remove("locked");
+btn.innerText="確認テストを実施する";
 }
+
+}
+
 function toggleChapters(){
 
 if(chapterPanel.style.right==="0px"){
@@ -676,6 +717,21 @@ document.getElementById("viewerStatus").style.display="none";
 
 home.style.display="none";
 nameInputModal.style.display="flex";
+
+}
+function startQuiz(videoId){
+
+if(!localStorage.getItem(username+"_complete_"+videoId)){
+
+showToast("動画を最後まで視聴するとテストを受けられます");
+
+return;
+
+}
+
+localStorage.setItem("quizUser",username);
+
+window.location.href="quiz.html";
 
 }
 </script>
