@@ -205,6 +205,35 @@ cursor:default;
 opacity:0.5;
 }
 
+.videoRow{
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.videoTitle{
+flex:1;
+cursor:pointer;
+}
+
+.quizBtn{
+margin-left:10px;
+padding:6px 12px;
+font-size:13px;
+background:#e50914;
+border:none;
+color:white;
+border-radius:6px;
+cursor:pointer;
+white-space:nowrap;
+}
+
+.quizBtn.locked{
+background:#555;
+cursor:default;
+opacity:0.5;
+}
+
 </style>
 </head>
 <body>
@@ -241,13 +270,17 @@ opacity:0.5;
   
 <li id="video_HyyeZRsWGkw">
 
-<div onclick="playVideo('HyyeZRsWGkw')">
+<div class="videoRow">
+
+<div class="videoTitle" onclick="playVideo('HyyeZRsWGkw')">
 第一回オンライン勉強会　ノロウイルスの対応について
 </div>
 
 <button class="quizBtn" onclick="startQuiz('HyyeZRsWGkw')">
 確認テストを実施する
 </button>
+
+</div>
 
 <div class="viewedDate"></div>
 
