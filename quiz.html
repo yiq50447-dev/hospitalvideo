@@ -176,12 +176,14 @@ box-shadow:0 2px 6px rgba(0,0,0,0.1);
 
 /* 問題ヘッダー */
 
-.questionHeaderBox{
+questionHeaderBox{
 background:white;
 border:1px solid #ccc;
 padding:15px;
-margin-bottom:10px;
+margin-bottom:15px; /* ←ここで隙間 */
+border-radius:6px;
 }
+
 
 /* 問題番号 */
 
@@ -223,19 +225,21 @@ border:2px solid orange;
 background:#cfe9f6;
 padding:20px;
 border-radius:6px;
-margin-bottom:10px;
+margin-bottom:15px;
 }
+
 
 /* 選択肢 */
 
 .option{
 background:#eee;
 padding:12px;
-margin:8px 0;
+margin:10px 15px; /* 上下左右余白 */
 border-radius:6px;
 cursor:pointer;
 border:1px solid #ccc;
 }
+
 
 /* 選択肢ホバー */
 
@@ -255,6 +259,9 @@ border-top:2px solid #ccc;
 padding:15px;
 text-align:center;
 display:none;
+}
+.questionText{
+margin-bottom:15px;
 }
 
 
@@ -300,23 +307,30 @@ display:none;
 
 </div>
 
-<div class="option">
-<label><input type="radio" name="q1" value="A"> A　6〜12時間</label>
+<div class="questionBody">
+
+<div class="questionText">
+問1 ノロウイルスの潜伏期間として正しいものはどれですか。
 </div>
 
 <div class="option">
-<label><input type="radio" name="q1" value="B"> B　12〜24時間</label>
+<label><input type="radio" name="q1" value="A"> A 6〜12時間</label>
 </div>
 
 <div class="option">
-<label><input type="radio" name="q1" value="C"> C　24〜48時間</label>
+<label><input type="radio" name="q1" value="B"> B 12〜24時間</label>
 </div>
 
 <div class="option">
-<label><input type="radio" name="q1" value="D"> D　3〜5日</label>
+<label><input type="radio" name="q1" value="C"> C 24〜48時間</label>
+</div>
+
+<div class="option">
+<label><input type="radio" name="q1" value="D"> D 3〜5日</label>
 </div>
 
 </div>
+
 
 <div class="question">
 <button type="button" onclick="toggleFlag(this)">🚩フラグ</button>
