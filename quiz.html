@@ -980,6 +980,33 @@ passText="不合格";
 }
 
 let name=localStorage.getItem("quizUser");
+  
+let data={
+
+name:name,
+score:point,
+grade:grade,
+
+q1:getAnswer("q1"),
+q2:getAnswer("q2"),
+q3:getAnswer("q3"),
+q4:getAnswer("q4"),
+q5:getAnswer("q5"),
+q6:getAnswer("q6"),
+q7:getAnswer("q7"),
+q8:getAnswer("q8"),
+q9:getAnswer("q9"),
+q10:getAnswer("q10"),
+q11:getAnswer("q11"),
+q12:getAnswer("q12"),
+q13:getAnswer("q13")
+
+};
+
+fetch("https://script.google.com/macros/s/AKfycbxI4u38XuAX38SKkl-oOSzk9NtBpOZBO68hjDmatd-_OQHvyY-1_YpOdM06CS9438SM/exec",{
+method:"POST",
+body:JSON.stringify(data)
+});
 
 /* 結果HTML */
 
@@ -1138,6 +1165,13 @@ document.getElementById("bottomPanel").style.display="none";
 
 });
 
+function getAnswer(q){
+
+let ans=document.querySelector('input[name="'+q+'"]:checked');
+
+return ans ? ans.value : "";
+
+}
 
 </script>
 
