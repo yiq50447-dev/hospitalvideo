@@ -40,18 +40,21 @@ cursor:pointer;
 
 #nav{
 display:grid;
-grid-template-columns:repeat(7,1fr);
+grid-template-columns:repeat(13,30px);
 gap:6px;
-margin-bottom:10px;
+justify-content:center;
+margin:10px auto;
 }
 
 .navBtn{
 background:silver;
 border-radius:4px;
-padding:6px;
+padding:5px;
 text-align:center;
 font-size:12px;
+width:30px;
 }
+
 
 .answered{
 background:#4CAF50;
@@ -147,8 +150,8 @@ justify-content:space-between;
 align-items:center;
 z-index:999;
 font-size:18px;
+box-sizing:border-box;
 }
-
 /* タイマー */
 
 #timer{
@@ -162,6 +165,7 @@ color:red;
 #userName{
 font-size:18px;
 font-weight:bold;
+white-space:nowrap;
 }
 
 /* 問題カード */
@@ -264,7 +268,19 @@ display:none;
 margin-bottom:15px;
 }
 
-
+#testTitle{
+margin-top:70px;
+text-align:left;
+font-size:20px;
+font-weight:bold;
+padding-left:20px;
+}
+#navTitle{
+text-align:center;
+font-size:14px;
+margin-bottom:6px;
+color:#555;
+}
 </style>
 </head>
 
@@ -282,9 +298,10 @@ margin-bottom:15px;
 
 </div>
 
-<h2 style="text-align:center;margin-top:50px">
+<div id="testTitle">
 ノロウイルス対応研修 確認テスト
-</h2>
+</div>
+  
 <form id="quizForm">
   
 <div class="questionCard">
@@ -512,11 +529,14 @@ margin-bottom:15px;
 
 <div id="bottomPanel">
 
+<div id="navTitle">問題リンク</div>
+
 <div id="nav"></div>
 
 <button onclick="saveAnswers()">回答一時保存</button>
 
 </div>
+
 
 <script>
 let name = localStorage.getItem("quizUser");
