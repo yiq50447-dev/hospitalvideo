@@ -1005,9 +1005,12 @@ q13:getAnswer("q13")
 
 fetch("https://script.google.com/macros/s/AKfycbxI4u38XuAX38SKkl-oOSzk9NtBpOZBO68hjDmatd-_OQHvyY-1_YpOdM06CS9438SM/exec",{
 method:"POST",
+mode:"no-cors",
+headers:{
+"Content-Type":"application/json"
+},
 body:JSON.stringify(data)
 });
-
 /* 結果HTML */
 
 let html="";
