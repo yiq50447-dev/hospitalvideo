@@ -321,7 +321,65 @@ body{
 padding-bottom:160px;
 }
 
+/* 結果画面 */
 
+#resultHeader{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+}
+
+#finishBtn{
+background:#555;
+}
+
+.resultSummary{
+text-align:center;
+background:white;
+padding:25px;
+border-radius:10px;
+box-shadow:0 2px 6px rgba(0,0,0,0.1);
+margin-bottom:20px;
+}
+
+.resultName{
+font-size:22px;
+font-weight:bold;
+margin-bottom:10px;
+}
+
+.resultGrade{
+font-size:26px;
+font-weight:bold;
+margin-bottom:10px;
+}
+
+.pass{
+color:#2e7d32;
+}
+
+.fail{
+color:#c62828;
+}
+
+.explainCard{
+background:white;
+border-radius:10px;
+padding:15px;
+margin-bottom:15px;
+box-shadow:0 1px 4px rgba(0,0,0,0.1);
+}
+
+.answerUser{
+color:#1976d2;
+font-weight:bold;
+}
+
+.answerCorrect{
+color:#2e7d32;
+font-weight:bold;
+}
 
   
 </style>
@@ -898,47 +956,107 @@ let total=Object.keys(answers).length;
 
 let point=Math.round(score/total*100);
 
-/* ←ここに判定コード */
+/* 判定 */
+
 let grade="";
+let passText="";
 
 if(point==100){
 grade="ⓐ";
+passText="合格";
 }else if(point>=80){
 grade="A";
+passText="合格";
 }else if(point>=60){
 grade="B";
+passText="合格";
 }else{
 grade="C";
+passText="不合格";
 }
 
-/* ←ここに追加 */
 let name=localStorage.getItem("quizUser");
+
+/* 結果HTML */
 
 let html="";
 
-html+="<h2>結果</h2>";
-html+="<p>受講者："+name+"</p>";
-html+="<p>判定："+grade+"</p>";
-html+="<p>点数："+point+"点</p>";
-html+="<hr>";
+html+=`
+<div id="resultHeader">
+<h2>テスト結果</h2>
+<button id="finishBtn" onclick="location.href='index.html'">
+テストを終了する
+</button>
+</div>
+`;
+
+html+=`
+<div class="resultSummary">
+
+<div class="resultName">
+受験者：${name}
+</div>
+
+<div class="resultGrade">
+判定：${grade}
+<span class="${passText=="合格"?"pass":"fail"}">
+${passText}
+</span>
+</div>
+
+<div>
+点数：${point}点
+</div>
+
+</div>
+`;
+
+/* 問題解説 */
+
 for(let i=1;i<=13;i++){
 
-html+="<div style='margin-bottom:20px'>";
-html+="<b>問"+i+" 正解："+answers["q"+i]+"</b><br>";
-html+=explanations["q"+i];
-html+="</div>";
+let userAns=document.querySelector('input[name="q'+i+'"]:checked');
+
+let userText = userAns ? userAns.value : "未回答";
+
+html+=`
+
+<div class="explainCard">
+
+<b>問${i}</b><br><br>
+
+あなたの回答：
+<span class="answerUser">
+${userText}
+</span>
+
+<br>
+
+正解：
+<span class="answerCorrect">
+${answers["q"+i]}
+</span>
+
+<br><br>
+
+<b>解説</b><br>
+${explanations["q"+i]}
+
+</div>
+
+`;
 
 }
 
-
 document.getElementById("confirmScreen").style.display="none";
-document.getElementById("bottomPanel").style.display="none";
 document.getElementById("timer").style.display="none";
-
 
 document.getElementById("result").innerHTML=html;
 
+window.scrollTo(0,0);
+
 }
+
 
 /* タイマー */
 
@@ -970,13 +1088,32 @@ function toggleFlag(el){
 
 el.classList.toggle("flagOn");
 
+let card = el.closest(".questionCard");
+let index = [...document.querySelectorAll(".questionCard")].indexOf(card);
+let navBtn = document.querySelectorAll(".navBtn")[index];
+
 if(el.innerText.includes("フラグをつける")){
+
 el.innerText="🚩フラグ解除";
+
+if(navBtn){
+navBtn.style.background="#ff9800";
+navBtn.style.color="white";
+}
+
 }else{
+
 el.innerText="🚩問題にフラグをつける";
+
+if(navBtn){
+navBtn.style.background="silver";
+navBtn.style.color="black";
 }
 
 }
+
+}
+  
 window.addEventListener("scroll",function(){
 
 let scrollTop=window.scrollY;
