@@ -297,6 +297,14 @@ padding:10px 25px;
 font-size:14px;
 }
 
+.questionCard:nth-of-type(odd){
+background:#e6f4fb;
+}
+
+.questionCard:nth-of-type(even){
+background:white;
+}
+
 
   
 </style>
@@ -357,151 +365,421 @@ font-size:14px;
 </div>
 
 
-<div class="question">
-<button type="button" onclick="toggleFlag(this)">🚩フラグ</button>
+<div class="questionCard">
 
-<b>問2 人から人への感染で感染力が特に強い期間はどれですか。</b>
-<label><input type="radio" name="q2" value="A">発症前</label>
-<label><input type="radio" name="q2" value="B">発症後約3日間</label>
-<label><input type="radio" name="q2" value="C">症状消失後1週間</label>
-<label><input type="radio" name="q2" value="D">症状消失後1ヶ月</label>
+<div class="qNumber">問2</div>
+<div class="status">未回答</div>
+
+<div class="flagBox" onclick="toggleFlag(this)">
+🚩問題にフラグをつける
 </div>
 
-<div class="question">
-<button type="button" onclick="toggleFlag(this)">🚩フラグ</button>
+<div class="questionBody">
 
-<b>問3 ノロウイルス対策として最も重要なものはどれですか。</b>
-<label><input type="radio" name="q3" value="A">アルコール消毒</label>
-<label><input type="radio" name="q3" value="B">石けんと流水による手洗い</label>
-<label><input type="radio" name="q3" value="C">水拭き</label>
-<label><input type="radio" name="q3" value="D">手袋のみ</label>
+<div class="questionText">
+問2 人から人への感染で感染力が特に強い期間はどれですか。
 </div>
 
-<div class="question">
-<button type="button" onclick="toggleFlag(this)">🚩フラグ</button>
-
-<b>問4 嘔吐物処理時に着用するPPEとして正しいものはどれですか。</b>
-<label><input type="radio" name="q4" value="A">手袋のみ</label>
-<label><input type="radio" name="q4" value="B">手袋とマスク</label>
-<label><input type="radio" name="q4" value="C">手袋・マスク・ガウン</label>
-<label><input type="radio" name="q4" value="D">ガウン・ヘアキャップ・マスク・フェイスシールド・手袋・シューズカバー</label>
-
-
-
+<div class="option">
+<label><input type="radio" name="q2" value="A"> A 発症前</label>
 </div>
 
-<div class="question">
-<button type="button" onclick="toggleFlag(this)">🚩フラグ</button>
-
-<b>問5 0.1％次亜塩素酸ナトリウム溶液の調製方法として正しいものはどれですか。</b>
-<label><input type="radio" name="q5" value="A">水1000ml＋ヤクラックス100ml</label>
-<label><input type="radio" name="q5" value="B">水1500ml＋ヤクラックス100ml</label>
-<label><input type="radio" name="q5" value="C">水1800ml＋ヤクラックス200ml</label>
-<label><input type="radio" name="q5" value="D">水2000ml＋ヤクラックス100ml</label>
-
-
-
+<div class="option">
+<label><input type="radio" name="q2" value="B"> B 発症後約3日間</label>
 </div>
 
-<div class="question">
-<button type="button" onclick="toggleFlag(this)">🚩フラグ</button>
-
-<b>問6 嘔吐物回収時の対応として正しいものはどれですか。</b>
-<label><input type="radio" name="q6" value="A">強くこすって拭き取る</label>
-<label><input type="radio" name="q6" value="B">ペーパーで覆い、静かに回収する</label>
-<label><input type="radio" name="q6" value="C">水で流す</label>
-<label><input type="radio" name="q6" value="D">モップで拭く</label>
-
-
-
+<div class="option">
+<label><input type="radio" name="q2" value="C"> C 症状消失後1週間</label>
 </div>
 
-<div class="question">
-<button type="button" onclick="toggleFlag(this)">🚩フラグ</button>
-
-<b>問7 嘔吐物処理時の消毒範囲として適切なものはどれですか。</b>
-<label><input type="radio" name="q7" value="A">吐物周囲30cm</label>
-<label><input type="radio" name="q7" value="B">吐物周囲1m</label>
-<label><input type="radio" name="q7" value="C">吐物中心から半径2m以上</label>
-<label><input type="radio" name="q7" value="D">吐物部分のみ</label>
-
-
-
+<div class="option">
+<label><input type="radio" name="q2" value="D"> D 症状消失後1ヶ月</label>
 </div>
 
-<div class="question">
-<button type="button" onclick="toggleFlag(this)">🚩フラグ</button>
-
-<b>問8 嘔吐物処理後の環境消毒の接触時間として適切なものはどれですか。</b>
-<label><input type="radio" name="q8" value="A">1分</label>
-<label><input type="radio" name="q8" value="B">5分</label>
-<label><input type="radio" name="q8" value="C">10分</label>
-<label><input type="radio" name="q8" value="D">30分</label>
-
-
-
+</div>
 </div>
 
-<div class="question">
-<button type="button" onclick="toggleFlag(this)">🚩フラグ</button>
 
-<b>問9 当院リネンを消毒する場合の浸漬時間として正しいものはどれですか。</b>
-<label><input type="radio" name="q9" value="A">5分</label>
-<label><input type="radio" name="q9" value="B">10分</label>
-<label><input type="radio" name="q9" value="C">30〜60分</label>
-<label><input type="radio" name="q9" value="D">2時間</label>
-  
+<div class="questionCard">
 
+<div class="qNumber">問3</div>
+<div class="status">未回答</div>
 
+<div class="flagBox" onclick="toggleFlag(this)">
+🚩問題にフラグをつける
 </div>
 
-<div class="question">
-<button type="button" onclick="toggleFlag(this)">🚩フラグ</button>
+<div class="questionBody">
 
-<b>問10 高頻度接触面（ドアノブ・ベッド柵など）の清拭頻度として正しいものはどれですか。</b>
-<label><input type="radio" name="q10" value="A">1日1回</label>
-<label><input type="radio" name="q10" value="B">1日2回以上</label>
-<label><input type="radio" name="q10" value="C">1日3回</label>
-<label><input type="radio" name="q10" value="D">週1回</label>
-  
-
-
-</div>
-<div class="question">
-<button type="button" onclick="toggleFlag(this)">🚩フラグ</button>
-
-<b>問11 ゾーニングについて正しいものはどれか。</b>
-<label><input type="radio" name="q11" value="A">赤は清潔</label>
-<label><input type="radio" name="q11" value="B">赤は汚染エリア</label>
-<label><input type="radio" name="q11" value="C">色は任意</label>
-<label><input type="radio" name="q11" value="D">病室のみ</label>
-
-
+<div class="questionText">
+問3 ノロウイルス対策として最も重要なものはどれですか。
 </div>
 
-<div class="question">
-<button type="button" onclick="toggleFlag(this)">🚩フラグ</button>
-
-<b>問12 感染性廃棄物ダンボール配置で正しいものは？</b>
-<label><input type="radio" name="q12" value="A">廊下に置く</label>
-<label><input type="radio" name="q12" value="B">廊下配置は感染拡大の恐れ</label>
-<label><input type="radio" name="q12" value="C">清潔なら廊下OK</label>
-<label><input type="radio" name="q12" value="D">自由</label>
-
-
-  
+<div class="option">
+<label><input type="radio" name="q3" value="A"> A アルコール消毒</label>
 </div>
 
-<div class="question">
-<button type="button" onclick="toggleFlag(this)">🚩フラグ</button>
+<div class="option">
+<label><input type="radio" name="q3" value="B"> B 石けんと流水による手洗い</label>
+</div>
 
-<b>問13 汚染エリアの範囲は？</b>
-<label><input type="radio" name="q13" value="A">廊下側</label>
-<label><input type="radio" name="q13" value="B">室内側</label>
-<label><input type="radio" name="q13" value="C">黄色テープのみ</label>
-<label><input type="radio" name="q13" value="D">変わらない</label>
+<div class="option">
+<label><input type="radio" name="q3" value="C"> C 水拭き</label>
+</div>
+
+<div class="option">
+<label><input type="radio" name="q3" value="D"> D 手袋のみ</label>
+</div>
+
+</div>
+</div>
 
 
+<div class="questionCard">
+
+<div class="qNumber">問4</div>
+<div class="status">未回答</div>
+
+<div class="flagBox" onclick="toggleFlag(this)">
+🚩問題にフラグをつける
+</div>
+
+<div class="questionBody">
+
+<div class="questionText">
+問4 嘔吐物処理時に着用するPPEとして正しいものはどれですか。
+</div>
+
+<div class="option">
+<label><input type="radio" name="q4" value="A"> A 手袋のみ</label>
+</div>
+
+<div class="option">
+<label><input type="radio" name="q4" value="B"> B 手袋とマスク</label>
+</div>
+
+<div class="option">
+<label><input type="radio" name="q4" value="C"> C 手袋・マスク・ガウン</label>
+</div>
+
+<div class="option">
+<label><input type="radio" name="q4" value="D"> D ガウン・ヘアキャップ・マスク・フェイスシールド・手袋・シューズカバー</label>
+</div>
+
+</div>
+</div>
+
+
+<div class="questionCard">
+
+<div class="qNumber">問5</div>
+<div class="status">未回答</div>
+
+<div class="flagBox" onclick="toggleFlag(this)">
+🚩問題にフラグをつける
+</div>
+
+<div class="questionBody">
+
+<div class="questionText">
+問5 0.1％次亜塩素酸ナトリウム溶液の調製方法として正しいものはどれですか。
+</div>
+
+<div class="option">
+<label><input type="radio" name="q5" value="A"> A 水1000ml＋ヤクラックス100ml</label>
+</div>
+
+<div class="option">
+<label><input type="radio" name="q5" value="B"> B 水1500ml＋ヤクラックス100ml</label>
+</div>
+
+<div class="option">
+<label><input type="radio" name="q5" value="C"> C 水1800ml＋ヤクラックス200ml</label>
+</div>
+
+<div class="option">
+<label><input type="radio" name="q5" value="D"> D 水2000ml＋ヤクラックス100ml</label>
+</div>
+
+</div>
+</div>
+
+
+<div class="questionCard">
+
+<div class="qNumber">問6</div>
+<div class="status">未回答</div>
+
+<div class="flagBox" onclick="toggleFlag(this)">
+🚩問題にフラグをつける
+</div>
+
+<div class="questionBody">
+
+<div class="questionText">
+問6 嘔吐物回収時の対応として正しいものはどれですか。
+</div>
+
+<div class="option">
+<label><input type="radio" name="q6" value="A"> A 強くこすって拭き取る</label>
+</div>
+
+<div class="option">
+<label><input type="radio" name="q6" value="B"> B ペーパーで覆い、静かに回収する</label>
+</div>
+
+<div class="option">
+<label><input type="radio" name="q6" value="C"> C 水で流す</label>
+</div>
+
+<div class="option">
+<label><input type="radio" name="q6" value="D"> D モップで拭く</label>
+</div>
+
+</div>
+</div>
+
+
+<div class="questionCard">
+
+<div class="qNumber">問7</div>
+<div class="status">未回答</div>
+
+<div class="flagBox" onclick="toggleFlag(this)">
+🚩問題にフラグをつける
+</div>
+
+<div class="questionBody">
+
+<div class="questionText">
+問7 嘔吐物処理時の消毒範囲として適切なものはどれですか。
+</div>
+
+<div class="option">
+<label><input type="radio" name="q7" value="A"> A 吐物周囲30cm</label>
+</div>
+
+<div class="option">
+<label><input type="radio" name="q7" value="B"> B 吐物周囲1m</label>
+</div>
+
+<div class="option">
+<label><input type="radio" name="q7" value="C"> C 吐物中心から半径2m以上</label>
+</div>
+
+<div class="option">
+<label><input type="radio" name="q7" value="D"> D 吐物部分のみ</label>
+</div>
+
+</div>
+</div>
+
+
+<div class="questionCard">
+
+<div class="qNumber">問8</div>
+<div class="status">未回答</div>
+
+<div class="flagBox" onclick="toggleFlag(this)">
+🚩問題にフラグをつける
+</div>
+
+<div class="questionBody">
+
+<div class="questionText">
+問8 嘔吐物処理後の環境消毒の接触時間として適切なものはどれですか。
+</div>
+
+<div class="option">
+<label><input type="radio" name="q8" value="A"> A 1分</label>
+</div>
+
+<div class="option">
+<label><input type="radio" name="q8" value="B"> B 5分</label>
+</div>
+
+<div class="option">
+<label><input type="radio" name="q8" value="C"> C 10分</label>
+</div>
+
+<div class="option">
+<label><input type="radio" name="q8" value="D"> D 30分</label>
+</div>
+
+</div>
+</div>
+
+
+<div class="questionCard">
+
+<div class="qNumber">問9</div>
+<div class="status">未回答</div>
+
+<div class="flagBox" onclick="toggleFlag(this)">
+🚩問題にフラグをつける
+</div>
+
+<div class="questionBody">
+
+<div class="questionText">
+問9 当院リネンを消毒する場合の浸漬時間として正しいものはどれですか。
+</div>
+
+<div class="option">
+<label><input type="radio" name="q9" value="A"> A 5分</label>
+</div>
+
+<div class="option">
+<label><input type="radio" name="q9" value="B"> B 10分</label>
+</div>
+
+<div class="option">
+<label><input type="radio" name="q9" value="C"> C 30〜60分</label>
+</div>
+
+<div class="option">
+<label><input type="radio" name="q9" value="D"> D 2時間</label>
+</div>
+
+</div>
+</div>
+
+
+<div class="questionCard">
+
+<div class="qNumber">問10</div>
+<div class="status">未回答</div>
+
+<div class="flagBox" onclick="toggleFlag(this)">
+🚩問題にフラグをつける
+</div>
+
+<div class="questionBody">
+
+<div class="questionText">
+問10 高頻度接触面（ドアノブ・ベッド柵など）の清拭頻度として正しいものはどれですか。
+</div>
+
+<div class="option">
+<label><input type="radio" name="q10" value="A"> A 1日1回</label>
+</div>
+
+<div class="option">
+<label><input type="radio" name="q10" value="B"> B 1日2回以上</label>
+</div>
+
+<div class="option">
+<label><input type="radio" name="q10" value="C"> C 1日3回</label>
+</div>
+
+<div class="option">
+<label><input type="radio" name="q10" value="D"> D 週1回</label>
+</div>
+
+</div>
+</div>
+
+
+<div class="questionCard">
+
+<div class="qNumber">問11</div>
+<div class="status">未回答</div>
+
+<div class="flagBox" onclick="toggleFlag(this)">
+🚩問題にフラグをつける
+</div>
+
+<div class="questionBody">
+
+<div class="questionText">
+問11 ゾーニングについて正しいものはどれか。
+</div>
+
+<div class="option">
+<label><input type="radio" name="q11" value="A"> A 赤は清潔</label>
+</div>
+
+<div class="option">
+<label><input type="radio" name="q11" value="B"> B 赤は汚染エリア</label>
+</div>
+
+<div class="option">
+<label><input type="radio" name="q11" value="C"> C 色は任意</label>
+</div>
+
+<div class="option">
+<label><input type="radio" name="q11" value="D"> D 病室のみ</label>
+</div>
+
+</div>
+</div>
+
+
+<div class="questionCard">
+
+<div class="qNumber">問12</div>
+<div class="status">未回答</div>
+
+<div class="flagBox" onclick="toggleFlag(this)">
+🚩問題にフラグをつける
+</div>
+
+<div class="questionBody">
+
+<div class="questionText">
+問12 感染性廃棄物ダンボール配置で正しいものは？
+</div>
+
+<div class="option">
+<label><input type="radio" name="q12" value="A"> A 廊下に置く</label>
+</div>
+
+<div class="option">
+<label><input type="radio" name="q12" value="B"> B 廊下配置は感染拡大の恐れ</label>
+</div>
+
+<div class="option">
+<label><input type="radio" name="q12" value="C"> C 清潔なら廊下OK</label>
+</div>
+
+<div class="option">
+<label><input type="radio" name="q12" value="D"> D 自由</label>
+</div>
+
+</div>
+</div>
+
+
+<div class="questionCard">
+
+<div class="qNumber">問13</div>
+<div class="status">未回答</div>
+
+<div class="flagBox" onclick="toggleFlag(this)">
+🚩問題にフラグをつける
+</div>
+
+<div class="questionBody">
+
+<div class="questionText">
+問13 汚染エリアの範囲は？
+</div>
+
+<div class="option">
+<label><input type="radio" name="q13" value="A"> A 廊下側</label>
+</div>
+
+<div class="option">
+<label><input type="radio" name="q13" value="B"> B 室内側</label>
+</div>
+
+<div class="option">
+<label><input type="radio" name="q13" value="C"> C 黄色テープのみ</label>
+</div>
+
+<div class="option">
+<label><input type="radio" name="q13" value="D"> D 変わらない</label>
+</div>
 
 </div>
 
