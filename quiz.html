@@ -13,19 +13,6 @@ margin:0;
 line-height:1.8;
 }
 
-/* タイマー */
-
-#timer{
-position:fixed;
-top:10px;
-left:10px;
-font-weight:bold;
-color:red;
-background:white;
-padding:8px 12px;
-border-radius:6px;
-z-index:999;
-}
 
 /* 問題 */
 
@@ -50,17 +37,6 @@ padding:8px;
 cursor:pointer;
 }
 
-/* 下パネル */
-
-#bottomPanel{
-position:fixed;
-bottom:0;
-left:0;
-width:100%;
-background:white;
-border-top:2px solid #ccc;
-padding:15px;
-}
 
 #nav{
 display:grid;
@@ -197,6 +173,130 @@ padding:15px;
 display:none;
 text-align:center;
 }
+/* 上バー */
+
+#topBar{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+background:white;
+border-bottom:2px solid #ccc;
+padding:15px 20px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+z-index:999;
+font-size:18px;
+}
+
+/* タイマー */
+
+#timer{
+font-size:24px;
+font-weight:bold;
+color:red;
+}
+
+/* 受験者名 */
+
+#userName{
+font-size:18px;
+font-weight:bold;
+}
+
+/* 問題カード */
+
+.questionCard{
+background:white;
+margin:90px 15px 20px 15px;
+border-radius:10px;
+overflow:hidden;
+box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* 問題ヘッダー */
+
+.questionHeaderBox{
+background:white;
+border:1px solid #ccc;
+padding:15px;
+margin-bottom:10px;
+}
+
+/* 問題番号 */
+
+.qNumber{
+font-size:26px;
+font-weight:bold;
+}
+
+/* 未回答 */
+
+.status{
+color:red;
+font-size:14px;
+margin-top:5px;
+}
+
+/* フラグボックス */
+
+.flagBox{
+border:2px solid silver;
+background:white;
+padding:10px;
+margin-top:10px;
+border-radius:6px;
+cursor:pointer;
+font-size:14px;
+}
+
+/* フラグON */
+
+.flagOn{
+background:#fff3cd;
+border:2px solid orange;
+}
+
+/* 問題文 */
+
+.questionBody{
+background:#cfe9f6;
+padding:20px;
+border-radius:6px;
+margin-bottom:10px;
+}
+
+/* 選択肢 */
+
+.option{
+background:#eee;
+padding:12px;
+margin:8px 0;
+border-radius:6px;
+cursor:pointer;
+border:1px solid #ccc;
+}
+
+/* 選択肢ホバー */
+
+.option:hover{
+background:#ddd;
+}
+
+/* 下ボタン */
+
+#bottomPanel{
+position:fixed;
+bottom:0;
+left:0;
+width:100%;
+background:white;
+border-top:2px solid #ccc;
+padding:15px;
+text-align:center;
+display:none;
+}
 
 
 </style>
@@ -220,16 +320,42 @@ text-align:center;
 ノロウイルス対応研修 確認テスト
 </h2>
 
-<form id="quizForm">
+<div class="questionCard">
 
-<div class="question">
-<button type="button" onclick="toggleFlag(this)">🚩フラグ</button>
+<div class="questionHeaderBox">
 
-<b>問1 ノロウイルスの潜伏期間として正しいものはどれですか。</b>
-<label><input type="radio" name="q1" value="A">6〜12時間</label>
-<label><input type="radio" name="q1" value="B">12〜24時間</label>
-<label><input type="radio" name="q1" value="C">24〜48時間</label>
-<label><input type="radio" name="q1" value="D">3〜5日</label>
+<div class="qNumber">問1</div>
+
+<div class="status">未回答</div>
+
+<div class="flagBox" onclick="toggleFlag(this)">
+🚩問題にフラグをつける
+</div>
+
+</div>
+
+<div class="questionBody">
+
+ノロウイルスの潜伏期間として正しいものはどれですか。
+
+</div>
+
+<div class="option">
+<label><input type="radio" name="q1" value="A"> A　6〜12時間</label>
+</div>
+
+<div class="option">
+<label><input type="radio" name="q1" value="B"> B　12〜24時間</label>
+</div>
+
+<div class="option">
+<label><input type="radio" name="q1" value="C"> C　24〜48時間</label>
+</div>
+
+<div class="option">
+<label><input type="radio" name="q1" value="D"> D　3〜5日</label>
+</div>
+
 </div>
 
 <div class="question">
@@ -667,18 +793,14 @@ submitQuiz();
 
 },1000);
   
-function toggleFlag(btn){
+function toggleFlag(el){
 
-if(btn.innerText=="問題にフラグをつける"){
+el.classList.toggle("flagOn");
 
-btn.innerText="フラグ解除";
-btn.style.background="#f44336";
-
+if(el.innerText.includes("フラグをつける")){
+el.innerText="🚩フラグ解除";
 }else{
-
-btn.innerText="問題にフラグをつける";
-btn.style.background="#ff9800";
-
+el.innerText="🚩問題にフラグをつける";
 }
 
 }
