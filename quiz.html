@@ -15,22 +15,6 @@ line-height:1.8;
 
 
 /* 問題 */
-
-.question{
-padding:25px;
-margin:20px;
-border-radius:10px;
-box-shadow:0 2px 6px rgba(0,0,0,0.1);
-}
-
-.question:nth-child(odd){
-background:#d9eef2;
-}
-
-.question:nth-child(even){
-background:white;
-}
-
 label{
 display:block;
 padding:8px;
@@ -102,10 +86,7 @@ margin:0;
 line-height:1.8;
 padding-bottom:120px;
 }
-.flagged{
-background:#ff9800 !important;
-color:white;
-}
+
 
 .questionHeader{
 padding:15px;
@@ -116,14 +97,7 @@ color:red;
 font-size:13px;
 }
 
-.flagBtn{
-background:#ff9800;
-color:white;
-border:none;
-padding:6px 12px;
-border-radius:6px;
-margin-top:8px;
-}
+
 
 /* 下ボタン */
 
@@ -297,6 +271,56 @@ padding:10px 25px;
 font-size:14px;
 }
 
+.flagHeader{
+background:white;
+border:1px solid #ccc;
+padding:15px;
+border-radius:6px;
+margin-bottom:12px;
+}
+
+.qNumber{
+font-size:24px;
+font-weight:bold;
+}
+
+.status{
+color:red;
+margin-top:5px;
+}
+
+.flagBox{
+border:2px solid silver;
+padding:8px;
+margin-top:10px;
+border-radius:6px;
+cursor:pointer;
+background:white;
+}
+
+.questionBody{
+background:#cfe9f6;
+padding:18px;
+border-radius:6px;
+}
+
+.questionText{
+font-size:16px;
+font-weight:bold;
+margin-bottom:10px;
+}
+
+.selectText{
+margin-bottom:10px;
+}
+
+.option{
+background:#eee;
+border:1px solid #ccc;
+border-radius:6px;
+padding:12px;
+margin:8px 0;
+}
 
 
 
@@ -340,6 +364,10 @@ font-size:14px;
 問1 ノロウイルスの潜伏期間として正しいものはどれですか。
 </div>
 
+<div class="selectText">
+選択してください：
+</div> 
+  
 <div class="option">
 <label><input type="radio" name="q1" value="A"> A 6〜12時間</label>
 </div>
