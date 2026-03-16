@@ -157,7 +157,7 @@ box-shadow:0 2px 6px rgba(0,0,0,0.1);
 
 /* 問題ヘッダー */
 
-questionHeaderBox{
+.questionHeaderBox{
 background:white;
 border:1px solid #ccc;
 padding:15px;
@@ -934,7 +934,7 @@ html+="</div>";
 document.getElementById("confirmScreen").style.display="none";
 document.getElementById("bottomPanel").style.display="none";
 document.getElementById("timer").style.display="none";
-document.getElementById("bottomPanel").style.display="none";
+
 
 document.getElementById("result").innerHTML=html;
 
@@ -982,13 +982,21 @@ window.addEventListener("scroll",function(){
 let scrollTop=window.scrollY;
 let pageHeight=document.body.scrollHeight-window.innerHeight;
 
-if(scrollTop>pageHeight-200){
+let quizVisible =
+document.getElementById("quizForm").style.display !== "none";
+
+if(scrollTop>pageHeight-200 && quizVisible){
 
 document.getElementById("bottomPanel").style.display="block";
+
+}else{
+
+document.getElementById("bottomPanel").style.display="none";
 
 }
 
 });
+
 
 </script>
 
