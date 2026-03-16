@@ -124,13 +124,97 @@ padding-bottom:120px;
 background:#ff9800 !important;
 color:white;
 }
+/* 上バー */
+
+#topBar{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+background:white;
+border-bottom:2px solid #ccc;
+padding:12px;
+display:flex;
+justify-content:space-between;
+z-index:999;
+}
+
+#userName{
+font-weight:bold;
+}
+
+/* 問題カードUI */
+
+.questionCard{
+background:white;
+margin:90px 15px 20px 15px;
+border-radius:10px;
+overflow:hidden;
+box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+
+.questionHeader{
+padding:15px;
+}
+
+.status{
+color:red;
+font-size:13px;
+}
+
+.questionBody{
+background:#cfe9f6;
+padding:20px;
+}
+
+.option{
+background:#eee;
+padding:12px;
+margin:8px 0;
+border-radius:6px;
+cursor:pointer;
+}
+
+.flagBtn{
+background:#ff9800;
+color:white;
+border:none;
+padding:6px 12px;
+border-radius:6px;
+margin-top:8px;
+}
+
+/* 下ボタン */
+
+#bottomBox{
+position:fixed;
+bottom:0;
+left:0;
+width:100%;
+background:white;
+border-top:2px solid #ccc;
+padding:15px;
+display:none;
+text-align:center;
+}
+
 
 </style>
 </head>
 
 <body>
 
-<div id="timer">残り 10:00</div>
+<div id="topBar">
+
+<div id="timer">
+残り 10分00秒
+</div>
+
+<div id="userName">
+受験者：<span id="nameArea"></span>
+</div>
+
+</div>
 
 <h2 style="text-align:center;margin-top:50px">
 ノロウイルス対応研修 確認テスト
@@ -329,6 +413,13 @@ color:white;
 </div>
 
 <script>
+let name = localStorage.getItem("quizUser");
+
+if(!name){
+name="未設定";
+}
+
+document.getElementById("nameArea").innerText=name;
 
 const answers={
 q1:"C",
@@ -389,14 +480,26 @@ nav.appendChild(btn);
 
 /* 回答検知 */
 
-document.querySelectorAll("input").forEach(r=>{
+document.querySelectorAll("input[type=radio]").forEach(function(radio){
 
-r.addEventListener("change",function(){
+radio.addEventListener("change", function(){
 
-let q=this.name.replace("q","");
+let q = this.name.replace("q","");
 
-document.querySelectorAll(".navBtn")[q-1]
-.classList.add("answered");
+let btn = document.querySelectorAll(".navBtn")[q-1];
+
+if(btn){
+btn.classList.add("answered");
+}
+
+/* 未回答→回答済み */
+
+let header=document.querySelectorAll(".status")[q-1];
+
+if(header){
+header.innerText="回答済み";
+header.style.color="green";
+}
 
 });
 
@@ -554,7 +657,40 @@ btn.classList.toggle("flagged");
 }
 
 },1000);
+  
+function toggleFlag(btn){
 
+if(btn.innerText=="問題にフラグをつける"){
+
+btn.innerText="フラグ解除";
+btn.style.background="#f44336";
+
+}else{
+
+btn.innerText="問題にフラグをつける";
+btn.style.background="#ff9800";
+
+}
+
+}
+  
+window.addEventListener("scroll",function(){
+
+let scrollTop=window.scrollY;
+
+let pageHeight=document.body.scrollHeight-window.innerHeight;
+
+if(scrollTop>pageHeight-50){
+
+document.getElementById("bottomBox").style.display="block";
+
+}else{
+
+document.getElementById("bottomBox").style.display="none";
+
+}
+
+});
 </script>
 
 </body>
