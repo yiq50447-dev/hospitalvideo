@@ -324,9 +324,7 @@ font-size:14px;
 イントロをスキップ
 <div id="skipBar"></div>
 </div>
-<div id="skipThinking" onclick="skipThinkingClick(event)">
-シンキングタイムをスキップ（30）
-</div>
+
 
 <div id="bottomControls">
 <span id="currentTime">0:00</span>
@@ -525,37 +523,7 @@ introActive=false;
 }
 }
 
-let ctime=player.getCurrentTime();
 
-thinkingTimes.forEach(t=>{
-
-if(ctime>=t.start && ctime<t.end && !thinkingActive){
-
-thinkingActive=true;
-
-let remain=Math.floor(t.end-ctime);
-
-skipThinking.style.display="block";
-
-updateThinkingText(remain);
-
-thinkingTimer=setInterval(()=>{
-
-remain--;
-
-updateThinkingText(remain);
-
-if(remain<=0){
-clearInterval(thinkingTimer);
-skipThinking.style.display="none";
-thinkingActive=false;
-}
-
-},1000);
-
-}
-
-});
 
 function rewind10(){player.seekTo(player.getCurrentTime()-10,true);showUI();}
 function forward10(){
@@ -574,9 +542,6 @@ return;
 player.seekTo(target,true);
 showUI();
 
-}
-function updateThinkingText(sec){
-skipThinking.innerText="シンキングタイムをスキップ（"+sec+"）";
 }
 
 function formatTime(t){let m=Math.floor(t/60),s=Math.floor(t%60);if(s<10)s="0"+s;return m+":"+s;}
@@ -819,31 +784,7 @@ localStorage.setItem("quizUser",username);
 window.location.href="quiz.html";
 
 }
-function skipThinkingClick(e){
 
-e.stopPropagation();
-
-let c=player.getCurrentTime();
-
-for(let t of thinkingTimes){
-
-if(c>=t.start && c<t.end){
-
-player.seekTo(t.end,true);
-
-break;
-
-}
-
-}
-
-skipThinking.style.display="none";
-
-thinkingActive=false;
-
-clearInterval(thinkingTimer);
-
-}
 </script>
 <div id="toast"></div>  
 </body>
