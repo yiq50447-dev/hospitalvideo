@@ -236,13 +236,14 @@ opacity:0.5;
 #skipThinking{
 position:absolute;
 right:15px;
-bottom:150px;
+bottom:140px;
 background:rgba(0,0,0,.9);
 padding:10px 16px;
 border-radius:6px;
 display:none;
 z-index:999;
 cursor:pointer;
+color:#fff;
 font-size:14px;
 }
 
@@ -321,11 +322,15 @@ font-size:14px;
 </div>
 
 <div id="skipIntro" onclick="skipIntroClick(event)">
+
 イントロをスキップ
 <div id="skipBar"></div>
 </div>
 
-
+<div id="skipThinking" onclick="skipThinkingClick(event)">
+シンキングタイムをスキップ（30秒）
+</div>
+  
 <div id="bottomControls">
 <span id="currentTime">0:00</span>
 <input type="range" id="progress" min="0" max="100" value="0">
@@ -400,6 +405,17 @@ const UPDATE_MESSAGE = `
 ・動画の修正箇所の更新
 `;
 let player,username="guest",currentVideoId="";
+let thinkingStarts=[287,628,1009,1376,1737,1930];
+let thinkingActive=false;
+let thinkingTimer=null;
+let thinkingStartTime=0;
+
+/* テキスト更新 */
+function updateThinkingText(remain){
+document.getElementById("skipThinking").innerText=
+"シンキングタイムをスキップ（残り"+remain+"秒）";
+}
+
 let resumeTime=0,resumePromptShown=false;
 let uiTimer=null,chapterOpen=false;
 let introActive=false,uiInterval=null;
@@ -489,7 +505,38 @@ function updateUI(){
 if(!player.getDuration()) return;
   
 let c=player.getCurrentTime(),d=player.getDuration();
-  
+// ===== シンキングタイム判定 =====
+thinkingStarts.forEach(start=>{
+
+if(c>=start && c<start+1 && !thinkingActive){
+
+thinkingActive=true;
+thinkingStartTime=start;
+
+let remain=30;
+
+skipThinking.style.display="block";
+skipThinking.innerText="シンキングタイム（"+remain+"秒）";
+
+thinkingTimer=setInterval(()=>{
+
+remain--;
+
+skipThinking.innerText="シンキングタイム（"+remain+"秒）";
+
+if(remain<=0){
+
+clearInterval(thinkingTimer);
+skipThinking.style.display="none";
+thinkingActive=false;
+
+}
+
+},1000);
+
+}
+
+}); 
 if(c > maxWatchedTime){
 maxWatchedTime = c;
 }
@@ -784,7 +831,19 @@ localStorage.setItem("quizUser",username);
 window.location.href="quiz.html";
 
 }
+function skipThinkingClick(e){
 
+e.stopPropagation();
+
+player.seekTo(thinkingStartTime+30,true);
+
+skipThinking.style.display="none";
+
+clearInterval(thinkingTimer);
+
+thinkingActive=false;
+
+}
 </script>
 <div id="toast"></div>  
 </body>
