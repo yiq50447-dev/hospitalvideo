@@ -132,7 +132,7 @@ box-sizing:border-box;
 /* タイマー */
 
 #timer{
-font-size:24px;
+font-size:40px;
 font-weight:bold;
 color:red;
 }
@@ -390,7 +390,7 @@ font-weight:bold;
 <div id="topBar">
 
 <div id="timer">
-残り 10分00秒
+残り 30分00秒
 </div>
 
 <div id="userName">
@@ -701,15 +701,19 @@ font-weight:bold;
 <div class="questionBody">
 
 <div class="questionText">
-問11 ゾーニングについて正しいものはどれか。
+問11 ノロウイルス感染が疑われる患者が発生し、病棟内でゾーニングを実施することになった。
+
+感染拡大防止のため、エリアの区分と色分けを適切に理解する必要がある。
+
+ゾーニングの区分として正しいものはどれか。
 </div>
 
 <div class="selectText">選択してください：</div>
 
-<div class="option"><label><input type="radio" name="q11" value="A"> A 赤は清潔</label></div>
-<div class="option"><label><input type="radio" name="q11" value="B"> B 赤は汚染エリア</label></div>
-<div class="option"><label><input type="radio" name="q11" value="C"> C 色は任意</label></div>
-<div class="option"><label><input type="radio" name="q11" value="D"> D 病室のみ</label></div>
+<div class="option"><label><input type="radio" name="q11" value="A"> A 赤は清潔エリア、黄は汚染エリア、青は準汚染エリアである</label></div>
+<div class="option"><label><input type="radio" name="q11" value="B"> B 赤は汚染エリア、黄は準汚染エリア、緑は清潔エリアである</label></div>
+<div class="option"><label><input type="radio" name="q11" value="C"> C 色分けは推奨であり、実施は任意である</label></div>
+<div class="option"><label><input type="radio" name="q11" value="D"> D ゾーニングは病室内のみで行えばよい</label></div>
 
 </div>
 </div>
@@ -726,15 +730,19 @@ font-weight:bold;
 <div class="questionBody">
 
 <div class="questionText">
-問12 感染性廃棄物ダンボール配置で正しいものは？
+問12 ノロウイルス対応中、感染性廃棄物を適切に管理する必要がある。
+  
+感染性廃棄物用ダンボールの設置場所について検討している。
+
+対応として最も適切なのはどれか。
 </div>
 
 <div class="selectText">選択してください：</div>
 
-<div class="option"><label><input type="radio" name="q12" value="A"> A 廊下に置く</label></div>
-<div class="option"><label><input type="radio" name="q12" value="B"> B 廊下配置は感染拡大の恐れ</label></div>
-<div class="option"><label><input type="radio" name="q12" value="C"> C 清潔なら廊下OK</label></div>
-<div class="option"><label><input type="radio" name="q12" value="D"> D 自由</label></div>
+<div class="option"><label><input type="radio" name="q12" value="A"> A 作業効率を考え、廊下に予備を配置する</label></div>
+<div class="option"><label><input type="radio" name="q12" value="B"> B 廊下に配置すると、不潔物混入や接触により感染拡大のリスクがある</label></div>
+<div class="option"><label><input type="radio" name="q12" value="C"> C 清潔エリアであれば廊下に設置しても問題ない</label></div>
+<div class="option"><label><input type="radio" name="q12" value="D"> D ゾーニングに関係なく、設置場所は自由に決めてよい</label></div>
 
 </div>
 </div>
@@ -751,15 +759,18 @@ font-weight:bold;
 <div class="questionBody">
 
 <div class="questionText">
-問13 汚染エリアの範囲は？
+問13 病室内でゾーニングを行い、汚染エリアを明確に区分することになった。
+  
+赤テープで境界を示した場合の汚染エリアの範囲について、正しい説明はどれか。
+
 </div>
 
 <div class="selectText">選択してください：</div>
 
-<div class="option"><label><input type="radio" name="q13" value="A"> A 廊下側</label></div>
-<div class="option"><label><input type="radio" name="q13" value="B"> B 室内側</label></div>
-<div class="option"><label><input type="radio" name="q13" value="C"> C 黄色テープのみ</label></div>
-<div class="option"><label><input type="radio" name="q13" value="D"> D 変わらない</label></div>
+<div class="option"><label><input type="radio" name="q13" value="A"> A 赤線より廊下側が汚染エリアとなる</label></div>
+<div class="option"><label><input type="radio" name="q13" value="B"> B 赤線より室内・居室側が汚染エリアとなる</label></div>
+<div class="option"><label><input type="radio" name="q13" value="C"> C 黄色テープ内のみが汚染エリアとなる</label></div>
+<div class="option"><label><input type="radio" name="q13" value="D"> D ゾーニングの色に関わらず範囲は一定である</label></div>
 
 </div>
 </div>
@@ -844,19 +855,19 @@ q13:"B"
 
 
 const explanations={
-q1:"ノロウイルスの潜伏期間は一般的に24〜48時間とされています。",
-q2:"ノロウイルスは発症後約3日間は特に感染力が強く、人から人へ感染しやすい時期です。",
-q3:"ノロウイルスはアルコール消毒が効きにくいため、石けんと流水による手洗いが最も重要です。",
-q4:"嘔吐物処理では飛沫・接触感染の両方を防ぐため、フルPPEの着用が必要です。",
-q5:"0.1％次亜塩素酸ナトリウム溶液は水1800ml＋ヤクラックス200mlで調製します。",
-q6:"嘔吐物はこすらず、ペーパーで覆い静かに回収します。こするとウイルスを拡散させる可能性があります。",
-q7:"嘔吐物は想像以上に広範囲に飛散するため、中心から半径2m以上を消毒範囲とします。",
-q8:"次亜塩素酸ナトリウムによる環境消毒は10分間接触させることで効果を発揮します。",
-q9:"当院リネンは30〜60分浸漬消毒してから洗濯します。",
-q10:"ドアノブやベッド柵などの高頻度接触面は1日2回以上の清拭を行います。",
-q11:"赤は汚染エリアです。",
-q12:"廊下配置は感染拡大の恐れがあります。",
-q13:"赤線より室内側が汚染エリアです。"
+q1:"ノロウイルスは、感染してすぐに症状が出るわけではなく、体内で増殖する期間があります。これを潜伏期間といい、一般的には24〜48時間とされています。この時間を理解しておくことで、感染経路の推定や対応の判断に役立ちます。",
+q2:"ノロウイルスは発症後、特に約3日間は感染力が非常に強い状態が続きます。この期間は嘔吐や下痢によって大量のウイルスが排出されるため、周囲への感染リスクが高く、特に注意が必要です。",
+q3:"ノロウイルス対策で重要なのが手指衛生ですが、アルコール消毒は十分な効果が得られません。そのため、石けんと流水による手洗いが最も重要になります。物理的にウイルスを洗い流すことが基本です。",
+q4:"嘔吐物処理の際は、飛沫・接触・空気中への拡散といった複数の感染リスクがあるため、必ずフルPPEを着用します。手袋だけでは不十分であり、ガウンやマスク、フェイスシールドなどを含めて身体全体を保護することが必要です。",
+q5:"環境消毒に使用する次亜塩素酸ナトリウムは、ヤクラックスD（1％）を希釈して使用します。具体的には、水1800mlにヤクラックス200mlを加えることで、0.1％溶液を調製します。この濃度が環境消毒の基本となります。",
+q6:"嘔吐物の回収時には、こすらないことが非常に重要です。こするとウイルスが周囲に広がってしまうため、ペーパーで覆い、静かに回収するようにします。",
+q7:"嘔吐物は見た目以上に広範囲へ飛散している可能性があります。そのため、消毒範囲は吐物の中心から半径2メートル以上を目安に設定します。目に見える範囲だけでは不十分である点に注意が必要です。",
+q8:"消毒の際は、次亜塩素酸ナトリウムをかけた後、すぐに拭き取るのではなく、10分間しっかり接触させることが重要です。この時間を確保することで、十分な消毒効果が得られます。基本的には自然乾燥で問題ありません。",
+q9:"リネンについては、ウイルスが繊維の奥まで入り込んでいる可能性があるため、30〜60分の浸漬消毒を行った後に洗濯します。短時間では十分な効果が得られない可能性があります。",
+q10:"ドアノブやベッド柵などの高頻度接触面は、感染拡大の原因となりやすい場所です。そのため、1日2回以上の清拭を行い、環境を清潔に保つことが重要です。",
+q11:"ゾーニングは、作業中の交差感染を防ぐために必須です。当院では・赤：汚染エリア・黄：準汚染エリア・緑：清潔エリアと定められており、色分けは推奨ではなく必須の感染対策です。",
+q12:"感染性廃棄物ダンボールを廊下に置くと、不潔物の混入につながり、感染拡大のリスクが高まります。そのため、廊下への配置は行いません。",
+q13:"汚染エリアは、赤線より室内・居室側です。患者が使用する空間や排泄・嘔吐が起こり得る範囲を汚染エリアと考え、廊下側を清潔に保つことが重要です。"
 };
 
 /* ナビ生成 */
@@ -1129,7 +1140,7 @@ window.scrollTo(0,0);
 
 /* タイマー */
 
-let time=600;
+let time=1800;
 
 setInterval(function(){
 
