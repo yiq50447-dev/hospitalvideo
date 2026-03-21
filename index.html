@@ -84,7 +84,7 @@ z-index:60;text-align:center;
 }
 
 #skipIntro{
-position:absolute;right:15px;bottom:50px;
+position:absolute;right:15px;bottom:20px;
 background:rgba(0,0,0,.9);
 padding:10px 16px;border-radius:6px;
 display:none;z-index:999;overflow:hidden;cursor:pointer;
@@ -236,7 +236,7 @@ opacity:0.5;
 #skipThinking{
 position:absolute;
 right:15px;
-bottom:50px;
+bottom:20px;
 background:rgba(0,0,0,.9);
 padding:10px 16px;
 border-radius:6px;
@@ -396,13 +396,13 @@ font-size:14px;
   
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "0.9.5 β";
+const APP_VERSION = "0.9.6 β";
 document.addEventListener("DOMContentLoaded", function(){
 document.getElementById("topVersion").innerText = "Ver " + APP_VERSION;
 });
 const UPDATE_MESSAGE = `
 【機能追加】
-・動画の修正箇所の更新
+・thinkingtimeスキップ機能追加
 `;
 let player,username="guest",currentVideoId="";
 let thinkingStarts=[287,628,1009,1376,1737,1930];
