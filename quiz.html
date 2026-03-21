@@ -1135,6 +1135,12 @@ document.getElementById("result").innerHTML=html;
 
 window.scrollTo(0,0);
 
+// 受験済みフラグ保存
+localStorage.setItem(name+"_quiz_done_"+ "HyyeZRsWGkw", true);
+
+// 結果HTMLも保存（←これが重要）
+localStorage.setItem(name+"_quiz_result_"+ "HyyeZRsWGkw", html);
+
 }
 
 
