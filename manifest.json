@@ -3,6 +3,7 @@
   "short_name": "院内動画",
   "start_url": "./index.html",
   "display": "standalone",
+  "orientation": "portrait"
   "background_color": "#000000",
   "theme_color": "#000000",
   "orientation": "landscape",
