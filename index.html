@@ -461,6 +461,11 @@ updateViewedDates();
 }
 
 function playVideo(id){
+  
+if(screen.orientation){
+screen.orientation.lock("landscape").catch(()=>{});
+}
+  
 currentVideoId=id;
 resumeTime=parseFloat(localStorage.getItem(username+"_"+id))||0;
 maxWatchedTime = resumeTime;
@@ -754,6 +759,10 @@ location.reload();
 }
 function goBack(){
 
+if(screen.orientation){
+screen.orientation.lock("portrait").catch(()=>{});
+}
+  
 if(player){
 player.destroy();
 }
