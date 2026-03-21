@@ -707,7 +707,15 @@ document.querySelector("#video_"+id+" .viewedDate").innerText="視聴済み："+
 }
 
 const btn=document.querySelector("#video_"+id+" .quizBtn");
-
+// ★ここ追加
+if(localStorage.getItem(username+"_quiz_done_"+id)){
+btn.classList.remove("locked");
+btn.innerText="回答結果を見る";
+btn.onclick=function(){
+showResult(id);
+};
+return;
+}
 if(!localStorage.getItem(username+"_complete_"+id)){
 btn.classList.add("locked");
 btn.innerText="確認テスト（動画視聴後）";
@@ -847,6 +855,19 @@ skipThinking.style.display="none";
 clearInterval(thinkingTimer);
 
 thinkingActive=false;
+
+}
+
+function showResult(id){
+
+let html = localStorage.getItem(username+"_quiz_result_"+id);
+
+if(!html){
+alert("結果が見つかりません");
+return;
+}
+
+document.body.innerHTML = html;
 
 }
 </script>
