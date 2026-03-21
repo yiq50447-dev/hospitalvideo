@@ -396,13 +396,13 @@ font-size:14px;
   
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "0.9.6 β";
+const APP_VERSION = "0.9.7 β";
 document.addEventListener("DOMContentLoaded", function(){
 document.getElementById("topVersion").innerText = "Ver " + APP_VERSION;
 });
 const UPDATE_MESSAGE = `
 【機能追加】
-・thinkingtimeスキップ機能追加
+・テスト回答結果確認機能追加
 `;
 let player,username="guest",currentVideoId="";
 let thinkingStarts=[286,627,1009,1375,1736,1929];
@@ -860,14 +860,7 @@ thinkingActive=false;
 
 function showResult(id){
 
-let html = localStorage.getItem(username+"_quiz_result_"+id);
-
-if(!html){
-alert("結果が見つかりません");
-return;
-}
-
-document.body.innerHTML = html;
+window.location.href = "quiz_result.html";
 
 }
 </script>
