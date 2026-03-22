@@ -783,7 +783,7 @@ const id="HyyeZRsWGkw";
 const time = parseFloat(localStorage.getItem(username+"_"+id)) || 0;
 const date = localStorage.getItem(username+"_date_"+id);
 
-// 動画の総時間（秒）
+// 動画の総時間
 const duration = 2063;
 
 let percent = Math.floor((time / duration) * 100);
@@ -802,7 +802,6 @@ const text = document.querySelector("#video_"+id+" .progressText");
 
 fill.style.width = percent + "%";
 
-// ★ここがポイント（両方表示）
 let displayText = "視聴率：" + percent + "%";
 
 if(date){
@@ -812,7 +811,7 @@ displayText += "（最終視聴：" + date + "）";
 text.innerText = displayText;
 
 
-/* ===== ボタン制御 ===== */
+/* ===== テストボタン ===== */
 
 const btn = document.querySelector("#video_"+id+" .quizBtn");
 
@@ -822,10 +821,7 @@ btn.innerText="回答結果を見る";
 btn.onclick=function(){
 showResult(id);
 };
-return;
-}
-
-if(!localStorage.getItem(username+"_complete_"+id)){
+}else if(!localStorage.getItem(username+"_complete_"+id)){
 btn.classList.add("locked");
 btn.innerText="確認テスト（動画視聴後）";
 }else{
@@ -833,15 +829,17 @@ btn.classList.remove("locked");
 btn.innerText="確認テストを実施する";
 }
 
-}
+
+/* ===== 復習ボタン ===== */
+
 const reviewBtn = document.querySelector("#video_"+id+" .reviewBtn");
 
 let wrong = JSON.parse(localStorage.getItem(username+"_wrong_"+id) || "[]");
 
-// 初期はロック状態
+// 初期ロック
 reviewBtn.classList.add("locked");
 
-// テスト未受験 → 完全非表示
+// テスト未受験 → 非表示
 if(!localStorage.getItem(username+"_quiz_done_"+id)){
 reviewBtn.classList.add("hidden");
 return;
@@ -857,6 +855,7 @@ return;
 reviewBtn.classList.remove("hidden");
 reviewBtn.classList.remove("locked");
 
+}
 function toggleChapters(){
 
 if(chapterPanel.style.right==="0px"){
