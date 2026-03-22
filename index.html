@@ -248,17 +248,18 @@ font-size:14px;
 }
   
 #topBarHome{
+display:none; /* ←これだけ残す */
 position:fixed;
 top:0;
 left:0;
 width:100%;
-display:flex;
 justify-content:space-between;
 align-items:center;
 padding:12px 16px;
 background:#000;
 z-index:999;
 }
+
 
 #viewerStatus{
 font-size:14px;
@@ -426,7 +427,7 @@ padding-top:70px;
   
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "0.9.8 β";
+const APP_VERSION = "0.9.9 β";
 document.addEventListener("DOMContentLoaded", function(){
 document.getElementById("topVersion").innerText = "Ver " + APP_VERSION;
 });
@@ -482,6 +483,8 @@ nameInputModal.style.display="none";
 loader.style.display="none";
 
 document.getElementById("topVersion").style.display="none";
+
+document.getElementById("topBarHome").style.display = "flex";
 
 const viewer = document.getElementById("viewerStatus");
 viewer.innerText = username + " として視聴中";
@@ -851,15 +854,24 @@ adminTapCount=0;
 });
 function logout(){
 
-if(!confirm("ログアウトしますか？")){
-return;
+username="guest";
+
+/* 上バー消す */
+document.getElementById("topBarHome").style.display = "none";
+
+/* 表示リセット */
+document.getElementById("viewerStatus").style.display="none";
+document.getElementById("nameInputModal").style.display="flex";
+document.getElementById("home").style.display="none";
+
+/* ★これ重要（固まり防止） */
+document.getElementById("loader").style.display="none";
+
+/* 入力欄リセット */
+document.getElementById("usernameInput").value="";
+
 }
 
-localStorage.removeItem("quizUser");
-
-window.location.href = "index.html";
-
-}
 function startQuiz(videoId){
 
 if(!localStorage.getItem(username+"_complete_"+videoId)){
