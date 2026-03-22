@@ -464,7 +464,9 @@ showUI();
 }
 
 function setUsername(){
-username=usernameInput.value.trim();
+
+const input = document.getElementById("usernameInput");
+username = input.value.trim();
 
 if(!username){
 document.getElementById("nameError").style.display="block";
@@ -473,11 +475,11 @@ return;
 
 document.getElementById("nameError").style.display="none";
 
-nameInputModal.style.display="none";
-loader.style.display="none";
-
+document.getElementById("nameInputModal").style.display="none";
+document.getElementById("loader").style.display="none";
 document.getElementById("topVersion").style.display="none";
 
+/* ★ここで表示 */
 document.getElementById("topBarHome").style.display = "flex";
 
 const viewer = document.getElementById("viewerStatus");
