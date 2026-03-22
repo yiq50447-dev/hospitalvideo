@@ -1066,8 +1066,7 @@ grade="C";
 passText="不合格";
 }
 
-let name=localStorage.getItem("quizUser");
-  
+
 let data={
 
 name:name,
@@ -1290,7 +1289,12 @@ document.getElementById("testTitle").innerText = "復習モード（間違えた
 
 }
 
+/* ★ここ超重要（復習モード解除） */
+localStorage.removeItem("reviewMode");
+localStorage.removeItem("reviewVideoId");
+
 });
+
 
 </script>
 
