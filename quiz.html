@@ -857,6 +857,8 @@ margin-right:10px;
 
 <script>
 let name = localStorage.getItem("quizUser");
+let reviewMode = localStorage.getItem("reviewMode") === "true";
+let reviewVideoId = localStorage.getItem("reviewVideoId");
 
 if(!name){
 name="未設定";
@@ -1029,6 +1031,17 @@ let ans=document.querySelector('input[name="'+q+'"]:checked');
 if(ans && ans.value===answers[q]) score++;
 
 }
+let wrongList = [];
+
+for(let i=1;i<=13;i++){
+let userAns = document.querySelector('input[name="q'+i+'"]:checked');
+
+if(!userAns || userAns.value !== answers["q"+i]){
+wrongList.push(i);
+}
+}
+
+localStorage.setItem(name+"_wrong_"+ "HyyeZRsWGkw", JSON.stringify(wrongList));
 
 let total=Object.keys(answers).length;
 
@@ -1255,6 +1268,29 @@ let ans=document.querySelector('input[name="'+q+'"]:checked');
 return ans ? ans.value : "";
 
 }
+window.addEventListener("DOMContentLoaded", function(){
+
+if(reviewMode){
+
+let name = localStorage.getItem("quizUser");
+let wrongList = JSON.parse(localStorage.getItem(name+"_wrong_"+reviewVideoId) || "[]");
+
+// 全部非表示
+document.querySelectorAll(".questionCard").forEach(el=>{
+el.style.display="none";
+});
+
+// 間違えた問題だけ表示
+wrongList.forEach(num=>{
+document.querySelectorAll(".questionCard")[num-1].style.display="block";
+});
+
+// タイトル変更
+document.getElementById("testTitle").innerText = "復習モード（間違えた問題）";
+
+}
+
+});
 
 </script>
 
