@@ -248,7 +248,6 @@ font-size:14px;
 }
   
 #topBarHome{
-display:none; /* ←これだけ残す */
 position:fixed;
 top:0;
 left:0;
@@ -856,19 +855,13 @@ function logout(){
 
 username="guest";
 
-/* 上バー消す */
+/* ★ここ追加（非表示に戻す） */
 document.getElementById("topBarHome").style.display = "none";
 
-/* 表示リセット */
 document.getElementById("viewerStatus").style.display="none";
-document.getElementById("nameInputModal").style.display="flex";
-document.getElementById("home").style.display="none";
 
-/* ★これ重要（固まり防止） */
-document.getElementById("loader").style.display="none";
-
-/* 入力欄リセット */
-document.getElementById("usernameInput").value="";
+home.style.display="none";
+nameInputModal.style.display="flex";
 
 }
 
