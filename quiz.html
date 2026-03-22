@@ -1022,25 +1022,48 @@ return;
 document.getElementById("bottomPanel").style.display="none";
 
 
-let score=0;
+let score = 0;
+let total = 0;
 
 for(let q in answers){
 
-let ans=document.querySelector('input[name="'+q+'"]:checked');
+let index = Number(q.replace("q","")) - 1;
+let card = document.querySelectorAll(".questionCard")[index];
 
-if(ans && ans.value===answers[q]) score++;
+// 復習モードなら「表示されてる問題だけ」
+if(reviewMode && card.style.display === "none"){
+continue;
+}
+
+// 出題数カウント
+total++;
+
+let ans = document.querySelector('input[name="'+q+'"]:checked');
+
+if(ans && ans.value === answers[q]){
+score++;
+}
 
 }
+
 let wrongList = [];
 
 for(let i=1;i<=13;i++){
+
+let card = document.querySelectorAll(".questionCard")[i-1];
+
+// 復習モードは非表示を除外
+if(reviewMode && card.style.display === "none"){
+continue;
+}
+
 let userAns = document.querySelector('input[name="q'+i+'"]:checked');
 
 if(!userAns || userAns.value !== answers["q"+i]){
 wrongList.push(i);
 }
-}
 
+}
 localStorage.setItem(name+"_wrong_"+ "HyyeZRsWGkw", JSON.stringify(wrongList));
 
 let total=Object.keys(answers).length;
