@@ -272,7 +272,28 @@ font-size:14px;
 #home{
 padding-top:70px;
 }
-  
+
+.progressBar{
+width:100%;
+height:6px;
+background:#333;
+border-radius:4px;
+margin-top:6px;
+overflow:hidden;
+}
+
+.progressFill{
+height:100%;
+width:0%;
+background:#e50914;
+transition:0.3s;
+}
+
+.progressText{
+font-size:12px;
+color:#aaa;
+margin-top:4px;
+}
 </style>
 </head>
 <body>
@@ -321,7 +342,12 @@ padding-top:70px;
 
 </div>
 
-<div class="viewedDate"></div>
+<div class="viewedDate">
+  <div class="progressBar">
+    <div class="progressFill"></div>
+  </div>
+  <div class="progressText"></div>
+</div>
 
 </li>
 
@@ -729,14 +755,35 @@ function updateViewedDates(){
 
 const id="HyyeZRsWGkw";
 
-const date=localStorage.getItem(username+"_date_"+id);
+const time = parseFloat(localStorage.getItem(username+"_"+id)) || 0;
 
-if(date){
-document.querySelector("#video_"+id+" .viewedDate").innerText="視聴済み："+date;
+// 仮の動画時間（秒）←ここだけ後で正確にすると神
+const duration = 2063;
+
+let percent = Math.floor((time / duration) * 100);
+if(percent > 100) percent = 100;
+
+// 未視聴
+if(time === 0){
+percent = 0;
 }
 
-const btn=document.querySelector("#video_"+id+" .quizBtn");
-// ★ここ追加
+// 完了してたら100%
+if(localStorage.getItem(username+"_complete_"+id)){
+percent = 100;
+}
+
+const fill = document.querySelector("#video_"+id+" .progressFill");
+const text = document.querySelector("#video_"+id+" .progressText");
+
+fill.style.width = percent + "%";
+text.innerText = "視聴率：" + percent + "%";
+
+
+/* ===== ボタン制御（そのまま） ===== */
+
+const btn = document.querySelector("#video_"+id+" .quizBtn");
+
 if(localStorage.getItem(username+"_quiz_done_"+id)){
 btn.classList.remove("locked");
 btn.innerText="回答結果を見る";
@@ -745,6 +792,7 @@ showResult(id);
 };
 return;
 }
+
 if(!localStorage.getItem(username+"_complete_"+id)){
 btn.classList.add("locked");
 btn.innerText="確認テスト（動画視聴後）";
@@ -754,6 +802,7 @@ btn.innerText="確認テストを実施する";
 }
 
 }
+
 
 function toggleChapters(){
 
