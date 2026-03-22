@@ -756,19 +756,18 @@ function updateViewedDates(){
 const id="HyyeZRsWGkw";
 
 const time = parseFloat(localStorage.getItem(username+"_"+id)) || 0;
+const date = localStorage.getItem(username+"_date_"+id);
 
-// 仮の動画時間（秒）←ここだけ後で正確にすると神
+// 動画の総時間（秒）
 const duration = 2063;
 
 let percent = Math.floor((time / duration) * 100);
 if(percent > 100) percent = 100;
 
-// 未視聴
 if(time === 0){
 percent = 0;
 }
 
-// 完了してたら100%
 if(localStorage.getItem(username+"_complete_"+id)){
 percent = 100;
 }
@@ -777,10 +776,18 @@ const fill = document.querySelector("#video_"+id+" .progressFill");
 const text = document.querySelector("#video_"+id+" .progressText");
 
 fill.style.width = percent + "%";
-text.innerText = "視聴率：" + percent + "%";
+
+// ★ここがポイント（両方表示）
+let displayText = "視聴率：" + percent + "%";
+
+if(date){
+displayText += "（最終視聴：" + date + "）";
+}
+
+text.innerText = displayText;
 
 
-/* ===== ボタン制御（そのまま） ===== */
+/* ===== ボタン制御 ===== */
 
 const btn = document.querySelector("#video_"+id+" .quizBtn");
 
