@@ -1021,22 +1021,13 @@ return;
 
 document.getElementById("bottomPanel").style.display="none";
 
-
 let score = 0;
-let total = 0;
+let total = Object.keys(answers).length;
 
 for(let q in answers){
 
 let index = Number(q.replace("q","")) - 1;
 let card = document.querySelectorAll(".questionCard")[index];
-
-// 復習モードなら「表示されてる問題だけ」
-if(reviewMode && card.style.display === "none"){
-continue;
-}
-
-// 出題数カウント
-total++;
 
 let ans = document.querySelector('input[name="'+q+'"]:checked');
 
@@ -1066,7 +1057,6 @@ wrongList.push(i);
 }
 localStorage.setItem(name+"_wrong_"+ "HyyeZRsWGkw", JSON.stringify(wrongList));
 
-let total=Object.keys(answers).length;
 
 let point=Math.round(score/total*100);
 
