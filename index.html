@@ -294,6 +294,23 @@ font-size:12px;
 color:#aaa;
 margin-top:4px;
 }
+
+.reviewBtn{
+margin-left:8px;
+padding:6px 12px;
+font-size:13px;
+background:#ff9800;
+border:none;
+color:white;
+border-radius:6px;
+cursor:pointer;
+white-space:nowrap;
+}
+
+.reviewBtn.hidden{
+display:none;
+}
+
 </style>
 </head>
 <body>
@@ -339,7 +356,11 @@ margin-top:4px;
 <button class="quizBtn" onclick="startQuiz('HyyeZRsWGkw')">
 確認テストを実施する
 </button>
-
+  
+<button class="reviewBtn" onclick="startReview('HyyeZRsWGkw')">
+復習する
+</button>
+  
 </div>
 
 <div class="viewedDate">
@@ -809,7 +830,22 @@ btn.innerText="確認テストを実施する";
 }
 
 }
+const reviewBtn = document.querySelector("#video_"+id+" .reviewBtn");
 
+let wrong = JSON.parse(localStorage.getItem(username+"_wrong_"+id) || "[]");
+
+// テスト未受験 → 非表示
+if(!localStorage.getItem(username+"_quiz_done_"+id)){
+reviewBtn.classList.add("hidden");
+}
+// 間違いなし → 非表示
+else if(wrong.length === 0){
+reviewBtn.classList.add("hidden");
+}
+// 間違いあり → 表示
+else{
+reviewBtn.classList.remove("hidden");
+}
 
 function toggleChapters(){
 
@@ -960,6 +996,14 @@ thinkingActive=false;
 function showResult(id){
 
 window.location.href = "quiz_result.html";
+
+}
+function startReview(videoId){
+
+localStorage.setItem("reviewMode", "true");
+localStorage.setItem("reviewVideoId", videoId);
+
+window.location.href = "quiz.html";
 
 }
 </script>
