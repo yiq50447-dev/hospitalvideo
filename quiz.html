@@ -1288,7 +1288,6 @@ window.addEventListener("DOMContentLoaded", function(){
 
 if(reviewMode){
 
-let name = localStorage.getItem("quizUser");
 let wrongList = JSON.parse(localStorage.getItem(name+"_wrong_"+reviewVideoId) || "[]");
 
 // 全部非表示
@@ -1305,6 +1304,8 @@ document.querySelectorAll(".questionCard")[num-1].style.display="block";
 document.getElementById("testTitle").innerText = "復習モード（間違えた問題）";
 
 }
+
+});
 
 function reviewSubmit(){
 
@@ -1332,11 +1333,12 @@ alert("復習結果\n"+score+" / "+total+"問 正解（"+point+"点）");
 /* ★克服チェック用（任意） */
 if(point === 100){
 alert("全問正解！克服できています 👍");
-}else{
-alert("まだ復習が必要です");
 /* ★ここ超重要（復習モード解除） */
 localStorage.removeItem("reviewMode");
 localStorage.removeItem("reviewVideoId");
+
+}else{
+alert("まだ復習が必要です");
 
 }
 
