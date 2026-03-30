@@ -1018,6 +1018,16 @@ function submitQuiz(){
 if(!confirm("解答を送信すると受験は終了し、解答の変更はできません。\n送信して受験を終了しますか？")){
 return;
 }
+if(reviewMode){
+
+alert("復習モードのため採点は行いません");
+
+document.getElementById("confirmScreen").style.display="none";
+document.getElementById("quizForm").style.display="block";
+
+return;
+
+}
 
 document.getElementById("bottomPanel").style.display="none";
 
