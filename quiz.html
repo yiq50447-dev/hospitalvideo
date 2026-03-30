@@ -1309,16 +1309,15 @@ document.getElementById("testTitle").innerText = "復習モード（間違えた
 
 function reviewSubmit(){
 
-let score = 0;
-let total = 0;
-
 let wrongList = JSON.parse(localStorage.getItem(name+"_wrong_"+reviewVideoId) || "[]");
 
+let score = 0;
+let total = wrongList.length;
+
+/* 採点 */
 wrongList.forEach(function(i){
 
 let ans = document.querySelector('input[name="q'+i+'"]:checked');
-
-total++;
 
 if(ans && ans.value === answers["q"+i]){
 score++;
@@ -1328,24 +1327,86 @@ score++;
 
 let point = total > 0 ? Math.round(score/total*100) : 0;
 
-alert("復習結果\n"+score+" / "+total+"問 正解（"+point+"点）");
+/* 結果HTML */
+let html="";
 
-/* ★克服チェック用（任意） */
+html+=`
+<div id="resultHeader">
+<h2>復習結果</h2>
+<button id="finishBtn" onclick="location.href='index.html'">
+終了
+</button>
+</div>
+`;
+
+html+=`
+<div class="resultSummary">
+
+<div class="resultName">
+受験者：${name}
+</div>
+
+<div class="resultGrade">
+正解数：${score} / ${total}
+</div>
+
+<div>
+正答率：${point}％
+</div>
+
+</div>
+`;
+
+/* 解説表示（復習問題のみ） */
+wrongList.forEach(function(i){
+
+let userAns=document.querySelector('input[name="q'+i+'"]:checked');
+let userText = userAns ? userAns.value : "未回答";
+
+html+=`
+
+<div class="explainCard">
+
+<b>問${i}</b><br><br>
+
+あなたの回答：
+<span class="answerUser">
+${userText}
+</span>
+
+<br>
+
+正解：
+<span class="answerCorrect">
+${answers["q"+i]}
+</span>
+
+<br><br>
+
+<b>解説</b><br>
+${explanations["q"+i]}
+
+</div>
+
+`;
+
+});
+
+/* 画面切り替え */
+document.getElementById("quizForm").style.display="none";
+document.getElementById("confirmScreen").style.display="none";
+document.getElementById("timer").style.display="none";
+
+document.getElementById("result").innerHTML=html;
+
+window.scrollTo(0,0);
+
+/* 復習モード解除（全問正解なら） */
 if(point === 100){
-alert("全問正解！克服できています 👍");
-/* ★ここ超重要（復習モード解除） */
 localStorage.removeItem("reviewMode");
 localStorage.removeItem("reviewVideoId");
-  
-location.href = "index.html";
-  
-}else{
-alert("まだ復習が必要です");
-
 }
-
 }
-
 
 </script>
 
