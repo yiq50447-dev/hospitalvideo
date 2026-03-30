@@ -1336,7 +1336,9 @@ alert("全問正解！克服できています 👍");
 /* ★ここ超重要（復習モード解除） */
 localStorage.removeItem("reviewMode");
 localStorage.removeItem("reviewVideoId");
-
+  
+location.href = "index.html";
+  
 }else{
 alert("まだ復習が必要です");
 
