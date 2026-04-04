@@ -316,6 +316,8 @@ cursor:default;
 opacity:0.5;
 }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
 <body>
 
@@ -347,6 +349,19 @@ opacity:0.5;
   <button id="logoutBtn" onclick="logout()">ログアウト</button>
  </div>
 <h2 style="padding:20px;color:#e50914;">動画リスト</h2>
+<button id="summaryBtn"
+onclick="showSummary()"
+style="display:none;margin:20px;padding:10px 16px;background:#e50914;color:#fff;border:none;border-radius:6px;">
+テスト全体集計
+</button>
+
+<div id="summaryArea" style="display:none;padding:20px;">
+  <h3>全体集計</h3>
+  <canvas id="summaryChart"></canvas>
+  <div id="summaryTable" style="margin-top:20px;"></div>
+</div>
+
+
 <ul id="videoList">
  
 <li id="video_HyyeZRsWGkw">
@@ -921,6 +936,8 @@ if(adminTapCount===5){
 let pass = prompt("管理者パスワード");
 
 if(pass==="1234"){
+ 
+document.getElementById("summaryBtn").style.display="block";
 
 adminMode=true;
 username="管理者";
@@ -1028,6 +1045,53 @@ localStorage.setItem("reviewVideoId", videoId);
 window.location.href = "quiz.html";
 
 }
+async function showSummary(){
+
+  // 管理者以外ブロック
+  if(!adminMode){
+    showToast("管理者のみ閲覧できます");
+    return;
+  }
+
+  try{
+    const res = await fetch("https://script.google.com/macros/s/AKfycbzqjoFQGFztIyg6YhBsJRzyy4PVH5uRGXqqOmXMtXbM8ntIaUVcJVWgpYNT2dGJ-4Xu/exec?type=summary");
+    const data = await res.json();
+
+    document.getElementById("summaryArea").style.display="block";
+
+    document.getElementById("summaryTable").innerHTML = `
+      <p>受講者数：${data.total}</p>
+      <p>完了者：${data.completed}</p>
+      <p>平均視聴率：${data.avg}%</p>
+    `;
+
+    drawChart(data);
+
+  }catch(e){
+    showToast("取得エラー");
+    console.error(e);
+  }
+}
+
+function drawChart(data){
+
+  const ctx = document.getElementById("summaryChart");
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['受講者', '完了者', '平均視聴率'],
+      datasets: [{
+        label: '集計',
+        data: [data.total, data.completed, data.avg]
+      }]
+    },
+    options:{
+      responsive:true
+    }
+  });
+}
+
 </script>
 <div id="toast"></div>  
 </body>
