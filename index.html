@@ -119,8 +119,8 @@ transition:.3s;z-index:65;
 }
 #chapterPanel p{margin:8px 0;cursor:pointer;}
 .groupTitle{margin-top:15px;font-weight:bold;color:#e50914;}
-  
-  
+ 
+ 
 /* 更新モーダル */
 #updateModal{
 position:fixed;
@@ -134,7 +134,7 @@ align-items:center;
 justify-content:center;
 z-index:300;
 }
-  
+ 
 #backBtn{
 position:absolute;
 top:20px;
@@ -148,7 +148,7 @@ color:#fff;
 border-radius:6px;
 transition:.3s;
 }
-  
+ 
 #topVersion{
 position:fixed;
 top:15px;
@@ -240,7 +240,7 @@ cursor:pointer;
 color:#fff;
 font-size:14px;
 }
-  
+ 
 #topBarHome{
 display:none; /* ←これだけにする */
 position:fixed;
@@ -320,14 +320,14 @@ opacity:0.5;
 <body>
 
 <div id="topVersion"></div>
-  
+ 
 <div id="loader">ロード中…</div>
 
 <div id="nameInputModal">
-  
+ 
 <h3>視聴する方の名前を入力してください</h3>
 
-  
+ 
 <p style="margin-top:8px;font-size:14px;color:#aaa;">
 次回視聴時、続きから再生できます。
 </p>
@@ -340,7 +340,7 @@ opacity:0.5;
 
 <button onclick="setUsername()">開始</button>
 </div>
-  
+ 
 <div id="home">
  <div id="topBarHome">
   <div id="viewerStatus"></div>
@@ -348,7 +348,7 @@ opacity:0.5;
  </div>
 <h2 style="padding:20px;color:#e50914;">動画リスト</h2>
 <ul id="videoList">
-  
+ 
 <li id="video_HyyeZRsWGkw">
 
 <div class="videoRow">
@@ -360,11 +360,11 @@ opacity:0.5;
 <button class="quizBtn" onclick="startQuiz('HyyeZRsWGkw')">
 確認テストを実施する
 </button>
-  
+ 
 <button class="reviewBtn" onclick="startReview('HyyeZRsWGkw')">
 復習する
 </button>
-  
+ 
 </div>
 
 <div class="viewedDate">
@@ -406,7 +406,7 @@ opacity:0.5;
 <div id="skipThinking" onclick="skipThinkingClick(event)">
 シンキングタイムをスキップ（30秒）
 </div>
-  
+ 
 <div id="bottomControls">
 <span id="currentTime">0:00</span>
 <input type="range" id="progress" min="0" max="100" value="0">
@@ -461,7 +461,7 @@ opacity:0.5;
 
 </div>
 </div>
-  
+ 
 <div id="updateModal">
 <div style="background:#111;padding:25px;border-radius:12px;max-width:320px;text-align:left;">
 <h3 style="color:#e50914;margin-bottom:10px;">アップデート情報</h3>
@@ -469,7 +469,7 @@ opacity:0.5;
 <button onclick="closeUpdateModal()" style="margin-top:15px;background:#e50914;color:#fff;border:none;padding:8px 16px;border-radius:6px;">OK</button>
 </div>
 </div>
-  
+ 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
 const APP_VERSION = "1.0.0 ";
@@ -496,13 +496,13 @@ document.getElementById("skipThinking").innerText=
 let resumeTime=0,resumePromptShown=false;
 let uiTimer=null,chapterOpen=false;
 let introActive=false,uiInterval=null;
-  
+ 
 let maxWatchedTime = 0;
 let adminMode = false;
 
 let adminTapCount = 0;
 let adminTapTimer = null;
-  
+ 
 let speeds=[1,1.25,1.5,1.75,2];
 let speedIndex=0;
 
@@ -542,9 +542,9 @@ updateViewedDates();
 }
 
 function playVideo(id){
-  
+ 
 
-  
+ 
 currentVideoId=id;
 resumeTime=parseFloat(localStorage.getItem(username+"_"+id))||0;
 maxWatchedTime = resumeTime;
@@ -560,15 +560,8 @@ videoId:id,
 playerVars:{controls:0,rel:0,modestbranding:1,fs:0,playsinline:1},
 events:{
 onReady:()=>{
-  uiInterval=setInterval(updateUI,500);
-  showUI();
-  let sendInterval = null;
- if(sendInterval) clearInterval(sendInterval);
-  // ★追加（10秒ごと送信）
- sendInterval = setInterval(()=>{
-    sendWatchData();
-  },10000);
-
+uiInterval=setInterval(updateUI,500);
+showUI();
 },
 onStateChange:(e)=>{
 if(e.data===YT.PlayerState.PLAYING) startUITimer();
@@ -577,7 +570,7 @@ if(e.data===YT.PlayerState.PLAYING) startUITimer();
 });
 }
 
-
+function togglePlay(){
 if(!resumePromptShown && resumeTime>5){
 resumeInline.style.display="block";
 resumePromptShown=true;
@@ -594,7 +587,7 @@ function startFromBeginning(){localStorage.removeItem(username+"_"+currentVideoI
 
 function updateUI(){
 if(!player.getDuration()) return;
-  
+ 
 let c=player.getCurrentTime(),d=player.getDuration();
 // ===== シンキングタイム判定 =====
 thinkingStarts.forEach(start=>{
@@ -627,20 +620,18 @@ thinkingActive=false;
 
 }
 
-}); 
+});
 if(c > maxWatchedTime){
 maxWatchedTime = c;
 }
 
 if(c >= d-2){
 
-  sendWatchData(); // ★追加
+localStorage.setItem(username+"_complete_"+currentVideoId,true);
 
-  localStorage.setItem(username+"_complete_"+currentVideoId,true);
+localStorage.setItem("quizUser",username);
 
-  localStorage.setItem("quizUser",username);
-
-  window.location.href="quiz.html";
+window.location.href="quiz.html";
 
 }
 
@@ -905,17 +896,17 @@ location.reload();
 }
 function goBack(){
 
-  sendWatchData(); // ★追加
 
-  if(player){
-    player.destroy();
-  }
+ 
+if(player){
+player.destroy();
+}
 
-  videoWrapper.style.display="none";
-  home.style.display="block";
+videoWrapper.style.display="none";
+home.style.display="block";
 
-  chapterPanel.style.right="-320px";
-  chapterOpen=false;
+chapterPanel.style.right="-320px";
+chapterOpen=false;
 
 }
 checkVersion();
@@ -938,9 +929,9 @@ nameInputModal.style.display="none";
 loader.style.display="none";
 
 document.getElementById("topVersion").style.display="none";
-  
+ 
 document.getElementById("topBarHome").style.display = "flex";
-  
+ 
 const viewer = document.getElementById("viewerStatus");
 viewer.innerText = "管理者として視聴中";
 viewer.style.display = "block";
@@ -1037,66 +1028,7 @@ localStorage.setItem("reviewVideoId", videoId);
 window.location.href = "quiz.html";
 
 }
-  
-function sendWatchData(){
-
-if(!player || !player.getDuration()) return;
-
-let current = player.getCurrentTime();
-let duration = player.getDuration();
-
-let percent = Math.floor((current / duration) * 100);
-
-let data = {
-  name: username,
-  videoId: currentVideoId,
-  watchTime: Math.floor(current),
-  percent: percent,
-  completed: localStorage.getItem(username+"_complete_"+currentVideoId) ? true : false
-};
-
-fetch("https://script.google.com/macros/s/AKfycby6sCG-GqWyzSgM4OyTSihX8SocvKNw9wf-pqhmei_EnnKvKzGcEiclJlZuOCPaWdUK/exec",{
-  method:"POST",
-  mode:"no-cors",
-  headers:{
-    "Content-Type":"application/json"
-  },
-  body: JSON.stringify(data)
-});
-
-}
-
 </script>
 <div id="toast"></div>  
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
