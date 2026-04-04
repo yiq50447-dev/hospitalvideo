@@ -354,15 +354,10 @@ onclick="showSummary()"
 style="display:none;margin:20px;padding:10px 16px;background:#e50914;color:#fff;border:none;border-radius:6px;">
 テスト全体集計
 </button>
-
 <div id="summaryArea" style="display:none;padding:20px;">
   <h3>全体集計</h3>
-
+  <canvas id="summaryChart"></canvas>
   <div id="summaryTable" style="margin-top:20px;"></div>
-
-  <!-- ★ここに追加 -->
-  <canvas id="questionChart" style="margin-top:20px;"></canvas>
-
 </div>
 
 
@@ -1064,25 +1059,12 @@ async function showSummary(){
 
     document.getElementById("summaryArea").style.display="block";
 
-    // ===== 数値のみ =====
     document.getElementById("summaryTable").innerHTML = `
       <p>受講者数：${data.total}</p>
       <p>合格者数：${data.passed}</p>
       <p>平均点：${data.avg}点</p>
     `;
 
-    // ===== 苦手問題テキスト =====
-    const worst = data.questions
-      .map((rate,i)=>({q:i+1, rate}))
-      .sort((a,b)=>a.rate-b.rate)
-      .slice(0,3);
-
-    document.getElementById("summaryTable").innerHTML += `
-      <p style="margin-top:10px;">間違いが多い問題：</p>
-      ${worst.map(w=>`<p>Q${w.q}（正答率 ${w.rate}%）</p>`).join("")}
-    `;
-
-    // ===== 円グラフ =====
     drawChart(data);
 
   }catch(e){
@@ -1090,22 +1072,19 @@ async function showSummary(){
     console.error(e);
   }
 }
+
+
+
 function drawChart(data){
 
-  // ワースト3抽出
-  const worst = data.questions
-    .map((rate,i)=>({q:i+1, rate}))
-    .sort((a,b)=>a.rate-b.rate)
-    .slice(0,3);
-
-  const ctx = document.getElementById("questionChart");
+  const ctx = document.getElementById("summaryChart");
 
   new Chart(ctx, {
-    type: 'pie',
+    type: 'bar',
     data: {
-      labels: worst.map(w => "Q" + w.q),
+      labels: ['受講者', '合格者', '平均点'],
       datasets: [{
-        data: worst.map(w => 100 - w.rate) // 不正解率にする
+        data: [data.total, data.passed, data.avg]
       }]
     }
   });
