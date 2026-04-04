@@ -316,7 +316,6 @@ cursor:default;
 opacity:0.5;
 }
 </style>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -348,18 +347,7 @@ opacity:0.5;
   <button id="logoutBtn" onclick="logout()">ログアウト</button>
  </div>
 <h2 style="padding:20px;color:#e50914;">動画リスト</h2>
-<button onclick="showSummary()" style="margin:20px;padding:10px 16px;background:#e50914;color:#fff;border:none;border-radius:6px;">
-テスト全体集計
-</button>
 <ul id="videoList">
-
-<div id="summaryArea" style="display:none;padding:20px;">
-  <h3>全体集計</h3>
-
-  <canvas id="summaryChart"></canvas>
-
-  <div id="summaryTable" style="margin-top:20px;"></div>
-</div>
  
 <li id="video_HyyeZRsWGkw">
 
@@ -934,25 +922,24 @@ let pass = prompt("管理者パスワード");
 
 if(pass==="1234"){
 
-  adminMode=true;
-  username="管理者";
+adminMode=true;
+username="管理者";
 
-  document.getElementById("summaryBtn").style.display="block"; // ★ここ
+nameInputModal.style.display="none";
+loader.style.display="none";
 
-  nameInputModal.style.display="none";
-  loader.style.display="none";
+document.getElementById("topVersion").style.display="none";
+ 
+document.getElementById("topBarHome").style.display = "flex";
+ 
+const viewer = document.getElementById("viewerStatus");
+viewer.innerText = "管理者として視聴中";
+viewer.style.display = "block";
 
-  document.getElementById("topVersion").style.display="none";
+updateViewedDates();  // ←追加
 
-  document.getElementById("topBarHome").style.display = "flex";
+alert("管理者モードON");
 
-  const viewer = document.getElementById("viewerStatus");
-  viewer.innerText = "管理者として視聴中";
-  viewer.style.display = "block";
-
-  updateViewedDates();
-
-  alert("管理者モードON");
 }
 
 adminTapCount=0;
@@ -1041,29 +1028,10 @@ localStorage.setItem("reviewVideoId", videoId);
 window.location.href = "quiz.html";
 
 }
-
-async function showSummary(){
-
-  if(!adminMode){
-    showToast("管理者のみ閲覧できます");
-    return;
-  }
-
-  const res = await fetch("https://script.google.com/macros/s/AKfycbzqjoFQGFztIyg6YhBsJRzyy4PVH5uRGXqqOmXMtXbM8ntIaUVcJVWgpYNT2dGJ-4Xu/exec?type=summary");
-
-  const data = await res.json();
-
-  document.getElementById("summaryArea").style.display="block";
-
-  // 表
-  document.getElementById("summaryTable").innerHTML = `
-    <p>受講者数：${data.total}</p>
-    <p>完了者：${data.completed}</p>
-    <p>平均視聴率：${data.avg}%</p>
-  `;
-
-  drawChart(data);
-}
+</script>
+<div id="toast"></div>  
+</body>
+</html>
 
 </script>
 <div id="toast"></div>  
