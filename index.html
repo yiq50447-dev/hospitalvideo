@@ -559,18 +559,24 @@ player=new YT.Player('player',{
 videoId:id,
 playerVars:{controls:0,rel:0,modestbranding:1,fs:0,playsinline:1},
 events:{
-onReady:()=>{
-uiInterval=setInterval(updateUI,500);
-showUI();
-},
+
 onStateChange:(e)=>{
 if(e.data===YT.PlayerState.PLAYING) startUITimer();
 }
 }
 });
 }
+onReady:()=>{
+  uiInterval=setInterval(updateUI,500);
+  showUI();
 
-function togglePlay(){
+  // ★追加（10秒ごと送信）
+  setInterval(()=>{
+    sendWatchData();
+  },10000);
+
+},
+
 if(!resumePromptShown && resumeTime>5){
 resumeInline.style.display="block";
 resumePromptShown=true;
@@ -627,11 +633,13 @@ maxWatchedTime = c;
 
 if(c >= d-2){
 
-localStorage.setItem(username+"_complete_"+currentVideoId,true);
+  sendWatchData(); // ★追加
 
-localStorage.setItem("quizUser",username);
+  localStorage.setItem(username+"_complete_"+currentVideoId,true);
 
-window.location.href="quiz.html";
+  localStorage.setItem("quizUser",username);
+
+  window.location.href="quiz.html";
 
 }
 
@@ -896,17 +904,17 @@ location.reload();
 }
 function goBack(){
 
+  sendWatchData(); // ★追加
 
-  
-if(player){
-player.destroy();
-}
+  if(player){
+    player.destroy();
+  }
 
-videoWrapper.style.display="none";
-home.style.display="block";
+  videoWrapper.style.display="none";
+  home.style.display="block";
 
-chapterPanel.style.right="-320px";
-chapterOpen=false;
+  chapterPanel.style.right="-320px";
+  chapterOpen=false;
 
 }
 checkVersion();
@@ -1028,6 +1036,35 @@ localStorage.setItem("reviewVideoId", videoId);
 window.location.href = "quiz.html";
 
 }
+  
+function sendWatchData(){
+
+if(!player || !player.getDuration()) return;
+
+let current = player.getCurrentTime();
+let duration = player.getDuration();
+
+let percent = Math.floor((current / duration) * 100);
+
+let data = {
+  name: username,
+  videoId: currentVideoId,
+  watchTime: Math.floor(current),
+  percent: percent,
+  completed: localStorage.getItem(username+"_complete_"+currentVideoId) ? true : false
+};
+
+fetch("https://script.google.com/macros/s/AKfycby6sCG-GqWyzSgM4OyTSihX8SocvKNw9wf-pqhmei_EnnKvKzGcEiclJlZuOCPaWdUK/exec",{
+  method:"POST",
+  mode:"no-cors",
+  headers:{
+    "Content-Type":"application/json"
+  },
+  body: JSON.stringify(data)
+});
+
+}
+
 </script>
 <div id="toast"></div>  
 </body>
