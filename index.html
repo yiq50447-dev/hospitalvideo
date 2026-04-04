@@ -562,6 +562,7 @@ events:{
 onReady:()=>{
   uiInterval=setInterval(updateUI,500);
   showUI();
+  let sendInterval = null;
  if(sendInterval) clearInterval(sendInterval);
   // ★追加（10秒ごと送信）
  sendInterval = setInterval(()=>{
