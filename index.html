@@ -1091,6 +1091,7 @@ async function showSummary(){
     console.error(e);
   }
 }
+
 function drawChart(data){
 
   // ワースト3抽出
@@ -1107,21 +1108,6 @@ function drawChart(data){
       labels: worst.map(w => "Q" + w.q),
       datasets: [{
         data: worst.map(w => 100 - w.rate) // 不正解率にする
-      }]
-    }
-  });
-}
-
-
-  // ★円グラフ（問題別）
-  const qctx = document.getElementById("questionChart");
-
-  new Chart(qctx, {
-    type: 'pie',
-    data: {
-      labels: data.questions.map((_,i)=>"Q"+(i+1)),
-      datasets: [{
-        data: data.questions
       }]
     }
   });
