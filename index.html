@@ -559,13 +559,6 @@ player=new YT.Player('player',{
 videoId:id,
 playerVars:{controls:0,rel:0,modestbranding:1,fs:0,playsinline:1},
 events:{
-
-onStateChange:(e)=>{
-if(e.data===YT.PlayerState.PLAYING) startUITimer();
-}
-}
-});
-}
 onReady:()=>{
   uiInterval=setInterval(updateUI,500);
   showUI();
@@ -576,6 +569,13 @@ onReady:()=>{
   },10000);
 
 },
+onStateChange:(e)=>{
+if(e.data===YT.PlayerState.PLAYING) startUITimer();
+}
+}
+});
+}
+
 
 if(!resumePromptShown && resumeTime>5){
 resumeInline.style.display="block";
