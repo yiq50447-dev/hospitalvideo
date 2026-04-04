@@ -562,9 +562,9 @@ events:{
 onReady:()=>{
   uiInterval=setInterval(updateUI,500);
   showUI();
-
+ if(sendInterval) clearInterval(sendInterval);
   // ★追加（10秒ごと送信）
-  setInterval(()=>{
+ sendInterval = setInterval(()=>{
     sendWatchData();
   },10000);
 
