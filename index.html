@@ -1065,7 +1065,15 @@ async function showSummary(){
       <p>合格者数：${data.passed}</p>
       <p>平均点：${data.avg}点</p>
     `;
+const worst = data.questions
+  .map((rate,i)=>({q:i+1, rate}))
+  .sort((a,b)=>a.rate-b.rate)
+  .slice(0,3);
 
+document.getElementById("summaryTable").innerHTML += `
+  <p>間違いが多い問題：</p>
+  ${worst.map(w=>`<p>Q${w.q}（正答率 ${w.rate}%）</p>`).join("")}
+`;
     drawChart(data);
 
   }catch(e){
@@ -1075,6 +1083,7 @@ async function showSummary(){
 }
 function drawChart(data){
 
+  // 棒グラフ（そのまま）
   const ctx = document.getElementById("summaryChart");
 
   new Chart(ctx, {
@@ -1086,7 +1095,21 @@ function drawChart(data){
       }]
     }
   });
+
+  // ★円グラフ（問題別）
+  const qctx = document.getElementById("questionChart");
+
+  new Chart(qctx, {
+    type: 'pie',
+    data: {
+      labels: data.questions.map((_,i)=>"Q"+(i+1)),
+      datasets: [{
+        data: data.questions
+      }]
+    }
+  });
 }
+
 </script>
 <div id="toast"></div>  
 </body>
