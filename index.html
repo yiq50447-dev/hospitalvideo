@@ -1047,22 +1047,23 @@ window.location.href = "quiz.html";
 }
 async function showSummary(){
 
-  // 管理者以外ブロック
   if(!adminMode){
     showToast("管理者のみ閲覧できます");
     return;
   }
 
   try{
-    const res = await fetch("https://script.google.com/macros/s/AKfycbzqjoFQGFztIyg6YhBsJRzyy4PVH5uRGXqqOmXMtXbM8ntIaUVcJVWgpYNT2dGJ-4Xu/exec?type=summary");
+
+    const res = await fetch("https://script.google.com/macros/s/AKfycbxqN8xHmiNJ9nnaHDvX5lE3oQ8siIdvGSlCjAwNrwL0Ye07Fixa5pcIeWpsp3oSvtUw/exec?type=summary");
+
     const data = await res.json();
 
     document.getElementById("summaryArea").style.display="block";
 
     document.getElementById("summaryTable").innerHTML = `
       <p>受講者数：${data.total}</p>
-      <p>完了者：${data.completed}</p>
-      <p>平均視聴率：${data.avg}%</p>
+      <p>合格者数：${data.passed}</p>
+      <p>平均点：${data.avg}点</p>
     `;
 
     drawChart(data);
@@ -1072,7 +1073,6 @@ async function showSummary(){
     console.error(e);
   }
 }
-
 function drawChart(data){
 
   const ctx = document.getElementById("summaryChart");
@@ -1080,24 +1080,15 @@ function drawChart(data){
   new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: ['受講者', '完了者', '平均視聴率'],
+      labels: ['受講者', '合格者', '平均点'],
       datasets: [{
-        label: '集計',
-        data: [data.total, data.completed, data.avg]
+        data: [data.total, data.passed, data.avg]
       }]
-    },
-    options:{
-      responsive:true
     }
   });
 }
-
 </script>
 <div id="toast"></div>  
 </body>
 </html>
 
-</script>
-<div id="toast"></div>  
-</body>
-</html>
