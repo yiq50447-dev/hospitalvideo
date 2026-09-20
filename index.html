@@ -402,10 +402,10 @@ style="display:none;margin:20px;padding:10px 16px;background:#e50914;color:#fff;
       第二回オンライン勉強会　より良い排泄ケアを目指して
     </div>
 
-    <button class="quizBtn"
-      onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSc7J4cA9X8WkHXmv6KITaTR3SE23LXhxzyZHyQbCq_eZRuohQ/viewform?usp=header','_blank')">
-      アンケートに答える
-    </button>
+<button class="quizBtn locked"
+  onclick="startSurvey('YpA2e9nQO1k')">
+  アンケートに答える（動画視聴後）
+</button>
 
   </div>
 
@@ -584,6 +584,7 @@ viewer.innerText = username + " として視聴中";
 viewer.style.display = "block";
 
 updateViewedDates();
+updateSurveyButton();
 }
 
 function playVideo(id){
@@ -693,11 +694,22 @@ if(c >= d-2){
 
 localStorage.setItem(username+"_complete_"+currentVideoId,true);
 
+// オムツ動画ならアンケートボタンを解放
+if(currentVideoId === "YpA2e9nQO1k"){
+updateSurveyButton();
+}
+
+// ノロウイルス動画だけテスト画面へ
+if(isNoroVideo()){
+
 localStorage.setItem("quizUser",username);
 
 window.location.href="quiz.html";
 
 }
+
+}
+
 
 currentTime.innerText=formatTime(c);
 duration.innerText=formatTime(d);
@@ -1051,6 +1063,24 @@ return;
 
 }
 
+function startSurvey(videoId){
+
+if(!localStorage.getItem(username+"_complete_"+videoId)){
+
+showToast("動画を最後まで視聴するとアンケートに回答できます");
+
+return;
+
+}
+
+window.open(
+"https://docs.google.com/forms/d/e/1FAIpQLSc7J4cA9X8WkHXmv6KITaTR3SE23LXhxzyZHyQbCq_eZRuohQ/viewform?usp=header",
+"_blank"
+);
+
+}
+
+ 
 localStorage.setItem("quizUser",username);
 
 window.location.href="quiz.html";
@@ -1159,6 +1189,28 @@ async function showSummary(){
     console.error(e);
   }
 }
+function updateSurveyButton(){
+
+const id = "YpA2e9nQO1k";
+
+const btn = document.querySelector("#video_"+id+" .quizBtn");
+
+if(!btn) return;
+
+if(localStorage.getItem(username+"_complete_"+id)){
+
+btn.classList.remove("locked");
+btn.innerText = "アンケートに答える";
+
+}else{
+
+btn.classList.add("locked");
+btn.innerText = "アンケートに答える（動画視聴後）";
+
+}
+
+}
+
 
 </script>
 <div id="toast"></div>  
