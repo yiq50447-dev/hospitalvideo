@@ -62,13 +62,14 @@ border-radius:6px;cursor:pointer;
 
 #player{
 position:absolute;
-width:100vw;
-height:56.25vw;
-max-height:100vh;
-left:50%;
-top:50%;
-transform:translate(-50%,-50%);
+width:100%;
+height:100%;
 pointer-events:none;
+z-index:1;
+}
+
+#player iframe{
+pointer-events:none !important;
 }
 
 .centralUI{
@@ -538,7 +539,7 @@ style="display:none;margin:20px;padding:10px 16px;background:#e50914;color:#fff;
  
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.0.2 ";
+const APP_VERSION = "1.0.3 ";
 document.addEventListener("DOMContentLoaded", function(){
 document.getElementById("topVersion").innerText = "Ver " + APP_VERSION;
 });
