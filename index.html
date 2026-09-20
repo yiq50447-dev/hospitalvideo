@@ -523,6 +523,11 @@ const UPDATE_MESSAGE = `
 ・復習モード修正
 `;
 let player,username="guest",currentVideoId="";
+ const NORO_VIDEO_ID = "HyyeZRsWGkw";
+
+function isNoroVideo(){
+  return currentVideoId === NORO_VIDEO_ID;
+}
 let thinkingStarts=[286,627,1009,1375,1736,1929];
 let thinkingActive=false;
 let thinkingTimer=null;
@@ -583,10 +588,25 @@ updateViewedDates();
 }
 
 function playVideo(id){
- 
 
- 
-currentVideoId=id;
+currentVideoId = id;
+
+// ノロウイルス動画だけチャプターを表示
+document.getElementById("chapterBtn").style.display =
+  isNoroVideo() ? "block" : "none";
+
+// 前の動画のスキップ表示をリセット
+skipIntro.style.display = "none";
+skipThinking.style.display = "none";
+
+introActive = false;
+thinkingActive = false;
+
+if(thinkingTimer){
+  clearInterval(thinkingTimer);
+  thinkingTimer = null;
+}
+
 resumeTime=parseFloat(localStorage.getItem(username+"_"+id))||0;
 maxWatchedTime = resumeTime;
 resumePromptShown=false;
@@ -631,6 +651,8 @@ if(!player.getDuration()) return;
  
 let c=player.getCurrentTime(),d=player.getDuration();
 // ===== シンキングタイム判定 =====
+if(isNoroVideo()){
+
 thinkingStarts.forEach(start=>{
 
 if(c>=start && c<start+1 && !thinkingActive){
@@ -662,6 +684,8 @@ thinkingActive=false;
 }
 
 });
+
+}
 if(c > maxWatchedTime){
 maxWatchedTime = c;
 }
@@ -682,12 +706,13 @@ progress.value=c/d*100;
 localStorage.setItem(username+"_"+currentVideoId,c);
 localStorage.setItem(username+"_date_"+currentVideoId,new Date().toLocaleDateString());
 
-if(c>=22 && c<=27 && !introActive){
+if(isNoroVideo() && c>=22 && c<=27 && !introActive){
 introActive=true;
 skipIntro.style.display="block";
 skipBar.style.animation="none";
 void skipBar.offsetWidth;
 skipBar.style.animation="grow 5s linear forwards";
+
 setTimeout(()=>{
 skipIntro.style.display="none";
 introActive=false;
