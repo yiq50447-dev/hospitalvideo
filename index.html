@@ -1063,6 +1063,23 @@ return;
 
 }
 
+function startQuiz(videoId){
+
+if(!localStorage.getItem(username+"_complete_"+videoId)){
+
+showToast("動画を最後まで視聴するとテストを受けられます");
+
+return;
+
+}
+
+localStorage.setItem("quizUser",username);
+
+window.location.href="quiz.html";
+
+}
+
+
 function startSurvey(videoId){
 
 if(!localStorage.getItem(username+"_complete_"+videoId)){
@@ -1080,12 +1097,6 @@ window.open(
 
 }
 
- 
-localStorage.setItem("quizUser",username);
-
-window.location.href="quiz.html";
-
-}
 function skipThinkingClick(e){
 
 e.stopPropagation();
