@@ -69,6 +69,16 @@ height:100%;
 pointer-events:none;
 }
 
+.centralUI,
+#bottomControls,
+#backBtn,
+#chapterBtn,
+#skipIntro,
+#skipThinking,
+#resumeInline,
+#chapterPanel{
+pointer-events:auto;
+}
 .centralUI{
 position:absolute;top:50%;left:50%;
 transform:translate(-50%,-50%);
@@ -536,7 +546,7 @@ style="display:none;margin:20px;padding:10px 16px;background:#e50914;color:#fff;
  
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.0.4 ";
+const APP_VERSION = "1.0.3 ";
 document.addEventListener("DOMContentLoaded", function(){
 document.getElementById("topVersion").innerText = "Ver " + APP_VERSION;
 });
