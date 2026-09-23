@@ -2,7 +2,8 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<!-- viewport-fit=cover を追加 -->
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>動画アプリ</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -11,355 +12,375 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:sans-serif;}
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:sans-serif;
+  -webkit-tap-highlight-color: transparent; /* タップ時の青いハイライトを削除 */
+}
+
+/* ボタン等のタップ操作性を向上 */
+button, div[role="button"] {
+  touch-action: manipulation;
+  cursor: pointer;
+}
+
 body,html{
-width:100%;
-height:100%;
-background:#000;
-overflow:hidden;
-color:#fff;
+  width:100%;
+  height:100%;
+  background:#000;
+  overflow:hidden;
+  color:#fff;
 }
 
 
 #loader{
-position:fixed;top:0;left:0;width:100%;height:100%;
-background:#111;display:flex;align-items:center;justify-content:center;
-z-index:100;
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:#111;display:flex;align-items:center;justify-content:center;
+  z-index:100;
 }
 
 #nameInputModal{
-position:fixed;top:0;left:0;width:100%;height:100%;
-background:rgba(0,0,0,0.95);
-display:flex;align-items:center;justify-content:center;
-flex-direction:column;z-index:101;text-align:center;padding:20px;
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.95);
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;z-index:101;text-align:center;
+  padding:calc(20px + env(safe-area-inset-top)) calc(20px + env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) calc(20px + env(safe-area-inset-left));
 }
 #nameInputModal input{
-padding:12px;font-size:16px;border-radius:8px;border:none;margin:10px;
+  padding:12px;font-size:16px;border-radius:8px;border:none;margin:10px;
 }
 #nameInputModal button{
-padding:10px 20px;background:#e50914;color:#fff;border:none;border-radius:8px;
+  padding:10px 20px;background:#e50914;color:#fff;border:none;border-radius:8px;
 }
 
-#home{width:100%;height:100%;overflow-y:auto;}
+#home{
+  width:100%;
+  height:100%;
+  overflow-y:auto;
+  padding-top:calc(70px + env(safe-area-inset-top));
+  padding-left:env(safe-area-inset-left);
+  padding-right:env(safe-area-inset-right);
+  padding-bottom:env(safe-area-inset-bottom);
+}
 #videoList{list-style:none;padding:20px;}
 #videoList li{
-padding:12px;margin-bottom:10px;background:rgba(255,255,255,0.05);
-border-radius:6px;cursor:pointer;
+  padding:12px;margin-bottom:10px;background:rgba(255,255,255,0.05);
+  border-radius:6px;cursor:pointer;
 }
 .locked{opacity:.4;cursor:default;}
 .viewedDate{font-size:12px;color:#aaa;margin-top:4px;}
 
 #videoWrapper{
-width:100vw;
-height:100vh;
-position:fixed;
-top:0;
-left:0;
-display:none;
-overflow:hidden;
+  width:100%;
+  height:100%;
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  display:none;
+  overflow:hidden;
+  isolation:isolate;
 }
- 
+
 #player{
-position:absolute;
-width:100%;
-height:100%;
-pointer-events:none;
+  position:absolute;
+  width:100%;
+  height:100%;
+  pointer-events:none;
 }
-
-#player iframe{
-pointer-events:none !important;
-}
-
-.centralUI,
-#bottomControls,
-#backBtn,
-#chapterBtn,
-#skipIntro,
-#skipThinking,
-#resumeInline,
-#chapterPanel{
-position:absolute;
-z-index:9999 !important;
-pointer-events:auto !important;
-}
-
 
 .centralUI{
-position:absolute;top:50%;left:50%;
-transform:translate(-50%,-50%);
-display:flex;gap:20px;z-index:50;transition:.3s;
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  display:flex;gap:20px;z-index:50;transition:.3s;
 }
 .centralUI button{
-font-size:22px;padding:14px;
-background:rgba(180,180,180,.6);
-border:none;color:#fff;border-radius:6px;
+  font-size:22px;padding:14px;
+  background:rgba(180,180,180,.6);
+  border:none;color:#fff;border-radius:6px;
 }
 
+/* 下部コントロールバー：左右・下部にSafe Areaを追加 */
 #bottomControls{
-position:absolute;bottom:0;width:100%;
-background:rgba(0,0,0,.6);
-display:flex;align-items:center;
-padding:8px;gap:8px;z-index:40;transition:.3s;
+  position:absolute;
+  bottom:0;
+  left:0;
+  width:100%;
+  background:rgba(0,0,0,.6);
+  display:flex;
+  align-items:center;
+  padding: 8px calc(8px + env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) calc(8px + env(safe-area-inset-left));
+  gap:8px;
+  z-index:40;
+  transition:.3s;
 }
 #progress{flex:1;}
 .hideUI{opacity:0;pointer-events:none;}
 
 #speedBtn{
-background:rgba(255,255,255,0.15);
-border:none;
-color:#fff;
-padding:6px 10px;
-border-radius:6px;
-font-size:14px;
-min-width:55px;
+  background:rgba(255,255,255,0.15);
+  border:none;
+  color:#fff;
+  padding:6px 10px;
+  border-radius:6px;
+  font-size:14px;
+  min-width:55px;
 }
 
 #resumeInline{
-position:absolute;top:60%;left:50%;
-transform:translateX(-50%);
-display:none;background:rgba(0,0,0,.9);
-padding:12px 20px;border-radius:8px;
-z-index:60;text-align:center;
+  position:absolute;top:60%;left:50%;
+  transform:translateX(-50%);
+  display:none;background:rgba(0,0,0,.9);
+  padding:12px 20px;border-radius:8px;
+  z-index:60;text-align:center;
 }
 
+/* スキップボタン：右・下にSafe Areaを追加 */
 #skipIntro{
-position:absolute;right:15px;bottom:20px;
-background:rgba(0,0,0,.9);
-padding:10px 16px;border-radius:6px;
-display:none;z-index:999;overflow:hidden;cursor:pointer;
+  position:absolute;
+  right:calc(15px + env(safe-area-inset-right));
+  bottom:calc(20px + env(safe-area-inset-bottom));
+  background:rgba(0,0,0,.9);
+  padding:10px 16px;border-radius:6px;
+  display:none;z-index:999;overflow:hidden;cursor:pointer;
 }
 #skipBar{
-position:absolute;bottom:0;left:0;height:4px;
-background:#e50914;width:0%;
+  position:absolute;bottom:0;left:0;height:4px;
+  background:#e50914;width:0%;
 }
 @keyframes grow{
-from{width:0%;}
-to{width:100%;}
+  from{width:0%;}
+  to{width:100%;}
 }
 
+/* チャプターボタン：上・右にSafe Areaを追加 */
 #chapterBtn{
-position:absolute;
-top:20px;
-right:20px;
-z-index:70;
-background:rgba(229,9,20,0.6);
-border:none;
-color:#fff;
-padding:8px 14px;
-border-radius:8px;
-backdrop-filter:blur(6px);
+  position:absolute;
+  top:calc(20px + env(safe-area-inset-top));
+  right:calc(20px + env(safe-area-inset-right));
+  z-index:70;
+  background:rgba(229,9,20,0.6);
+  border:none;
+  color:#fff;
+  padding:8px 14px;
+  border-radius:8px;
+  backdrop-filter:blur(6px);
 }
+
 #chapterPanel{
-position:absolute;top:0;right:-320px;
-width:320px;height:100%;
-background:rgba(0,0,0,0.95);
-overflow-y:auto;padding:20px;
-transition:.3s;z-index:65;
+  position:absolute;
+  top:0;
+  right:-320px;
+  width:calc(320px + env(safe-area-inset-right));
+  height:100%;
+  background:rgba(0,0,0,0.95);
+  overflow-y:auto;
+  padding:calc(20px + env(safe-area-inset-top)) calc(20px + env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) 20px;
+  transition:.3s;
+  z-index:65;
 }
 #chapterPanel p{margin:8px 0;cursor:pointer;}
 .groupTitle{margin-top:15px;font-weight:bold;color:#e50914;}
- 
- 
+
 /* 更新モーダル */
 #updateModal{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.7);
-display:none;
-align-items:center;
-justify-content:center;
-z-index:300;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.7);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:300;
 }
- 
+
+/* 戻るボタン：上・左にSafe Areaを追加 */
 #backBtn{
-position:absolute;
-top:20px;
-left:20px;
-z-index:80;
-font-size:18px;
-padding:12px;
-background:rgba(180,180,180,.6);
-border:none;
-color:#fff;
-border-radius:6px;
-transition:.3s;
+  position:absolute;
+  top:calc(20px + env(safe-area-inset-top));
+  left:calc(20px + env(safe-area-inset-left));
+  z-index:80;
+  font-size:18px;
+  padding:12px;
+  background:rgba(180,180,180,.6);
+  border:none;
+  color:#fff;
+  border-radius:6px;
+  transition:.3s;
 }
- 
+
 #topVersion{
-position:fixed;
-top:15px;
-right:20px;
-z-index:500;
-font-size:18px;
-font-weight:bold;
-color:#e50914;
-letter-spacing:1px;
+  position:fixed;
+  top:calc(15px + env(safe-area-inset-top));
+  right:calc(20px + env(safe-area-inset-right));
+  z-index:500;
+  font-size:18px;
+  font-weight:bold;
+  color:#e50914;
+  letter-spacing:1px;
 }
 #toast{
-position:fixed;
-bottom:120px;
-left:50%;
-transform:translateX(-50%);
-background:rgba(0,0,0,0.85);
-color:#fff;
-padding:12px 20px;
-border-radius:8px;
-font-size:14px;
-opacity:0;
-transition:0.3s;
-z-index:999;
+  position:fixed;
+  bottom:calc(120px + env(safe-area-inset-bottom));
+  left:50%;
+  transform:translateX(-50%);
+  background:rgba(0,0,0,0.85);
+  color:#fff;
+  padding:12px 20px;
+  border-radius:8px;
+  font-size:14px;
+  opacity:0;
+  transition:0.3s;
+  z-index:999;
 }
 #logoutBtn{
-margin:10px 20px;
-padding:8px 14px;
-border:none;
-border-radius:6px;
-background:#444;
-color:#fff;
-font-size:14px;
+  margin:10px 20px;
+  padding:8px 14px;
+  border:none;
+  border-radius:6px;
+  background:#444;
+  color:#fff;
+  font-size:14px;
 }
 .quizBtn{
-margin-top:8px;
-padding:6px 10px;
-font-size:13px;
-background:#e50914;
-border:none;
-color:white;
-border-radius:6px;
-cursor:pointer;
+  margin-top:8px;
+  padding:6px 10px;
+  font-size:13px;
+  background:#e50914;
+  border:none;
+  color:white;
+  border-radius:6px;
+  cursor:pointer;
 }
 
 .quizBtn.locked{
-background:#555;
-cursor:default;
-opacity:0.5;
+  background:#555;
+  cursor:default;
+  opacity:0.5;
 }
 
 .videoRow{
-display:flex;
-justify-content:space-between;
-align-items:center;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
 
 .videoTitle{
-flex:1;
-cursor:pointer;
+  flex:1;
+  cursor:pointer;
 }
 
 .quizBtn{
-margin-left:10px;
-padding:6px 12px;
-font-size:13px;
-background:#e50914;
-border:none;
-color:white;
-border-radius:6px;
-cursor:pointer;
-white-space:nowrap;
+  margin-left:10px;
+  padding:6px 12px;
+  font-size:13px;
+  background:#e50914;
+  border:none;
+  color:white;
+  border-radius:6px;
+  cursor:pointer;
+  white-space:nowrap;
 }
 
 .quizBtn.locked{
-background:#555;
-cursor:default;
-opacity:0.5;
-}
-#skipThinking{
-position:absolute;
-right:15px;
-bottom:20px;
-background:rgba(0,0,0,.9);
-padding:10px 16px;
-border-radius:6px;
-display:none;
-z-index:999;
-cursor:pointer;
-color:#fff;
-font-size:14px;
-}
- 
-#topBarHome{
-display:none; /* ←これだけにする */
-position:fixed;
-top:0;
-left:0;
-width:100%;
-justify-content:space-between;
-align-items:center;
-padding:12px 16px;
-background:#000;
-z-index:999;
+  background:#555;
+  cursor:default;
+  opacity:0.5;
 }
 
+#skipThinking{
+  position:absolute;
+  right:calc(15px + env(safe-area-inset-right));
+  bottom:calc(20px + env(safe-area-inset-bottom));
+  background:rgba(0,0,0,.9);
+  padding:10px 16px;
+  border-radius:6px;
+  display:none;
+  z-index:999;
+  cursor:pointer;
+  color:#fff;
+  font-size:14px;
+}
+
+#topBarHome{
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  justify-content:space-between;
+  align-items:center;
+  padding:calc(12px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) 12px calc(16px + env(safe-area-inset-left));
+  background:#000;
+  z-index:999;
+}
 
 #viewerStatus{
-font-size:14px;
-color:#aaa;
+  font-size:14px;
+  color:#aaa;
 }
 
 #logoutBtn{
-padding:8px 14px;
-border:none;
-border-radius:6px;
-background:#e50914;
-color:#fff;
-font-size:14px;
-}
-
-#home{
-padding-top:70px;
+  padding:8px 14px;
+  border:none;
+  border-radius:6px;
+  background:#e50914;
+  color:#fff;
+  font-size:14px;
 }
 
 .progressBar{
-width:100%;
-height:6px;
-background:#333;
-border-radius:4px;
-margin-top:6px;
-overflow:hidden;
+  width:100%;
+  height:6px;
+  background:#333;
+  border-radius:4px;
+  margin-top:6px;
+  overflow:hidden;
 }
 
 .progressFill{
-height:100%;
-width:0%;
-background:#e50914;
-transition:0.3s;
+  height:100%;
+  width:0%;
+  background:#e50914;
+  transition:0.3s;
 }
 
 .progressText{
-font-size:12px;
-color:#aaa;
-margin-top:4px;
+  font-size:12px;
+  color:#aaa;
+  margin-top:4px;
 }
 
 .reviewBtn{
-margin-left:8px;
-padding:6px 12px;
-font-size:13px;
-background:#ff9800;
-border:none;
-color:white;
-border-radius:6px;
-cursor:pointer;
-white-space:nowrap;
+  margin-left:8px;
+  padding:6px 12px;
+  font-size:13px;
+  background:#ff9800;
+  border:none;
+  color:white;
+  border-radius:6px;
+  cursor:pointer;
+  white-space:nowrap;
 }
 
 .reviewBtn.hidden{
-display:none;
+  display:none;
 }
 .reviewBtn.locked{
-background:#555;
-cursor:default;
-opacity:0.5;
+  background:#555;
+  cursor:default;
+  opacity:0.5;
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </head>
 <body>
-
 <div id="topVersion"></div>
  
 <div id="loader">ロード中…</div>
@@ -551,7 +572,7 @@ style="display:none;margin:20px;padding:10px 16px;background:#e50914;color:#fff;
  
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.0.6 ";
+const APP_VERSION = "1.0.7 ";
 document.addEventListener("DOMContentLoaded", function(){
 document.getElementById("topVersion").innerText = "Ver " + APP_VERSION;
 });
