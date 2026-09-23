@@ -53,15 +53,8 @@ display:none;
 position:absolute;
 width:100%;
 height:100%;
-left:0;
-top:0;
 pointer-events:none;
-z-index:1;
-display:flex;
-align-items:center;
-justify-content:center;
 }
-
 #player iframe{
 width:100% !important;
 height:100% !important;
@@ -349,6 +342,19 @@ background:#555;
 cursor:default;
 opacity:0.5;
 }
+ 
+@media (orientation: landscape){
+  #player{
+    width:100vw;
+    height:56.25vw;
+    max-height:100vh;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    pointer-events:none;
+    z-index:1;
+  }
+}
 </style>
 <script src=" https://cdn.jsdelivr.net/ npm/chart.js "></script>
 
@@ -546,7 +552,7 @@ style="display:none;margin:20px;padding:10px 16px;background:#e50914;color:#fff;
  
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.0.5 ";
+const APP_VERSION = "1.0.1 ";
 document.addEventListener("DOMContentLoaded", function(){
 document.getElementById("topVersion").innerText = "Ver " + APP_VERSION;
 });
