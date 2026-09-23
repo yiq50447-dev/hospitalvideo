@@ -177,18 +177,20 @@ body,html{
   backdrop-filter:blur(6px);
 }
 
+/* チャプターパネル（右側に隠す処理） */
 #chapterPanel{
-  position:absolute;
-  top:0;
-  right:-320px;
-  width:calc(320px + env(safe-area-inset-right));
-  height:100%;
-  background:rgba(0,0,0,0.95);
-  overflow-y:auto;
-  padding:calc(20px + env(safe-area-inset-top)) calc(20px + env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) 20px;
-  transition:.3s;
-  z-index:65;
+  position: absolute;
+  top: 0;
+  right: -350px; /* セーフエリアを含めても確実に画面外へ隠す */
+  width: 320px;
+  height: 100%;
+  background: rgba(0,0,0,0.95);
+  overflow-y: auto;
+  padding: calc(20px + env(safe-area-inset-top)) 20px 20px 20px;
+  transition: .3s;
+  z-index: 65;
 }
+
 #chapterPanel p{margin:8px 0;cursor:pointer;}
 .groupTitle{margin-top:15px;font-weight:bold;color:#e50914;}
 
@@ -579,7 +581,7 @@ style="display:none;margin:20px;padding:10px 16px;background:#e50914;color:#fff;
  
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.0.7 ";
+const APP_VERSION = "1.0.8 ";
 document.addEventListener("DOMContentLoaded", function(){
 document.getElementById("topVersion").innerText = "Ver " + APP_VERSION;
 });
