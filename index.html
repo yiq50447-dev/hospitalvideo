@@ -109,7 +109,7 @@ body,html{
     width: calc((100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom)) * 16 / 9) !important;
 
     /* 画面幅からはみ出さないための制限 */
-    max-width: calc(100vw - 120px) !important;
+    max-width: calc(100vw - 160px) !important;
     max-height: calc((100vw - 120px) * 9 / 16) !important;
 
     /* 上下は中央配置 */
@@ -117,7 +117,7 @@ body,html{
     transform: translateY(-50%) !important;
 
     /* ★画面中心より少し「左」にずらす指定 */
-    left: calc(50% - 65px) !important;
+    left: calc(50% - 85px) !important;
   }
 }
 
@@ -614,7 +614,7 @@ style="display:none;margin:20px;padding:10px 16px;background:#e50914;color:#fff;
  
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.0.1 ";
+const APP_VERSION = "1.0.2 ";
 document.addEventListener("DOMContentLoaded", function(){
 document.getElementById("topVersion").innerText = "Ver " + APP_VERSION;
 });
