@@ -59,21 +59,9 @@ right:0;
 bottom:0;
 display:none;
 overflow:hidden;
+isolation:isolate;
 }
-#videoWrapper{
-pointer-events:none;
-}
-
-.centralUI,
-#bottomControls,
-#backBtn,
-#chapterBtn,
-#skipIntro,
-#skipThinking,
-#resumeInline,
-#chapterPanel{
-pointer-events:auto;
-}
+ 
 #player{
 position:absolute;
 width:100%;
@@ -548,7 +536,7 @@ style="display:none;margin:20px;padding:10px 16px;background:#e50914;color:#fff;
  
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.0.3 ";
+const APP_VERSION = "1.0.4 ";
 document.addEventListener("DOMContentLoaded", function(){
 document.getElementById("topVersion").innerText = "Ver " + APP_VERSION;
 });
