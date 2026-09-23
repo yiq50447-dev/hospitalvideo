@@ -81,23 +81,27 @@ body,html{
   left: 0;
   right: 0;
   bottom: 0;
-  display: none; /* ← ここを none に戻しました */
+  display: none; /* 初期状態は非表示（JSで表示切替するため変更しない） */
   overflow: hidden;
   isolation: isolate;
   background: #000;
 
-  /* 左右・下に黒帯（セーフエリア）の余白を作る */
+  /* 左右に均等なセーフエリア（黒帯）を確保する */
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
   padding-bottom: env(safe-area-inset-bottom);
+
+  /* 左右の余白を差し引いた領域を正しく計算させる */
+  box-sizing: border-box;
 }
 
-/* 動画本体（iframeやvideoタグ） */
+/* 動画本体 */
 #player{
   position: absolute;
   top: 0;
-  left: 0;
-  width: 100%;
+  /* 左右のpadding（黒帯）の内側一杯に広げて中央配置 */
+  left: env(safe-area-inset-left);
+  width: calc(100% - env(safe-area-inset-left) - env(safe-area-inset-right));
   height: 100%;
   object-fit: contain;
   pointer-events: none;
@@ -586,7 +590,7 @@ style="display:none;margin:20px;padding:10px 16px;background:#e50914;color:#fff;
  
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.0.9.1 ";
+const APP_VERSION = "1.0.9.2 ";
 document.addEventListener("DOMContentLoaded", function(){
 document.getElementById("topVersion").innerText = "Ver " + APP_VERSION;
 });
