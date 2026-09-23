@@ -72,7 +72,7 @@ body,html{
 .locked{opacity:.4;cursor:default;}
 .viewedDate{font-size:12px;color:#aaa;margin-top:4px;}
 
-/* 動画プレイヤー全体のコンテナ */
+/* 動画プレイヤーコンテナ */
 #videoWrapper{
   width: 100vw;
   height: 100vh;
@@ -85,22 +85,28 @@ body,html{
   background: #000;
 }
 
-/* 動画本体（YouTube iframe） */
+/* 動画本体（デフォルト：縦画面用） */
 #player{
   position: absolute;
   top: 50%;
   left: 50%;
-
-  /* ↓ 画面幅（100vw）から左右の黒帯（計120px）を引いた幅に制限 */
-  width: calc(100vw - 120px) !important;
-  height: 100% !important;
-
-  /* ↓ 上下左右完璧に画面真ん中へ移動 */
+  width: 100%;
+  aspect-ratio: 16 / 9; /* 動画の比率を固定 */
   transform: translate(-50%, -50%);
-
-  object-fit: contain;
   pointer-events: none;
+  border: none;
 }
+
+/* 横画面（Landscape）の時だけの専用設定 */
+@media (orientation: landscape) {
+  #player {
+    /* Safe Area（黒帯）を除いた高さと幅の範囲内で16:9を維持 */
+    height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+    width: auto !important;
+    max-width: calc(100vw - env(safe-area-inset-left) - env(safe-area-inset-right)) !important;
+  }
+}
+
 
 .centralUI{
   position:absolute;top:50%;left:50%;
@@ -585,7 +591,7 @@ style="display:none;margin:20px;padding:10px 16px;background:#e50914;color:#fff;
  
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.0.9.4 ";
+const APP_VERSION = "1.0.9.5 ";
 document.addEventListener("DOMContentLoaded", function(){
 document.getElementById("topVersion").innerText = "Ver " + APP_VERSION;
 });
