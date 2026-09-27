@@ -101,21 +101,23 @@ body,html{
   justify-content: center;
 }
 
-/* 横画面（Landscape）時の最終調整設定 */
+/* 横画面（Landscape）時の確実な中央寄せ＆微調整設定 */
 @media (orientation: landscape) {
   #playerContainer {
     height: calc(100vh - 40px) !important;
     width: calc((100vh - 40px) * 16 / 9) !important;
 
-    /* 160pxで左右の隙間をしっかり確保 */
+    /* 画面からはみ出さないよう160px分（左右80pxずつ）を制限 */
     max-width: calc(100vw - 160px) !important;
     max-height: calc((100vw - 160px) * 9 / 16) !important;
 
+    /* 上下左右の完璧な真ん中を基準点にする */
     top: 50% !important;
-    transform: translateY(-50%) !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
 
-    /* ★ 85px から 20px に変更（左右均等な位置になります） */
-    left: calc(50% - 20px) !important;
+    /* ★ 基準点（真ん中）からの位置調整（正の値で右、負の値で左へ移動） */
+    margin-left: 20px !important;
   }
 }
 
