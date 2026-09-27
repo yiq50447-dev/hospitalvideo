@@ -70,66 +70,55 @@ body,html{
 .locked{opacity:.4;cursor:default;}
 .viewedDate{font-size:12px;color:#aaa;margin-top:4px;}
 
-/* --------------------------------------------------
-   動画プレイヤー関連（レスポンシブ・右はみ出し防止構造）
--------------------------------------------------- */
-#videoWrapper{
+/* 1. 画面全体 */
+#videoWrapper {
   width: 100vw;
   height: 100vh;
   position: fixed;
   top: 0;
   left: 0;
   display: none;
-  overflow: hidden;
-  isolation: isolate;
   background: #000;
+  overflow: hidden;
+  z-index: 10;
 }
 
-/* 動画枠コンテナ：常に画面の中央に固定配置 */
+/* 2. 動画枠（デフォルト：縦画面） */
 #playerContainer {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-
-  /* デフォルト（縦画面）設定 */
   width: 100vw;
   height: calc(100vw * 9 / 16);
   max-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
-/* 横画面（Landscape）時の確実な中央寄せ＆微調整設定 */
+/* 3. 横画面（Landscape）時の強制中央配置 */
 @media (orientation: landscape) {
   #playerContainer {
     height: calc(100vh - 40px) !important;
     width: calc((100vh - 40px) * 16 / 9) !important;
 
-    /* 画面からはみ出さないよう160px分（左右80pxずつ）を制限 */
+    /* 左右のセーフエリア（ノッチ/Dynamic Island）を考慮した制限 */
     max-width: calc(100vw - 160px) !important;
     max-height: calc((100vw - 160px) * 9 / 16) !important;
 
-    /* 上下左右の完璧な真ん中を基準点にする */
+    /* 上下左右の完璧な中央配置 */
     top: 50% !important;
     left: 50% !important;
     transform: translate(-50%, -50%) !important;
-
-    /* ★ 基準点（真ん中）からの位置調整（正の値で右、負の値で左へ移動） */
-    margin-left: -100px !important;
+    margin: 0 !important;
   }
 }
 
-/* iframe / videoタグ本体：親コンテナ（#playerContainer）にぴったり埋め込む */
-#player{
+/* 4. 動画本体 */
+#player {
   width: 100% !important;
   height: 100% !important;
   border: none;
   pointer-events: none;
-  object-fit: contain;
 }
-
 .centralUI{
   position:absolute;top:50%;left:50%;
   transform:translate(-50%,-50%);
@@ -613,7 +602,7 @@ style="display:none;margin:20px;padding:10px 16px;background:#e50914;color:#fff;
  
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.0.7 ";
+const APP_VERSION = "1.0.8 ";
 document.addEventListener("DOMContentLoaded", function(){
 document.getElementById("topVersion").innerText = "Ver " + APP_VERSION;
 });
