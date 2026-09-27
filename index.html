@@ -96,29 +96,27 @@ body,html{
   max-height: 100vh;
 }
 
-/* 3. 横画面（Landscape）時の強制的中央寄せ */
+/* 3. 横画面（Landscape）時の強制的中央寄せ（幅拡張版） */
 @media (orientation: landscape) {
   #playerContainer {
-    /* 画面の中心（物理的な50%, 50%）に固定 */
     position: fixed !important;
     top: 50% !important;
     left: 50% !important;
-
-    /* セーフエリアのズレを無視して、自分のサイズの半分だけ戻してピッタリ真ん中に置く */
     transform: translate(-50%, -50%) !important;
 
-    /* 画面高さからサイズを算出 */
-    height: calc(100vh - 20px) !important;
-    width: calc((100vh - 20px) * 16 / 9) !important;
+    /* 画面高さ限界まで大きく表示 */
+    height: calc(100vh - 10px) !important;
+    width: calc((100vh - 10px) * 16 / 9) !important;
 
-    /* 画面両端のノッチ等にぶつからないための上限 */
-    max-width: calc(100vw - 120px) !important;
-    max-height: calc((100vw - 120px) * 9 / 16) !important;
+    /* 左右の制限を 120px から 40px に緩めて、チャプターボタン位置まで動画幅を広げる */
+    max-width: calc(100vw - 40px) !important;
+    max-height: calc((100vw - 40px) * 9 / 16) !important;
 
     margin: 0 !important;
     padding: 0 !important;
   }
 }
+
 
 /* 4. 動画本体 */
 #playerContainer #player {
@@ -611,7 +609,7 @@ style="display:none;margin:20px;padding:10px 16px;background:#e50914;color:#fff;
  
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.0.4 ";
+const APP_VERSION = "1.0.5 ";
 document.addEventListener("DOMContentLoaded", function(){
 document.getElementById("topVersion").innerText = "Ver " + APP_VERSION;
 });
