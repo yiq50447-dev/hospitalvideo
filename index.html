@@ -71,15 +71,15 @@ body,html{
 .viewedDate{font-size:12px;color:#aaa;margin-top:4px;}
 
 
-/* --- 動画プレイヤー関連（一括・競合防止版） --- */
-
-/* 1. 画面全体 */
+/* 1. 画面全体（100%指定でSafariの画面幅バグを回避） */
 #videoWrapper {
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   position: fixed;
   top: 0;
   left: 0;
+  right: 0;
+  bottom: 0;
   display: none;
   background: #000;
   overflow: hidden;
@@ -92,20 +92,12 @@ body,html{
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 100vw;
+  width: 100%;
   height: calc(100vw * 9 / 16);
-  max-height: 100vh;
+  max-height: 100%;
 }
 
-/* 3. 動画本体 */
-#playerContainer #player {
-  width: 100% !important;
-  height: 100% !important;
-  border: none;
-  pointer-events: none;
-}
-
-/* 4. 横画面（Landscape）時の強制的中央配置（iOS Safari用修正版） */
+/* 3. 横画面（Landscape）時の完璧な中央配置 */
 @media (orientation: landscape) {
   #videoWrapper #playerContainer {
     position: absolute !important;
@@ -113,18 +105,17 @@ body,html{
     bottom: 0 !important;
     left: 0 !important;
     right: 0 !important;
-    margin: auto !important; /* 上下左右から自動で均等引っ張り（絶対中央寄せ） */
+    margin: auto !important;
 
-    /* vw（画面幅）を使わず、画面高さ(vh)から16:9比率で幅を計算 */
+    /* 画面の高さ基準で16:9比率を作成 */
     height: calc(100vh - 30px) !important;
     width: calc((100vh - 30px) * 16 / 9) !important;
 
-    /* 画面からはみ出さないための安全上限 */
+    /* vwではなく%で最大幅を制限して左右均等な黒帯を作る */
     max-width: 82% !important;
-    max-height: calc(82vw * 9 / 16) !important;
+    max-height: calc(82% * 9 / 16) !important;
 
-    transform: none !important; /* 位置ズレの原因になるtransformを解除 */
-    padding: 0 !important;
+    transform: none !important;
   }
 }
 
@@ -618,7 +609,7 @@ style="display:none;margin:20px;padding:10px 16px;background:#e50914;color:#fff;
  
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.1.0 ";
+const APP_VERSION = "1.1.1 ";
 document.addEventListener("DOMContentLoaded", function(){
 document.getElementById("topVersion").innerText = "Ver " + APP_VERSION;
 });
