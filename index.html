@@ -26,11 +26,11 @@ button, div[role="button"] {
 }
 
 body,html{
-width:100%;
-height:100%;
-background:#000;
-overflow:hidden;
-color:#fff;
+  width:100%;
+  height:100%;
+  background:#000;
+  overflow:hidden;
+  color:#fff;
 }
 
 #loader{
@@ -70,50 +70,63 @@ color:#fff;
 .locked{opacity:.4;cursor:default;}
 .viewedDate{font-size:12px;color:#aaa;margin-top:4px;}
 
-/* --------------------------------------------------
-   動画プレイヤー関連（レスポンシブ・右はみ出し防止構造）
--------------------------------------------------- */
-#videoWrapper{
-width:100%;
-height:100%;
-position:fixed;
-top:0;
-left:0;
-right:0;
-bottom:0;
-display:none;
-overflow:hidden;
+
+/* --- 動画プレイヤー関連（一括・競合防止版） --- */
+
+/* 1. 画面全体 */
+#videoWrapper {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: none;
+  background: #000;
+  overflow: hidden;
+  z-index: 10;
 }
 
-/* 動画枠コンテナ：常に画面の中央に固定配置 */
+/* 2. 動画枠（デフォルト：縦画面用） */
 #playerContainer {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-
-  /* デフォルト（縦画面）設定 */
   width: 100vw;
   height: calc(100vw * 9 / 16);
   max-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
-/* iframe / videoタグ本体：親コンテナ（#playerContainer）にぴったり埋め込む */
-#player{
-position:absolute;
-width:100%;
-height:100%;
-pointer-events:none;
-z-index:1;
+/* 3. 動画本体 */
+#playerContainer #player {
+  width: 100% !important;
+  height: 100% !important;
+  border: none;
+  pointer-events: none;
 }
 
-#player iframe{
-pointer-events:none !important;
-}
+/* 4. 横画面（Landscape）時の強制的中央配置（iOS Safari用） */
+@media (orientation: landscape) {
+ #playerContainer {
+   position: absolute;
+   top: 50%;
+   left: calc(50% - 180px);
+   transform: translate(-50%, -50%);
 
+   height: 100vh;
+   width: calc(100vh * 16 / 9);
+
+   max-width: 100vw;
+   max-height: 100vh;
+ }
+}
+/* 4. 動画本体 */
+#player {
+  width: 100% !important;
+  height: 100% !important;
+  border: none;
+  pointer-events: none;
+}
 .centralUI{
   position:absolute;top:50%;left:50%;
   transform:translate(-50%,-50%);
@@ -597,7 +610,7 @@ style="display:none;margin:20px;padding:10px 16px;background:#e50914;color:#fff;
  
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.0.2 ";
+const APP_VERSION = "1.0.3 ";
 document.addEventListener("DOMContentLoaded", function(){
 document.getElementById("topVersion").innerText = "Ver " + APP_VERSION;
 });
