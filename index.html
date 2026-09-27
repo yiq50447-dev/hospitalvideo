@@ -26,11 +26,11 @@ button, div[role="button"] {
 }
 
 body,html{
-  width:100%;
-  height:100%;
-  background:#000;
-  overflow:hidden;
-  color:#fff;
+width:100%;
+height:100%;
+background:#000;
+overflow:hidden;
+color:#fff;
 }
 
 #loader{
@@ -74,15 +74,15 @@ body,html{
    動画プレイヤー関連（レスポンシブ・右はみ出し防止構造）
 -------------------------------------------------- */
 #videoWrapper{
-  width: 100vw;
-  height: 100vh;
-  position: fixed;
-  top: 0;
-  left: 0;
-  display: none;
-  overflow: hidden;
-  isolation: isolate;
-  background: #000;
+width:100%;
+height:100%;
+position:fixed;
+top:0;
+left:0;
+right:0;
+bottom:0;
+display:none;
+overflow:hidden;
 }
 
 /* 動画枠コンテナ：常に画面の中央に固定配置 */
@@ -103,14 +103,15 @@ body,html{
 
 /* iframe / videoタグ本体：親コンテナ（#playerContainer）にぴったり埋め込む */
 #player{
- position:absolute;
- top:50%;
- left:50%;
- width:100vw !important;
- height:100vh !important;
- transform:translate(-50%,-50%);
- border:none;
- pointer-events:none;
+position:absolute;
+width:100%;
+height:100%;
+pointer-events:none;
+z-index:1;
+}
+
+#player iframe{
+pointer-events:none !important;
 }
 
 .centralUI{
@@ -596,7 +597,7 @@ style="display:none;margin:20px;padding:10px 16px;background:#e50914;color:#fff;
  
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.0.1 ";
+const APP_VERSION = "1.0.2 ";
 document.addEventListener("DOMContentLoaded", function(){
 document.getElementById("topVersion").innerText = "Ver " + APP_VERSION;
 });
