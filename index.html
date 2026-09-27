@@ -490,6 +490,145 @@ body,html{
   flex-wrap: wrap;
   margin-top: 6px;
 }
+/* --- 動画詳細モーダル --- */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 1000;
+  justify-content: center;
+  align-items: flex-end; /* スマホ風に下から出てくる配置 */
+  backdrop-filter: blur(4px);
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal-content {
+  background: #181818;
+  width: 100%;
+  max-width: 500px;
+  border-radius: 16px 16px 0 0;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.8);
+  animation: slideUp 0.3s ease-out;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  border: none;
+  font-size: 22px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.modal-hero {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* 16:9 比率 */
+  background: #000;
+}
+
+.modal-hero img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.modal-play-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.play-icon {
+  width: 50px;
+  height: 50px;
+  background: rgba(229, 9, 20, 0.9);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  padding-left: 3px;
+}
+
+.modal-body {
+  padding: 20px;
+  color: #fff;
+}
+
+.modal-body h3 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+}
+
+.modal-meta {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-size: 12px;
+  color: #aaa;
+  margin-bottom: 12px;
+}
+
+.modal-badge {
+  border: 1px solid #aaa;
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 10px;
+}
+
+.modal-desc {
+  font-size: 13px;
+  color: #ccc;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-actions button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 6px;
+  font-weight: bold;
+}
 
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -539,6 +678,31 @@ style="display:none;margin:20px;padding:10px 16px;background:#e50914;color:#fff;
   <canvas id="questionChart" style="margin-top:20px;"></canvas>
 
 </div>
+<!-- 動画詳細モーダル（ポップアップ画面） -->
+<div id="videoModal" class="modal-overlay" onclick="closeModal(event)">
+  <div class="modal-content">
+    <button class="modal-close-btn" onclick="closeModalDirect()">×</button>
+    <div class="modal-hero">
+      <img id="modalThumb" src="" alt="サムネイル">
+      <div class="modal-play-overlay" onclick="playModalVideo()">
+        <div class="play-icon">▶</div>
+      </div>
+    </div>
+    <div class="modal-body">
+      <h3 id="modalTitle"></h3>
+      <div class="modal-meta">
+        <span id="modalDuration"></span>
+        <span class="modal-badge">HD</span>
+      </div>
+      <p id="modalDesc" class="modal-desc"></p>
+
+      <div id="modalActions" class="modal-actions">
+        <!-- JSでボタンが動的に挿入されます -->
+      </div>
+    </div>
+  </div>
+</div>
+
 
 
 <!-- チーム選択タブの追加 -->
@@ -645,7 +809,7 @@ style="display:none;margin:20px;padding:10px 16px;background:#e50914;color:#fff;
  
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.1.0 ";
+const APP_VERSION = "1.2.0 ";
 document.addEventListener("DOMContentLoaded", function(){
 document.getElementById("topVersion").innerText = "Ver " + APP_VERSION;
 });
@@ -1346,12 +1510,12 @@ btn.innerText = "アンケートに答える（動画視聴後）";
 }
 let currentTeam = "infection"; // 初期表示チーム
 
-// 動画データの定義（サムネイル情報含む）
 const videosData = [
   {
     id: "HyyeZRsWGkw",
     team: "infection",
-    title: "第一回オンライン勉強会　ノロウイルスの対応について",
+    title: "第一回オンライン勉強会 ノロウイルスの対応について",
+    desc: "ノロウイルス発生時の初期対応、二次感染を防ぐための嘔吐物処理手順について解説します。",
     type: "quiz",
     duration: 2063
   },
@@ -1359,16 +1523,19 @@ const videosData = [
     id: "PPE_LOCKED",
     team: "infection",
     title: "PPEの着脱手順（配信日未定）",
+    desc: "個人防護具（PPE）の正しい着用・脱衣順序に関する研修動画です。（準備中）",
     locked: true
   },
   {
     id: "YpA2e9nQO1k",
     team: "study",
-    title: "第二回オンライン勉強会　より良い排泄ケアを目指して",
+    title: "第二回オンライン勉強会 より良い排泄ケアを目指して",
+    desc: "利用者様の尊厳を守る排泄介助の基本と、適切なオムツ選定・あて方について学びます。",
     type: "survey",
     duration: 1200
   }
 ];
+
 
 // チーム切り替え処理
 function switchTeam(teamName){
@@ -1378,7 +1545,7 @@ function switchTeam(teamName){
   renderVideoList();
 }
 
-// サムネイル付き動画リストの自動生成
+// サムネイル・タイトルクリックで直接再生ではなく modal 表示にする
 function renderVideoList(){
   const listEl = document.getElementById("videoList");
   if(!listEl) return;
@@ -1394,38 +1561,23 @@ function renderVideoList(){
     const thumbUrl = v.locked ? "" : `https://img.youtube.com/vi/${v.id}/hqdefault.jpg`;
 
     let html = `
-      <div class="videoCard">
-        <div class="thumbnailBox" onclick="${v.locked ? '' : `playVideo('${v.id}')`}">
+      <div class="videoCard" onclick="${v.locked ? '' : `openModal('${v.id}')`}">
+        <div class="thumbnailBox">
           ${v.locked
             ? `<div class="noThumb">COMING SOON</div>`
             : `<img src="${thumbUrl}" alt="サムネイル">`
           }
         </div>
         <div class="videoCardInfo">
-          <div class="videoTitle" onclick="${v.locked ? '' : `playVideo('${v.id}')`}">${v.title}</div>
+          <div class="videoTitle">${v.title}</div>
+          <div class="viewedDate">
+            <div class="progressBar"><div class="progressFill"></div></div>
+            <div class="progressText"></div>
+          </div>
+        </div>
+      </div>
     `;
 
-    if(!v.locked){
-      html += `<div class="buttonGroup">`;
-      if(v.type === "quiz"){
-        html += `
-          <button class="quizBtn" onclick="startQuiz('${v.id}')">確認テストを実施する</button>
-          <button class="reviewBtn hidden" onclick="startReview('${v.id}')">復習する</button>
-        `;
-      } else if(v.type === "survey"){
-        html += `<button class="quizBtn locked" onclick="startSurvey('${v.id}')">アンケートに答える（動画視聴後）</button>`;
-      }
-      html += `</div>`;
-
-      html += `
-        <div class="viewedDate">
-          <div class="progressBar"><div class="progressFill"></div></div>
-          <div class="progressText"></div>
-        </div>
-      `;
-    }
-
-    html += `</div></div>`;
     li.innerHTML = html;
     listEl.appendChild(li);
 
@@ -1492,6 +1644,65 @@ function updateSingleVideoStatus(id, duration){
       reviewBtn.classList.remove("locked");
     }
   }
+}
+let currentModalVideoId = null;
+
+// モーダルを開く
+function openModal(id){
+  const video = videosData.find(v => v.id === id);
+  if(!video || video.locked) return;
+
+  currentModalVideoId = id;
+
+  document.getElementById("modalThumb").src = `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+  document.getElementById("modalTitle").innerText = video.title;
+  document.getElementById("modalDesc").innerText = video.desc || "説明はありません。";
+  document.getElementById("modalDuration").innerText = Math.floor(video.duration / 60) + "分";
+
+  // ボタンエリアの動的生成
+  const actionsEl = document.getElementById("modalActions");
+  actionsEl.innerHTML = "";
+
+  // 再生ボタン
+  const playBtn = document.createElement("button");
+  playBtn.style.cssText = "background:#fff; color:#000; border:none; cursor:pointer;";
+  playBtn.innerText = "▶ 動画を再生する";
+  playBtn.onclick = function(){
+    closeModalDirect();
+    playVideo(id);
+  };
+  actionsEl.appendChild(playBtn);
+
+  // テスト/アンケートボタン（既存のボタン状態をコピー）
+  const origBtn = document.querySelector("#video_" + id + " .quizBtn");
+  if(origBtn){
+    const modalQuizBtn = origBtn.cloneNode(true);
+    modalQuizBtn.onclick = origBtn.onclick; // イベント引き継ぎ
+    actionsEl.appendChild(modalQuizBtn);
+  }
+
+  document.getElementById("videoModal").classList.add("active");
+}
+
+// モーダルを再生して閉じる
+function playModalVideo(){
+  if(currentModalVideoId){
+    const id = currentModalVideoId;
+    closeModalDirect();
+    playVideo(id);
+  }
+}
+
+// モーダルを閉じる処理
+function closeModal(e){
+  if(e.target.classList.contains("modal-overlay")){
+    closeModalDirect();
+  }
+}
+
+function closeModalDirect(){
+  document.getElementById("videoModal").classList.remove("active");
+  currentModalVideoId = null;
 }
 
 
