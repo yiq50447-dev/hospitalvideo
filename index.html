@@ -418,6 +418,79 @@ body,html{
   cursor:default;
   opacity:0.5;
 }
+/* --- チーム選択タブ --- */
+.team-tabs {
+  display: flex;
+  gap: 10px;
+  margin: 15px 20px 10px 20px;
+}
+
+.team-tab {
+  flex: 1;
+  padding: 12px;
+  background: #222;
+  color: #aaa;
+  border: 1px solid #444;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  transition: 0.2s;
+}
+
+.team-tab.active {
+  background: #e50914;
+  color: #fff;
+  border-color: #e50914;
+}
+
+/* --- サムネイル付き動画カード --- */
+.videoCard {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.thumbnailBox {
+  position: relative;
+  width: 120px;
+  height: 68px; /* 16:9 比率 */
+  background: #222;
+  border-radius: 6px;
+  overflow: hidden;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.thumbnailBox img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.noThumb {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: #666;
+  background: #1a1a1a;
+  text-align: center;
+}
+
+.videoCardInfo {
+  flex: 1;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -468,61 +541,15 @@ style="display:none;margin:20px;padding:10px 16px;background:#e50914;color:#fff;
 </div>
 
 
-<ul id="videoList">
- 
-<li id="video_HyyeZRsWGkw">
-
-<div class="videoRow">
-
-<div class="videoTitle" onclick="playVideo('HyyeZRsWGkw')">
-第一回オンライン勉強会　ノロウイルスの対応について
+<!-- チーム選択タブの追加 -->
+<div class="team-tabs">
+  <button class="team-tab active" id="tab_infection" onclick="switchTeam('infection')">感染対策チーム</button>
+  <button class="team-tab" id="tab_study" onclick="switchTeam('study')">学習会チーム</button>
 </div>
 
-<button class="quizBtn" onclick="startQuiz('HyyeZRsWGkw')">
-確認テストを実施する
-</button>
- 
-<button class="reviewBtn" onclick="startReview('HyyeZRsWGkw')">
-復習する
-</button>
- 
-</div>
-
-<div class="viewedDate">
-  <div class="progressBar">
-    <div class="progressFill"></div>
-  </div>
-  <div class="progressText"></div>
-</div>
-
-</li>
-
-<li id="video_YpA2e9nQO1k">
-
-  <div class="videoRow">
-
-    <div class="videoTitle" onclick="playVideo('YpA2e9nQO1k')">
-      第二回オンライン勉強会　より良い排泄ケアを目指して
-    </div>
-
-<button class="quizBtn locked"
-  onclick="startSurvey('YpA2e9nQO1k')">
-  アンケートに答える（動画視聴後）
-</button>
-
-  </div>
-
-  <div class="viewedDate">
-    <div class="progressBar">
-      <div class="progressFill"></div>
-    </div>
-    <div class="progressText"></div>
-  </div>
-
-</li>
-<li class="locked">PPEの着脱手順（配信日未定）</li>
-
-</ul>
+<!-- リスト（中身はJSで自動生成するため空にします） -->
+<ul id="videoList"></ul>
+  
 </div>
 
 <div id="videoWrapper">
@@ -618,7 +645,7 @@ style="display:none;margin:20px;padding:10px 16px;background:#e50914;color:#fff;
  
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.0.9 ";
+const APP_VERSION = "1.1.0 ";
 document.addEventListener("DOMContentLoaded", function(){
 document.getElementById("topVersion").innerText = "Ver " + APP_VERSION;
 });
@@ -1316,6 +1343,155 @@ btn.innerText = "アンケートに答える（動画視聴後）";
 
 }
 
+}
+let currentTeam = "infection"; // 初期表示チーム
+
+// 動画データの定義（サムネイル情報含む）
+const videosData = [
+  {
+    id: "HyyeZRsWGkw",
+    team: "infection",
+    title: "第一回オンライン勉強会　ノロウイルスの対応について",
+    type: "quiz",
+    duration: 2063
+  },
+  {
+    id: "PPE_LOCKED",
+    team: "infection",
+    title: "PPEの着脱手順（配信日未定）",
+    locked: true
+  },
+  {
+    id: "YpA2e9nQO1k",
+    team: "study",
+    title: "第二回オンライン勉強会　より良い排泄ケアを目指して",
+    type: "survey",
+    duration: 1200
+  }
+];
+
+// チーム切り替え処理
+function switchTeam(teamName){
+  currentTeam = teamName;
+  document.getElementById("tab_infection").classList.toggle("active", teamName === "infection");
+  document.getElementById("tab_study").classList.toggle("active", teamName === "study");
+  renderVideoList();
+}
+
+// サムネイル付き動画リストの自動生成
+function renderVideoList(){
+  const listEl = document.getElementById("videoList");
+  if(!listEl) return;
+  listEl.innerHTML = "";
+
+  const filtered = videosData.filter(v => v.team === currentTeam);
+
+  filtered.forEach(v => {
+    const li = document.createElement("li");
+    li.id = "video_" + v.id;
+    if(v.locked) li.classList.add("locked");
+
+    const thumbUrl = v.locked ? "" : `https://img.youtube.com/vi/${v.id}/hqdefault.jpg`;
+
+    let html = `
+      <div class="videoCard">
+        <div class="thumbnailBox" onclick="${v.locked ? '' : `playVideo('${v.id}')`}">
+          ${v.locked
+            ? `<div class="noThumb">COMING SOON</div>`
+            : `<img src="${thumbUrl}" alt="サムネイル">`
+          }
+        </div>
+        <div class="videoCardInfo">
+          <div class="videoTitle" onclick="${v.locked ? '' : `playVideo('${v.id}')`}">${v.title}</div>
+    `;
+
+    if(!v.locked){
+      html += `<div class="buttonGroup">`;
+      if(v.type === "quiz"){
+        html += `
+          <button class="quizBtn" onclick="startQuiz('${v.id}')">確認テストを実施する</button>
+          <button class="reviewBtn hidden" onclick="startReview('${v.id}')">復習する</button>
+        `;
+      } else if(v.type === "survey"){
+        html += `<button class="quizBtn locked" onclick="startSurvey('${v.id}')">アンケートに答える（動画視聴後）</button>`;
+      }
+      html += `</div>`;
+
+      html += `
+        <div class="viewedDate">
+          <div class="progressBar"><div class="progressFill"></div></div>
+          <div class="progressText"></div>
+        </div>
+      `;
+    }
+
+    html += `</div></div>`;
+    li.innerHTML = html;
+    listEl.appendChild(li);
+
+    if(!v.locked){
+      updateSingleVideoStatus(v.id, v.duration);
+    }
+  });
+}
+
+// 単体動画の進捗・ボタン表示状態の更新
+function updateSingleVideoStatus(id, duration){
+  const time = parseFloat(localStorage.getItem(username+"_"+id)) || 0;
+  const date = localStorage.getItem(username+"_date_"+id);
+
+  let percent = Math.floor((time / (duration || 2063)) * 100);
+  if(percent > 100) percent = 100;
+  if(time === 0) percent = 0;
+  if(localStorage.getItem(username+"_complete_"+id)) percent = 100;
+
+  const fill = document.querySelector("#video_"+id+" .progressFill");
+  const text = document.querySelector("#video_"+id+" .progressText");
+
+  if(fill) fill.style.width = percent + "%";
+  if(text) {
+    let displayText = "視聴率：" + percent + "%";
+    if(date) displayText += "（最終視聴：" + date + "）";
+    text.innerText = displayText;
+  }
+
+  const quizBtn = document.querySelector("#video_"+id+" .quizBtn");
+  if(quizBtn){
+    if(id === "HyyeZRsWGkw"){
+      if(localStorage.getItem(username+"_quiz_done_"+id)){
+        quizBtn.classList.remove("locked");
+        quizBtn.innerText="回答結果を見る";
+        quizBtn.onclick=function(){ showResult(id); };
+      }else if(!localStorage.getItem(username+"_complete_"+id)){
+        quizBtn.classList.add("locked");
+        quizBtn.innerText="確認テスト（動画視聴後）";
+      }else{
+        quizBtn.classList.remove("locked");
+        quizBtn.innerText="確認テストを実施する";
+      }
+    } else if(id === "YpA2e9nQO1k"){
+      if(localStorage.getItem(username+"_complete_"+id)){
+        quizBtn.classList.remove("locked");
+        quizBtn.innerText = "アンケートに答える";
+      }else{
+        quizBtn.classList.add("locked");
+        quizBtn.innerText = "アンケートに答える（動画視聴後）";
+      }
+    }
+  }
+
+  const reviewBtn = document.querySelector("#video_"+id+" .reviewBtn");
+  if(reviewBtn){
+    let wrong = JSON.parse(localStorage.getItem(username+"_wrong_"+id) || "[]");
+    reviewBtn.classList.add("locked");
+
+    if(!localStorage.getItem(username+"_quiz_done_"+id) || wrong.length === 0){
+      reviewBtn.classList.add("hidden");
+    } else {
+      reviewBtn.classList.remove("hidden");
+      reviewBtn.classList.remove("locked");
+    }
+  }
 }
 
 
