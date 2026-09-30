@@ -809,7 +809,7 @@ style="display:none;margin:20px;padding:10px 16px;background:#e50914;color:#fff;
  
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.2.0 ";
+const APP_VERSION = "1.2.1 ";
 document.addEventListener("DOMContentLoaded", function(){
 document.getElementById("topVersion").innerText = "Ver " + APP_VERSION;
 });
@@ -1647,7 +1647,7 @@ function updateSingleVideoStatus(id, duration){
 }
 let currentModalVideoId = null;
 
-// モーダルを開く
+// モーダルを開く関数（テスト・アンケートボタンを確実に表示）
 function openModal(id){
   const video = videosData.find(v => v.id === id);
   if(!video || video.locked) return;
@@ -1657,15 +1657,14 @@ function openModal(id){
   document.getElementById("modalThumb").src = `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
   document.getElementById("modalTitle").innerText = video.title;
   document.getElementById("modalDesc").innerText = video.desc || "説明はありません。";
-  document.getElementById("modalDuration").innerText = Math.floor(video.duration / 60) + "分";
+  document.getElementById("modalDuration").innerText = Math.floor((video.duration || 0) / 60) + "分";
 
-  // ボタンエリアの動的生成
   const actionsEl = document.getElementById("modalActions");
   actionsEl.innerHTML = "";
 
-  // 再生ボタン
+  // 1. 動画再生ボタン
   const playBtn = document.createElement("button");
-  playBtn.style.cssText = "background:#fff; color:#000; border:none; cursor:pointer;";
+  playBtn.style.cssText = "background:#fff; color:#000; border:none; cursor:pointer; font-weight:bold; padding:12px; border-radius:6px;";
   playBtn.innerText = "▶ 動画を再生する";
   playBtn.onclick = function(){
     closeModalDirect();
@@ -1673,16 +1672,49 @@ function openModal(id){
   };
   actionsEl.appendChild(playBtn);
 
-  // テスト/アンケートボタン（既存のボタン状態をコピー）
-  const origBtn = document.querySelector("#video_" + id + " .quizBtn");
-  if(origBtn){
-    const modalQuizBtn = origBtn.cloneNode(true);
-    modalQuizBtn.onclick = origBtn.onclick; // イベント引き継ぎ
-    actionsEl.appendChild(modalQuizBtn);
+  // 2. テスト or アンケートボタンの動的追加
+  const user = users[currentUser];
+  const viewed = user ? user.viewed[id] : null;
+  const isCompleted = viewed && viewed.percentage >= 100; // 視聴完了したか
+
+  if (video.type === "quiz") {
+    // 感染対策チーム（ノロウイルスなど）はテストボタン
+    const quizBtn = document.createElement("button");
+    quizBtn.className = "quizBtn" + (isCompleted ? "" : " locked");
+    quizBtn.style.cssText = "margin-top:8px; padding:12px; border-radius:6px; font-weight:bold;";
+
+    if (user && user.quizResults && user.quizResults[id]) {
+      quizBtn.innerText = "回答結果を見る";
+      quizBtn.onclick = function() { closeModalDirect(); startQuiz(id); };
+    } else {
+      quizBtn.innerText = isCompleted ? "確認テストを実施する" : "確認テスト（動画視聴後）";
+      quizBtn.onclick = isCompleted ? function() { closeModalDirect(); startQuiz(id); } : null;
+    }
+    actionsEl.appendChild(quizBtn);
+
+    // 復習ボタン（間違えた問題がある場合）
+    if (user && user.quizResults && user.quizResults[id] && user.quizResults[id].wrongAnswers && user.quizResults[id].wrongAnswers.length > 0) {
+      const reviewBtn = document.createElement("button");
+      reviewBtn.className = "reviewBtn";
+      reviewBtn.style.cssText = "margin-top:8px; padding:12px; border-radius:6px; font-weight:bold; background:#ff9800; color:#fff; border:none;";
+      reviewBtn.innerText = "復習する";
+      reviewBtn.onclick = function() { closeModalDirect(); startReview(id); };
+      actionsEl.appendChild(reviewBtn);
+    }
+
+  } else if (video.type === "survey") {
+    // 学習会チーム（排泄ケアなど）はアンケートボタン
+    const surveyBtn = document.createElement("button");
+    surveyBtn.className = "quizBtn" + (isCompleted ? "" : " locked");
+    surveyBtn.style.cssText = "margin-top:8px; padding:12px; border-radius:6px; font-weight:bold;";
+    surveyBtn.innerText = isCompleted ? "アンケートに答える" : "アンケートに答える（動画視聴後）";
+    surveyBtn.onclick = isCompleted ? function() { closeModalDirect(); startSurvey(id); } : null;
+    actionsEl.appendChild(surveyBtn);
   }
 
   document.getElementById("videoModal").classList.add("active");
 }
+
 
 // モーダルを再生して閉じる
 function playModalVideo(){
