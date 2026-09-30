@@ -38,7 +38,7 @@ body,html{
   z-index:100;
 }
 
-/* ログイン画面（モーダル） */
+/* ログイン画面（モーダル：上詰めに変更） */
 #nameInputModal {
   position: fixed;
   top: 0;
@@ -47,23 +47,25 @@ body,html{
   height: 100%;
   background: #121212;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: center; /* 横方向は中央揃え */
+  justify-content: flex-start; /* 縦方向は一番上から配置 */
   flex-direction: column;
   z-index: 101;
   text-align: center;
-  padding: calc(20px + env(safe-area-inset-top)) calc(20px + env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) calc(20px + env(safe-area-inset-left));
+  /* 上部に十分な余白をとって、画面内の一番上にロゴを配置 */
+  padding: calc(40px + env(safe-area-inset-top)) calc(20px + env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) calc(20px + env(safe-area-inset-left));
+  overflow-y: auto; /* 万が一画面からはみ出た場合もスクロール可能に */
 }
 
-/* アプリロゴ・ブランディング（左寄せに変更） */
+/* アプリロゴ・ブランディング（画面一番上の左寄せ） */
 .app-brand {
   width: 100%;
   max-width: 320px;
   text-align: left;
-  margin-bottom: 20px;
+  margin-bottom: 28px;
 }
 .app-brand .app-logo {
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 800;
   color: #e50914;
   letter-spacing: 1px;
@@ -821,7 +823,7 @@ body,html{
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.2.4 ";
+const APP_VERSION = "1.2.5 ";
 document.addEventListener("DOMContentLoaded", function(){
   document.getElementById("topVersion").innerText = "Ver " + APP_VERSION;
 });
