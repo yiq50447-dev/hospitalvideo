@@ -55,19 +55,22 @@ body,html{
   padding: calc(20px + env(safe-area-inset-top)) calc(20px + env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) calc(20px + env(safe-area-inset-left));
 }
 
-/* アプリロゴ・ブランディング */
+/* アプリロゴ・ブランディング（左寄せに変更） */
 .app-brand {
-  margin-bottom: 24px;
+  width: 100%;
+  max-width: 320px;
+  text-align: left;
+  margin-bottom: 20px;
 }
 .app-brand .app-logo {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 800;
   color: #e50914;
   letter-spacing: 1px;
 }
 .app-brand .app-subtitle {
-  font-size: 12px;
-  color: #888;
+  font-size: 13px;
+  color: #aaa;
   margin-top: 4px;
 }
 
@@ -116,43 +119,44 @@ body,html{
   margin-top: 8px;
 }
 
-/* お知らせボックス */
+/* お知らせボックス（視認性UP・サイズ大きめ） */
 .login-notice {
   width: 100%;
-  max-width: 300px;
-  margin-top: 24px;
-  padding: 12px 14px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid #2a2a2a;
+  max-width: 320px;
+  margin-top: 20px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid #333;
   border-radius: 8px;
   text-align: left;
 }
 .login-notice-title {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: bold;
   color: #e50914;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   display: flex;
   align-items: center;
   gap: 4px;
 }
 .login-notice-text {
-  font-size: 12px;
-  color: #ccc;
-  line-height: 1.5;
+  font-size: 13px;
+  color: #ddd;
+  line-height: 1.6;
 }
 
-/* 画面最下部のバージョン表記 */
+/* 画面最下部のバージョン表記（押しやすいようサイズUP） */
 #topVersion {
   position: absolute;
   bottom: calc(16px + env(safe-area-inset-bottom));
   left: 50%;
   transform: translateX(-50%);
-  font-size: 11px;
-  color: #555;
+  font-size: 13px; /* 少し大きめにして押しやすく調整 */
+  color: #777;
   letter-spacing: 0.5px;
   cursor: pointer;
   z-index: 102;
+  padding: 6px 12px;
 }
 
 #home{
@@ -650,32 +654,32 @@ body,html{
 <div id="loader">ロード中…</div>
 
 <div id="nameInputModal">
-  <!-- アプリロゴ / ブランディング -->
+  <!-- アプリロゴ / ブランディング（画面左上風の配置） -->
   <div class="app-brand">
-    <div class="app-logo">EFI VIDEO LEARNING</div>
-    <div class="app-subtitle">社内研修・オンライン学習ポータル</div>
+    <div class="app-logo">EFI Pocket</div>
+    <div class="app-subtitle">いつでも学べる病棟研修ポータル</div>
   </div>
 
-  <h3>視聴する方の名前を入力してください</h3>
-  <p style="font-size:13px; color:#888;">次回視聴時も続きから再生できます</p>
+  <h3 style="text-align:left; width:100%; max-width:320px;">視聴する方の名前を入力してください</h3>
+  <p style="font-size:13px; color:#888; text-align:left; width:100%; max-width:320px; margin-top:2px;">次回視聴時も続きから再生できます</p>
 
-  <div class="input-group">
+  <div class="input-group" style="max-width:320px;">
     <input id="usernameInput" placeholder="例：洞爺 太郎" autocomplete="off">
   </div>
   <p id="nameError" style="color:#ff4d4d; font-size:12px; display:none; margin-bottom:8px;">名前を入力してください</p>
 
-  <button onclick="setUsername()">学習を開始する</button>
+  <button onclick="setUsername()" style="max-width:320px;">学習を開始する</button>
 
   <!-- お知らせ欄 -->
   <div class="login-notice">
     <div class="login-notice-title">📢 お知らせ・テスト実施期間</div>
     <div class="login-notice-text">
-      ・第1回確認テスト受講期限：<b>2026年10月31日(土)まで</b><br>
+      ・第2回 より良い排泄ケアを目指しては受講期限：<b>2026年10月31日(土)まで</b><br>
       ・動画を最後まで視聴するとテストが解放されます。
     </div>
   </div>
 
-  <!-- 最下部に控えめに配置したバージョン表記 -->
+  <!-- 最下部のバージョン表記（タップで管理者モード） -->
   <div id="topVersion"></div>
 </div>
   
