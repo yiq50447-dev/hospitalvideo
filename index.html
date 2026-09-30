@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
 <style>
-*{
+  *{
   box-sizing:border-box;
   margin:0;
   padding:0;
@@ -38,18 +38,121 @@ body,html{
   z-index:100;
 }
 
-#nameInputModal{
-  position:fixed;top:0;left:0;width:100%;height:100%;
-  background:rgba(0,0,0,0.95);
-  display:flex;align-items:center;justify-content:center;
-  flex-direction:column;z-index:101;text-align:center;
-  padding:calc(20px + env(safe-area-inset-top)) calc(20px + env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) calc(20px + env(safe-area-inset-left));
+/* ログイン画面（モーダル） */
+#nameInputModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #121212;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 101;
+  text-align: center;
+  padding: calc(20px + env(safe-area-inset-top)) calc(20px + env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) calc(20px + env(safe-area-inset-left));
 }
-#nameInputModal input{
-  padding:12px;font-size:16px;border-radius:8px;border:none;margin:10px;
+
+/* アプリロゴ・ブランディング */
+.app-brand {
+  margin-bottom: 24px;
 }
-#nameInputModal button{
-  padding:10px 20px;background:#e50914;color:#fff;border:none;border-radius:8px;
+.app-brand .app-logo {
+  font-size: 24px;
+  font-weight: 800;
+  color: #e50914;
+  letter-spacing: 1px;
+}
+.app-brand .app-subtitle {
+  font-size: 12px;
+  color: #888;
+  margin-top: 4px;
+}
+
+#nameInputModal h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+/* ダークモード風の入力フォーム */
+.input-group {
+  width: 100%;
+  max-width: 300px;
+  margin: 16px 0 8px 0;
+}
+#nameInputModal input {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 15px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: #1e1e1e;
+  color: #fff;
+  outline: none;
+  transition: border-color 0.2s;
+}
+#nameInputModal input::placeholder {
+  color: #666;
+}
+#nameInputModal input:focus {
+  border-color: #e50914;
+}
+
+#nameInputModal button {
+  width: 100%;
+  max-width: 300px;
+  padding: 14px;
+  background: #e50914;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+/* お知らせボックス */
+.login-notice {
+  width: 100%;
+  max-width: 300px;
+  margin-top: 24px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  text-align: left;
+}
+.login-notice-title {
+  font-size: 12px;
+  font-weight: bold;
+  color: #e50914;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.login-notice-text {
+  font-size: 12px;
+  color: #ccc;
+  line-height: 1.5;
+}
+
+/* 画面最下部のバージョン表記 */
+#topVersion {
+  position: absolute;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  color: #555;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  z-index: 102;
 }
 
 #home{
@@ -238,16 +341,6 @@ body,html{
   transition:.3s;
 }
 
-#topVersion{
-  position:fixed;
-  top:calc(15px + env(safe-area-inset-top));
-  right:calc(20px + env(safe-area-inset-right));
-  z-index:500;
-  font-size:18px;
-  font-weight:bold;
-  color:#e50914;
-  letter-spacing:1px;
-}
 #toast{
   position:fixed;
   bottom:calc(120px + env(safe-area-inset-bottom));
@@ -557,13 +650,35 @@ body,html{
 <div id="loader">ロード中…</div>
 
 <div id="nameInputModal">
-  <h3>視聴する方の名前を入力してください</h3>
-  <p style="margin-top:8px;font-size:14px;color:#aaa;">次回視聴時、続きから再生できます。</p>
-  <input id="usernameInput" placeholder="例：洞爺 太郎">
-  <p id="nameError" style="color:#ff4d4d;font-size:13px;display:none;margin-top:6px;">名前を入力してください</p>
-  <button onclick="setUsername()">開始</button>
-</div>
+  <!-- アプリロゴ / ブランディング -->
+  <div class="app-brand">
+    <div class="app-logo">EFI VIDEO LEARNING</div>
+    <div class="app-subtitle">社内研修・オンライン学習ポータル</div>
+  </div>
 
+  <h3>視聴する方の名前を入力してください</h3>
+  <p style="font-size:13px; color:#888;">次回視聴時も続きから再生できます</p>
+
+  <div class="input-group">
+    <input id="usernameInput" placeholder="例：洞爺 太郎" autocomplete="off">
+  </div>
+  <p id="nameError" style="color:#ff4d4d; font-size:12px; display:none; margin-bottom:8px;">名前を入力してください</p>
+
+  <button onclick="setUsername()">学習を開始する</button>
+
+  <!-- お知らせ欄 -->
+  <div class="login-notice">
+    <div class="login-notice-title">📢 お知らせ・テスト実施期間</div>
+    <div class="login-notice-text">
+      ・第1回確認テスト受講期限：<b>2026年10月31日(土)まで</b><br>
+      ・動画を最後まで視聴するとテストが解放されます。
+    </div>
+  </div>
+
+  <!-- 最下部に控えめに配置したバージョン表記 -->
+  <div id="topVersion"></div>
+</div>
+  
 <div id="home">
   <div id="topBarHome">
     <div id="viewerStatus"></div>
@@ -702,7 +817,7 @@ body,html{
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.2.3 ";
+const APP_VERSION = "1.2.4 ";
 document.addEventListener("DOMContentLoaded", function(){
   document.getElementById("topVersion").innerText = "Ver " + APP_VERSION;
 });
@@ -761,6 +876,8 @@ function setUsername(){
   document.getElementById("nameError").style.display="none";
   document.getElementById("nameInputModal").style.display="none";
   document.getElementById("loader").style.display="none";
+
+  // ログイン後は最下部のバージョン表記を隠す
   document.getElementById("topVersion").style.display="none";
 
   document.getElementById("topBarHome").style.display = "flex";
@@ -771,6 +888,7 @@ function setUsername(){
 
   renderVideoList();
 }
+
 
 function playVideo(id){
   currentVideoId = id;
