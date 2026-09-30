@@ -16,10 +16,9 @@
   margin:0;
   padding:0;
   font-family:sans-serif;
-  -webkit-tap-highlight-color: transparent; /* タップ時の青いハイライトを削除 */
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* ボタン等のタップ操作性を向上 */
 button, div[role="button"] {
   touch-action: manipulation;
   cursor: pointer;
@@ -70,10 +69,7 @@ body,html{
 .locked{opacity:.4;cursor:default;}
 .viewedDate{font-size:12px;color:#aaa;margin-top:4px;}
 
-
-/* --- 動画プレイヤー関連（一括・競合防止版） --- */
-
-/* 1. 画面全体 */
+/* 動画プレイヤー関連 */
 #videoWrapper {
   width: 100vw;
   height: 100vh;
@@ -86,21 +82,17 @@ body,html{
   z-index: 10;
 }
 
-/* 2. 動画枠（デフォルト：縦画面用） */
 #playerContainer {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-
   width: 100vw;
   height: calc(100vw * 9 / 16);
-
   max-width: 100vw;
   max-height: 100vh;
 }
 
-/* 3. 動画本体 */
 #playerContainer #player {
   width: 100% !important;
   height: 100% !important;
@@ -114,18 +106,14 @@ body,html{
    top: 50%;
    left: calc(50% - 55px);
    transform: translate(-50%, -50%);
-
    width: 100vw;
    height: calc(100vw * 9 / 16);
-
    max-width: 100vw;
    max-height: 100vh;
-
    aspect-ratio: 16 / 9;
  }
 }
 
-/* 4. 動画本体 */
 #player {
   width: 100% !important;
   height: 100% !important;
@@ -143,7 +131,6 @@ body,html{
   border:none;color:#fff;border-radius:6px;
 }
 
-/* 下部コントロールバー：左右・下部にSafe Areaを追加 */
 #bottomControls{
   position:absolute;
   bottom:0;
@@ -178,7 +165,6 @@ body,html{
   z-index:60;text-align:center;
 }
 
-/* スキップボタン：右・下にSafe Areaを追加 */
 #skipIntro{
   position:absolute;
   right:calc(15px + env(safe-area-inset-right));
@@ -196,7 +182,6 @@ body,html{
   to{width:100%;}
 }
 
-/* チャプターボタン：上・右にSafe Areaを追加 */
 #chapterBtn{
   position:absolute;
   top:calc(20px + env(safe-area-inset-top));
@@ -210,7 +195,6 @@ body,html{
   backdrop-filter:blur(6px);
 }
 
-/* チャプターパネル（画面外に確実に追いやる） */
 #chapterPanel{
   position: absolute;
   top: 0;
@@ -227,7 +211,6 @@ body,html{
 #chapterPanel p{margin:8px 0;cursor:pointer;}
 .groupTitle{margin-top:15px;font-weight:bold;color:#e50914;}
 
-/* 更新モーダル */
 #updateModal{
   position:fixed;
   top:0;
@@ -241,7 +224,6 @@ body,html{
   z-index:300;
 }
 
-/* 戻るボタン：上・左にSafe Areaを追加 */
 #backBtn{
   position:absolute;
   top:calc(20px + env(safe-area-inset-top));
@@ -280,31 +262,6 @@ body,html{
   transition:0.3s;
   z-index:999;
 }
-#logoutBtn{
-  margin:10px 20px;
-  padding:8px 14px;
-  border:none;
-  border-radius:6px;
-  background:#444;
-  color:#fff;
-  font-size:14px;
-}
-.quizBtn{
-  margin-top:8px;
-  padding:6px 10px;
-  font-size:13px;
-  background:#e50914;
-  border:none;
-  color:white;
-  border-radius:6px;
-  cursor:pointer;
-}
-
-.quizBtn.locked{
-  background:#555;
-  cursor:default;
-  opacity:0.5;
-}
 
 .videoRow{
   display:flex;
@@ -315,24 +272,6 @@ body,html{
 .videoTitle{
   flex:1;
   cursor:pointer;
-}
-
-.quizBtn{
-  margin-left:10px;
-  padding:6px 12px;
-  font-size:13px;
-  background:#e50914;
-  border:none;
-  color:white;
-  border-radius:6px;
-  cursor:pointer;
-  white-space:nowrap;
-}
-
-.quizBtn.locked{
-  background:#555;
-  cursor:default;
-  opacity:0.5;
 }
 
 #skipThinking{
@@ -398,27 +337,7 @@ body,html{
   margin-top:4px;
 }
 
-.reviewBtn{
-  margin-left:8px;
-  padding:6px 12px;
-  font-size:13px;
-  background:#ff9800;
-  border:none;
-  color:white;
-  border-radius:6px;
-  cursor:pointer;
-  white-space:nowrap;
-}
-
-.reviewBtn.hidden{
-  display:none;
-}
-.reviewBtn.locked{
-  background:#555;
-  cursor:default;
-  opacity:0.5;
-}
-/* --- チーム選択タブ --- */
+/* チーム選択タブ */
 .team-tabs {
   display: flex;
   gap: 10px;
@@ -444,7 +363,7 @@ body,html{
   border-color: #e50914;
 }
 
-/* --- サムネイル付き動画カード --- */
+/* サムネイル付き動画カード */
 .videoCard {
   display: flex;
   gap: 12px;
@@ -454,7 +373,7 @@ body,html{
 .thumbnailBox {
   position: relative;
   width: 120px;
-  height: 68px; /* 16:9 比率 */
+  height: 68px;
   background: #222;
   border-radius: 6px;
   overflow: hidden;
@@ -484,13 +403,7 @@ body,html{
   flex: 1;
 }
 
-.buttonGroup {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin-top: 6px;
-}
-/* --- 動画詳細モーダル --- */
+/* 動画詳細モーダル（レイアウトズレ防止の修正を加えた部分） */
 .modal-overlay {
   display: none;
   position: fixed;
@@ -501,7 +414,7 @@ body,html{
   background: rgba(0, 0, 0, 0.75);
   z-index: 1000;
   justify-content: center;
-  align-items: flex-end; /* スマホ風に下から出てくる配置 */
+  align-items: flex-end;
   backdrop-filter: blur(4px);
 }
 
@@ -518,8 +431,9 @@ body,html{
   position: relative;
   box-shadow: 0 -4px 20px rgba(0,0,0,0.8);
   animation: slideUp 0.3s ease-out;
-  max-height: 85vh;
-  overflow-y: auto;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
 }
 
 @keyframes slideUp {
@@ -545,8 +459,9 @@ body,html{
 .modal-hero {
   position: relative;
   width: 100%;
-  padding-top: 56.25%; /* 16:9 比率 */
+  padding-top: 56.25%;
   background: #000;
+  flex-shrink: 0;
 }
 
 .modal-hero img {
@@ -585,13 +500,14 @@ body,html{
 }
 
 .modal-body {
-  padding: 20px;
+  padding: 16px 20px calc(20px + env(safe-area-inset-bottom)) 20px;
   color: #fff;
+  overflow-y: auto;
 }
 
 .modal-body h3 {
   margin: 0 0 8px 0;
-  font-size: 18px;
+  font-size: 17px;
 }
 
 .modal-meta {
@@ -600,7 +516,7 @@ body,html{
   align-items: center;
   font-size: 12px;
   color: #aaa;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .modal-badge {
@@ -613,205 +529,177 @@ body,html{
 .modal-desc {
   font-size: 13px;
   color: #ccc;
-  line-height: 1.5;
-  margin-bottom: 20px;
+  line-height: 1.4;
+  margin-bottom: 16px;
 }
 
 .modal-actions {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .modal-actions button {
   width: 100%;
   padding: 12px;
-  border-radius: 6px;
+  border-radius: 8px;
   font-weight: bold;
+  font-size: 14px;
 }
-
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 </head>
 <body>
-  
+
 <div id="topVersion"></div>
- 
 <div id="loader">ロード中…</div>
 
 <div id="nameInputModal">
- 
-<h3>視聴する方の名前を入力してください</h3>
-
- 
-<p style="margin-top:8px;font-size:14px;color:#aaa;">
-次回視聴時、続きから再生できます。
-</p>
-
-<input id="usernameInput" placeholder="例：洞爺 太郎">
-
-<p id="nameError" style="color:#ff4d4d;font-size:13px;display:none;margin-top:6px;">
-名前を入力してください
-</p>
-
-<button onclick="setUsername()">開始</button>
+  <h3>視聴する方の名前を入力してください</h3>
+  <p style="margin-top:8px;font-size:14px;color:#aaa;">次回視聴時、続きから再生できます。</p>
+  <input id="usernameInput" placeholder="例：洞爺 太郎">
+  <p id="nameError" style="color:#ff4d4d;font-size:13px;display:none;margin-top:6px;">名前を入力してください</p>
+  <button onclick="setUsername()">開始</button>
 </div>
- 
+
 <div id="home">
- <div id="topBarHome">
-  <div id="viewerStatus"></div>
-  <button id="logoutBtn" onclick="logout()">ログアウト</button>
- </div>
-<h2 style="padding:20px;color:#e50914;">動画リスト</h2>
-<button id="summaryBtn"
-onclick="showSummary()"
-style="display:none;margin:20px;padding:10px 16px;background:#e50914;color:#fff;border:none;border-radius:6px;">
-テスト全体集計
-</button>
-<div id="summaryArea" style="display:none;padding:20px;">
-  <h3>全体集計</h3>
+  <div id="topBarHome">
+    <div id="viewerStatus"></div>
+    <button id="logoutBtn" onclick="logout()">ログアウト</button>
+  </div>
+  <h2 style="padding:20px;color:#e50914;">動画リスト</h2>
+  <button id="summaryBtn" onclick="showSummary()" style="display:none;margin:20px;padding:10px 16px;background:#e50914;color:#fff;border:none;border-radius:6px;">テスト全体集計</button>
 
-  <div id="summaryTable" style="margin-top:20px;"></div>
+  <div id="summaryArea" style="display:none;padding:20px;">
+    <h3>全体集計</h3>
+    <div id="summaryTable" style="margin-top:20px;"></div>
+    <canvas id="questionChart" style="margin-top:20px;"></canvas>
+  </div>
 
-  <!-- ★ここに追加 -->
-  <canvas id="questionChart" style="margin-top:20px;"></canvas>
-
-</div>
-<!-- 動画詳細モーダル（ポップアップ画面） -->
-<div id="videoModal" class="modal-overlay" onclick="closeModal(event)">
-  <div class="modal-content">
-    <button class="modal-close-btn" onclick="closeModalDirect()">×</button>
-    <div class="modal-hero">
-      <img id="modalThumb" src="" alt="サムネイル">
-      <div class="modal-play-overlay" onclick="playModalVideo()">
-        <div class="play-icon">▶</div>
+  <!-- 動画詳細モーダル（ポップアップ画面） -->
+  <div id="videoModal" class="modal-overlay" onclick="closeModal(event)">
+    <div class="modal-content">
+      <button class="modal-close-btn" onclick="closeModalDirect()">×</button>
+      <div class="modal-hero">
+        <img id="modalThumb" src="" alt="サムネイル">
+        <div class="modal-play-overlay" onclick="playModalVideo()">
+          <div class="play-icon">▶</div>
+        </div>
       </div>
-    </div>
-    <div class="modal-body">
-      <h3 id="modalTitle"></h3>
-      <div class="modal-meta">
-        <span id="modalDuration"></span>
-        <span class="modal-badge">HD</span>
-      </div>
-      <p id="modalDesc" class="modal-desc"></p>
+      <div class="modal-body">
+        <h3 id="modalTitle"></h3>
+        <div class="modal-meta">
+          <span id="modalDuration"></span>
+          <span class="modal-badge">HD</span>
+        </div>
+        <p id="modalDesc" class="modal-desc"></p>
 
-      <div id="modalActions" class="modal-actions">
-        <!-- JSでボタンが動的に挿入されます -->
+        <div id="modalActions" class="modal-actions">
+          <!-- JSでボタンが動的に挿入されます -->
+        </div>
       </div>
     </div>
   </div>
-</div>
 
+  <!-- チーム選択タブ -->
+  <div class="team-tabs">
+    <button class="team-tab active" id="tab_infection" onclick="switchTeam('infection')">感染対策チーム</button>
+    <button class="team-tab" id="tab_study" onclick="switchTeam('study')">学習会チーム</button>
+  </div>
 
-
-<!-- チーム選択タブの追加 -->
-<div class="team-tabs">
-  <button class="team-tab active" id="tab_infection" onclick="switchTeam('infection')">感染対策チーム</button>
-  <button class="team-tab" id="tab_study" onclick="switchTeam('study')">学習会チーム</button>
-</div>
-
-<!-- リスト（中身はJSで自動生成するため空にします） -->
-<ul id="videoList"></ul>
-  
+  <ul id="videoList"></ul>
 </div>
 
 <div id="videoWrapper">
-<button id="backBtn" onclick="goBack()">ホームに戻る</button>
+  <button id="backBtn" onclick="goBack()">ホームに戻る</button>
 
-<div id="playerContainer">
-  <div id="player"></div>
+  <div id="playerContainer">
+    <div id="player"></div>
+  </div>
+
+  <div class="centralUI" id="centralUI">
+    <button onclick="rewind10()">«10</button>
+    <button id="playBtn" onclick="togglePlay()">▶</button>
+    <button onclick="forward10()">»10</button>
+  </div>
+
+  <div id="resumeInline">
+    <div style="margin-bottom:8px;">前回の続きから再生しますか？</div>
+    <button onclick="resumeFrom()">続きから見る</button>
+    <button onclick="startFromBeginning()">初めから見る</button>
+  </div>
+
+  <div id="skipIntro" onclick="skipIntroClick(event)">
+    イントロをスキップ
+    <div id="skipBar"></div>
+  </div>
+
+  <div id="skipThinking" onclick="skipThinkingClick(event)">
+    シンキングタイムをスキップ（30秒）
+  </div>
+
+  <div id="bottomControls">
+    <span id="currentTime">0:00</span>
+    <input type="range" id="progress" min="0" max="100" value="0">
+    <span id="duration">0:00</span>
+    <button id="speedBtn" onclick="changeSpeed()">1.0x</button>
+  </div>
+
+  <button id="chapterBtn" onclick="toggleChapters()">チャプター</button>
+
+  <div id="chapterPanel">
+    <div class="groupTitle">📚 本章</div>
+    <p onclick="goTo(0)">オープニング</p>
+    <p onclick="goTo(58)">第1章　はじめに</p>
+    <p onclick="goTo(146)">第2章　ノロウィルスの基本知識</p>
+    <p onclick="goTo(327)">第3章　ノロウィルス感染予防</p>
+    <p onclick="goTo(424)">第4章　次亜塩素酸ナトリウム調整</p>
+    <p onclick="goTo(666)">第5章　吐物処理手順</p>
+    <p onclick="goTo(1047)">第6章　トイレ清拭手順</p>
+    <p onclick="goTo(1420)">第7章　リネンの取扱い</p>
+    <p onclick="goTo(1805)">第8章　高頻度接触面・物品管理</p>
+    <p onclick="goTo(1966)">エンディング</p>
+
+    <div class="groupTitle">🎬 実践動画</div>
+    <p onclick="goTo(550)">次亜塩素酸ナトリウム調整</p>
+    <p onclick="goTo(722)">吐物処理物品確認編</p>
+    <p onclick="goTo(834)">吐物処理回収編</p>
+    <p onclick="goTo(936)">吐物処理消毒編</p>
+    <p onclick="goTo(1133)">トイレ清拭物品確認編</p>
+    <p onclick="goTo(1238)">トイレ清拭清拭編</p>
+    <p onclick="goTo(1498)">リネン実践動画</p>
+
+    <div class="groupTitle">⭐ ポイント</div>
+    <p onclick="goTo(260)">第2章ポイント</p>
+    <p onclick="goTo(604)">第4章ポイント</p>
+    <p onclick="goTo(987)">第5章ポイント</p>
+    <p onclick="goTo(1348)">第6章ポイント</p>
+    <p onclick="goTo(1707)">第7章ポイント</p>
+    <p onclick="goTo(1901)">第8章ポイント</p>
+
+    <div class="groupTitle">🧠 thinking time</div>
+    <p onclick="goTo(287)">第2章</p>
+    <p onclick="goTo(628)">第4章</p>
+    <p onclick="goTo(1009)">第5章</p>
+    <p onclick="goTo(1376)">第6章</p>
+    <p onclick="goTo(1737)">第7章</p>
+    <p onclick="goTo(1930)">第8章</p>
+  </div>
 </div>
 
-<div class="centralUI" id="centralUI">
-<button onclick="rewind10()">«10</button>
-<button id="playBtn" onclick="togglePlay()">▶</button>
-<button onclick="forward10()">»10</button>
-</div>
-
-<div id="resumeInline">
-<div style="margin-bottom:8px;">前回の続きから再生しますか？</div>
-<button onclick="resumeFrom()">続きから見る</button>
-<button onclick="startFromBeginning()">初めから見る</button>
-</div>
-
-<div id="skipIntro" onclick="skipIntroClick(event)">
-
-イントロをスキップ
-<div id="skipBar"></div>
-</div>
-
-<div id="skipThinking" onclick="skipThinkingClick(event)">
-シンキングタイムをスキップ（30秒）
-</div>
- 
-<div id="bottomControls">
-<span id="currentTime">0:00</span>
-<input type="range" id="progress" min="0" max="100" value="0">
-<span id="duration">0:00</span>
-<button id="speedBtn" onclick="changeSpeed()">1.0x</button>
-</div>
-
-<button id="chapterBtn" onclick="toggleChapters()">チャプター</button>
-
-<div id="chapterPanel">
-
-<div class="groupTitle">📚 本章</div>
-<p onclick="goTo(0)">オープニング</p>
-<p onclick="goTo(58)">第1章　はじめに</p>
-<p onclick="goTo(146)">第2章　ノロウィルスの基本知識</p>
-<p onclick="goTo(327)">第3章　ノロウィルス感染予防</p>
-<p onclick="goTo(424)">第4章　次亜塩素酸ナトリウム調整</p>
-<p onclick="goTo(666)">第5章　吐物処理手順</p>
-<p onclick="goTo(1047)">第6章　トイレ清拭手順</p>
-<p onclick="goTo(1420)">第7章　リネンの取扱い</p>
-<p onclick="goTo(1805)">第8章　高頻度接触面・物品管理</p>
-<p onclick="goTo(1966)">エンディング</p>
-
-
-<div class="groupTitle">🎬 実践動画</div>
-<p onclick="goTo(550)">次亜塩素酸ナトリウム調整</p>
-<p onclick="goTo(722)">吐物処理物品確認編</p>
-<p onclick="goTo(834)">吐物処理回収編</p>
-<p onclick="goTo(936)">吐物処理消毒編</p>
-<p onclick="goTo(1133)">トイレ清拭物品確認編</p>
-<p onclick="goTo(1238)">トイレ清拭清拭編</p>
-<p onclick="goTo(1498)">リネン実践動画</p>
-
-
-<div class="groupTitle">⭐ ポイント</div>
-<p onclick="goTo(260)">第2章ポイント</p>
-<p onclick="goTo(604)">第4章ポイント</p>
-<p onclick="goTo(987)">第5章ポイント</p>
-<p onclick="goTo(1348)">第6章ポイント</p>
-<p onclick="goTo(1707)">第7章ポイント</p>
-<p onclick="goTo(1901)">第8章ポイント</p>
-
-
-<div class="groupTitle">🧠 thinking time</div>
-<p onclick="goTo(287)">第2章</p>
-<p onclick="goTo(628)">第4章</p>
-<p onclick="goTo(1009)">第5章</p>
-<p onclick="goTo(1376)">第6章</p>
-<p onclick="goTo(1737)">第7章</p>
-<p onclick="goTo(1930)">第8章</p>
-
-</div>
-</div>
- 
 <div id="updateModal">
-<div style="background:#111;padding:25px;border-radius:12px;max-width:320px;text-align:left;">
-<h3 style="color:#e50914;margin-bottom:10px;">アップデート情報</h3>
-<p id="updateMessage" style="white-space:pre-line;font-size:14px;"></p>
-<button onclick="closeUpdateModal()" style="margin-top:15px;background:#e50914;color:#fff;border:none;padding:8px 16px;border-radius:6px;">OK</button>
+  <div style="background:#111;padding:25px;border-radius:12px;max-width:320px;text-align:left;">
+    <h3 style="color:#e50914;margin-bottom:10px;">アップデート情報</h3>
+    <p id="updateMessage" style="white-space:pre-line;font-size:14px;"></p>
+    <button onclick="closeUpdateModal()" style="margin-top:15px;background:#e50914;color:#fff;border:none;padding:8px 16px;border-radius:6px;">OK</button>
+  </div>
 </div>
-</div>
- 
+
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.2.2 ";
+const APP_VERSION = "1.2.3 ";
 document.addEventListener("DOMContentLoaded", function(){
-document.getElementById("topVersion").innerText = "Ver " + APP_VERSION;
+  document.getElementById("topVersion").innerText = "Ver " + APP_VERSION;
 });
 const UPDATE_MESSAGE = `
 【機能追加】
@@ -819,7 +707,7 @@ const UPDATE_MESSAGE = `
 ・アンケートへの制限追加
 `;
 let player,username="guest",currentVideoId="";
- const NORO_VIDEO_ID = "HyyeZRsWGkw";
+const NORO_VIDEO_ID = "HyyeZRsWGkw";
 
 function isNoroVideo(){
   return currentVideoId === NORO_VIDEO_ID;
@@ -829,646 +717,415 @@ let thinkingActive=false;
 let thinkingTimer=null;
 let thinkingStartTime=0;
 
-/* テキスト更新 */
 function updateThinkingText(remain){
-document.getElementById("skipThinking").innerText=
-"シンキングタイムをスキップ（残り"+remain+"秒）";
+  document.getElementById("skipThinking").innerText=
+  "シンキングタイムをスキップ（残り"+remain+"秒）";
 }
 
 let resumeTime=0,resumePromptShown=false;
 let uiTimer=null,chapterOpen=false;
 let introActive=false,uiInterval=null;
- 
+
 let maxWatchedTime = 0;
 let adminMode = false;
 
 let adminTapCount = 0;
 let adminTapTimer = null;
- 
+
 let speeds=[1,1.25,1.5,1.75,2];
 let speedIndex=0;
 
 function changeSpeed(){
-speedIndex++;
-if(speedIndex>=speeds.length) speedIndex=0;
-let newSpeed=speeds[speedIndex];
-player.setPlaybackRate(newSpeed);
-document.getElementById("speedBtn").innerText=newSpeed+"x";
-showUI();
+  speedIndex++;
+  if(speedIndex>=speeds.length) speedIndex=0;
+  let newSpeed=speeds[speedIndex];
+  player.setPlaybackRate(newSpeed);
+  document.getElementById("speedBtn").innerText=newSpeed+"x";
+  showUI();
 }
 
 function setUsername(){
+  const input = document.getElementById("usernameInput");
+  username = input.value.trim();
 
-const input = document.getElementById("usernameInput");
-username = input.value.trim();
+  if(!username){
+    document.getElementById("nameError").style.display="block";
+    return;
+  }
 
-if(!username){
-document.getElementById("nameError").style.display="block";
-return;
-}
+  document.getElementById("nameError").style.display="none";
+  document.getElementById("nameInputModal").style.display="none";
+  document.getElementById("loader").style.display="none";
+  document.getElementById("topVersion").style.display="none";
 
-document.getElementById("nameError").style.display="none";
+  document.getElementById("topBarHome").style.display = "flex";
 
-document.getElementById("nameInputModal").style.display="none";
-document.getElementById("loader").style.display="none";
-document.getElementById("topVersion").style.display="none";
+  const viewer = document.getElementById("viewerStatus");
+  viewer.innerText = username + " として視聴中";
+  viewer.style.display = "block";
 
-/* ★ここで表示 */
-document.getElementById("topBarHome").style.display = "flex";
-
-const viewer = document.getElementById("viewerStatus");
-viewer.innerText = username + " として視聴中";
-viewer.style.display = "block";
-
-updateViewedDates();
-updateSurveyButton();
+  renderVideoList();
 }
 
 function playVideo(id){
+  currentVideoId = id;
 
-currentVideoId = id;
+  document.getElementById("chapterBtn").style.display = isNoroVideo() ? "block" : "none";
 
-// ノロウイルス動画だけチャプターを表示
-document.getElementById("chapterBtn").style.display =
-  isNoroVideo() ? "block" : "none";
+  skipIntro.style.display = "none";
+  skipThinking.style.display = "none";
 
-// 前の動画のスキップ表示をリセット
-skipIntro.style.display = "none";
-skipThinking.style.display = "none";
+  introActive = false;
+  thinkingActive = false;
 
-introActive = false;
-thinkingActive = false;
+  if(thinkingTimer){
+    clearInterval(thinkingTimer);
+    thinkingTimer = null;
+  }
 
-if(thinkingTimer){
-  clearInterval(thinkingTimer);
-  thinkingTimer = null;
-}
+  resumeTime=parseFloat(localStorage.getItem(username+"_"+id))||0;
+  maxWatchedTime = resumeTime;
+  resumePromptShown=false;
 
-resumeTime=parseFloat(localStorage.getItem(username+"_"+id))||0;
-maxWatchedTime = resumeTime;
-resumePromptShown=false;
+  home.style.display="none";
+  videoWrapper.style.display="block";
 
-home.style.display="none";
-videoWrapper.style.display="block";
+  if(uiInterval) clearInterval(uiInterval);
 
-if(uiInterval) clearInterval(uiInterval);
-
-player=new YT.Player('player',{
-videoId:id,
-playerVars:{controls:0,rel:0,modestbranding:1,fs:0,playsinline:1},
-events:{
-onReady:()=>{
-uiInterval=setInterval(updateUI,500);
-showUI();
-},
-onStateChange:(e)=>{
-if(e.data===YT.PlayerState.PLAYING) startUITimer();
-}
-}
-});
+  player=new YT.Player('player',{
+    videoId:id,
+    playerVars:{controls:0,rel:0,modestbranding:1,fs:0,playsinline:1},
+    events:{
+      onReady:()=>{
+        uiInterval=setInterval(updateUI,500);
+        showUI();
+      },
+      onStateChange:(e)=>{
+        if(e.data===YT.PlayerState.PLAYING) startUITimer();
+      }
+    }
+  });
 }
 
 function togglePlay(){
-if(!resumePromptShown && resumeTime>5){
-resumeInline.style.display="block";
-resumePromptShown=true;
-return;
-}
-let state=player.getPlayerState();
-if(state===1){player.pauseVideo();playBtn.innerText="▶";}
-else{player.playVideo();playBtn.innerText="❚❚";}
-showUI();
+  if(!resumePromptShown && resumeTime>5){
+    resumeInline.style.display="block";
+    resumePromptShown=true;
+    return;
+  }
+  let state=player.getPlayerState();
+  if(state===1){player.pauseVideo();playBtn.innerText="▶";}
+  else{player.playVideo();playBtn.innerText="❚❚";}
+  showUI();
 }
 
 function resumeFrom(){player.seekTo(resumeTime,true);player.playVideo();resumeInline.style.display="none";}
 function startFromBeginning(){localStorage.removeItem(username+"_"+currentVideoId);player.seekTo(0,true);player.playVideo();resumeInline.style.display="none";}
 
 function updateUI(){
-if(!player.getDuration()) return;
- 
-let c=player.getCurrentTime(),d=player.getDuration();
-// ===== シンキングタイム判定 =====
-if(isNoroVideo()){
+  if(!player.getDuration()) return;
 
-thinkingStarts.forEach(start=>{
+  let c=player.getCurrentTime(),d=player.getDuration();
 
-if(c>=start && c<start+1 && !thinkingActive){
+  if(isNoroVideo()){
+    thinkingStarts.forEach(start=>{
+      if(c>=start && c<start+1 && !thinkingActive){
+        thinkingActive=true;
+        thinkingStartTime=start;
+        let remain=30;
 
-thinkingActive=true;
-thinkingStartTime=start;
+        skipThinking.style.display="block";
+        skipThinking.innerText="シンキングタイム（"+remain+"秒）";
 
-let remain=30;
+        thinkingTimer=setInterval(()=>{
+          remain--;
+          skipThinking.innerText="シンキングタイム（"+remain+"秒）";
+          if(remain<=0){
+            clearInterval(thinkingTimer);
+            skipThinking.style.display="none";
+            thinkingActive=false;
+          }
+        },1000);
+      }
+    });
+  }
 
-skipThinking.style.display="block";
-skipThinking.innerText="シンキングタイム（"+remain+"秒）";
+  if(c > maxWatchedTime){
+    maxWatchedTime = c;
+  }
 
-thinkingTimer=setInterval(()=>{
+  if(c >= d-2){
+    localStorage.setItem(username+"_complete_"+currentVideoId, "true");
 
-remain--;
+    if(isNoroVideo()){
+      localStorage.setItem("quizUser",username);
+      window.location.href="quiz.html";
+    }
+  }
 
-skipThinking.innerText="シンキングタイム（"+remain+"秒）";
+  currentTime.innerText=formatTime(c);
+  duration.innerText=formatTime(d);
+  progress.value=c/d*100;
+  localStorage.setItem(username+"_"+currentVideoId,c);
+  localStorage.setItem(username+"_date_"+currentVideoId,new Date().toLocaleDateString());
 
-if(remain<=0){
+  if(isNoroVideo() && c>=22 && c<=27 && !introActive){
+    introActive=true;
+    skipIntro.style.display="block";
+    skipBar.style.animation="none";
+    void skipBar.offsetWidth;
+    skipBar.style.animation="grow 5s linear forwards";
 
-clearInterval(thinkingTimer);
-skipThinking.style.display="none";
-thinkingActive=false;
-
+    setTimeout(()=>{
+      skipIntro.style.display="none";
+      introActive=false;
+    },5000);
+  }
 }
-
-},1000);
-
-}
-
-});
-
-}
-if(c > maxWatchedTime){
-maxWatchedTime = c;
-}
-
-if(c >= d-2){
-
-localStorage.setItem(username+"_complete_"+currentVideoId,true);
-
-// オムツ動画ならアンケートボタンを解放
-if(currentVideoId === "YpA2e9nQO1k"){
-updateSurveyButton();
-}
-
-// ノロウイルス動画だけテスト画面へ
-if(isNoroVideo()){
-
-localStorage.setItem("quizUser",username);
-
-window.location.href="quiz.html";
-
-}
-
-}
-
-
-currentTime.innerText=formatTime(c);
-duration.innerText=formatTime(d);
-progress.value=c/d*100;
-localStorage.setItem(username+"_"+currentVideoId,c);
-localStorage.setItem(username+"_date_"+currentVideoId,new Date().toLocaleDateString());
-
-if(isNoroVideo() && c>=22 && c<=27 && !introActive){
-introActive=true;
-skipIntro.style.display="block";
-skipBar.style.animation="none";
-void skipBar.offsetWidth;
-skipBar.style.animation="grow 5s linear forwards";
-
-setTimeout(()=>{
-skipIntro.style.display="none";
-introActive=false;
-},5000);
-}
-}
-
-
 
 function rewind10(){player.seekTo(player.getCurrentTime()-10,true);showUI();}
 function forward10(){
+  let target = player.getCurrentTime()+10;
 
-let target = player.getCurrentTime()+10;
+  if(!adminMode && !localStorage.getItem(username+"_complete_"+currentVideoId) && target > maxWatchedTime+5){
+    showToast("まだ先にはスキップできません");
+    return;
+  }
 
-if(!adminMode &&
-!localStorage.getItem(username+"_complete_"+currentVideoId) &&
-target > maxWatchedTime+5){
-
-showToast("まだ先にはスキップできません");
-return;
-
-}
-
-player.seekTo(target,true);
-showUI();
-
+  player.seekTo(target,true);
+  showUI();
 }
 
 function formatTime(t){let m=Math.floor(t/60),s=Math.floor(t%60);if(s<10)s="0"+s;return m+":"+s;}
 
 progress.addEventListener("input",e=>{
-
-let target = e.target.value/100*player.getDuration();
-
-if(!adminMode &&
-!localStorage.getItem(username+"_complete_"+currentVideoId) &&
-target > maxWatchedTime+5){
-
-showToast("まだ視聴していない場所には移動できません");
-
-progress.value = maxWatchedTime/player.getDuration()*100;
-
-return;
-
-}
-
-player.seekTo(target,true);
-showUI();
-
-});
-function showToast(msg){
-
-const toast=document.getElementById("toast");
-
-toast.innerText=msg;
-toast.style.opacity="1";
-
-setTimeout(()=>{
-toast.style.opacity="0";
-},2000);
-
-}
-
-function hideUI(){
-centralUI.classList.add("hideUI");
-bottomControls.classList.add("hideUI");
-backBtn.classList.add("hideUI");
-chapterBtn.classList.add("hideUI");
-}
-function showUI(){
-centralUI.classList.remove("hideUI");
-bottomControls.classList.remove("hideUI");
-backBtn.classList.remove("hideUI");
-chapterBtn.classList.remove("hideUI");
-startUITimer();
-}
-
-function startUITimer(){
-clearTimeout(uiTimer);
-uiTimer=setTimeout(()=>{
-if(!chapterOpen && player.getPlayerState()===1){
-hideUI();
-}
-},3000);
-}
-
-videoWrapper.addEventListener("click",(e)=>{
-if(e.target.id==="skipIntro"||e.target.id==="skipBar") return;
-showUI();
-});
-
-function skipIntroClick(e){
-e.stopPropagation();
-player.seekTo(57,true);
-skipIntro.style.display="none";
-introActive=false;
-}
-
-function goTo(sec){
-
-// 管理者は制限なし
-if(adminMode){
-player.seekTo(sec,true);
-showUI();
-return;
-}
-
-// 視聴済み動画なら制限なし
-if(localStorage.getItem(username+"_complete_"+currentVideoId)){
-player.seekTo(sec,true);
-showUI();
-return;
-}
-
-// まだ見ていない章
-if(sec > maxWatchedTime+5){
-showToast("この章はまだ視聴していません");
-return;
-}
-
-// 視聴済み章
-player.seekTo(sec,true);
-
-chapterPanel.style.right="-320px";
-chapterOpen=false;
-
-showUI();
-
-}
-
-function updateViewedDates(){
-
-const id="HyyeZRsWGkw";
-
-const time = parseFloat(localStorage.getItem(username+"_"+id)) || 0;
-const date = localStorage.getItem(username+"_date_"+id);
-
-// 動画の総時間
-const duration = 2063;
-
-let percent = Math.floor((time / duration) * 100);
-if(percent > 100) percent = 100;
-
-if(time === 0){
-percent = 0;
-}
-
-if(localStorage.getItem(username+"_complete_"+id)){
-percent = 100;
-}
-
-const fill = document.querySelector("#video_"+id+" .progressFill");
-const text = document.querySelector("#video_"+id+" .progressText");
-
-fill.style.width = percent + "%";
-
-let displayText = "視聴率：" + percent + "%";
-
-if(date){
-displayText += "（最終視聴：" + date + "）";
-}
-
-text.innerText = displayText;
-
-
-/* ===== テストボタン ===== */
-
-const btn = document.querySelector("#video_"+id+" .quizBtn");
-
-if(localStorage.getItem(username+"_quiz_done_"+id)){
-btn.classList.remove("locked");
-btn.innerText="回答結果を見る";
-btn.onclick=function(){
-showResult(id);
-};
-}else if(!localStorage.getItem(username+"_complete_"+id)){
-btn.classList.add("locked");
-btn.innerText="確認テスト（動画視聴後）";
-}else{
-btn.classList.remove("locked");
-btn.innerText="確認テストを実施する";
-}
-
-
-/* ===== 復習ボタン ===== */
-
-const reviewBtn = document.querySelector("#video_"+id+" .reviewBtn");
-
-let wrong = JSON.parse(localStorage.getItem(username+"_wrong_"+id) || "[]");
-
-// 初期ロック
-reviewBtn.classList.add("locked");
-
-// テスト未受験 → 非表示
-if(!localStorage.getItem(username+"_quiz_done_"+id)){
-reviewBtn.classList.add("hidden");
-return;
-}
-
-// 間違いなし → 非表示
-if(wrong.length === 0){
-reviewBtn.classList.add("hidden");
-return;
-}
-
-// 間違いあり → 解放
-reviewBtn.classList.remove("hidden");
-reviewBtn.classList.remove("locked");
-
-}
-function toggleChapters(){
-
-if(chapterPanel.style.right==="0px"){
-
-chapterPanel.style.right="-320px";
-chapterOpen=false;
-startUITimer();
-
-}else{
-
-chapterPanel.style.right="0px";
-chapterOpen=true;
-
-centralUI.classList.add("hideUI");
-bottomControls.classList.add("hideUI");
-
-}
-
-}
-
-function checkVersion(){
-const saved=localStorage.getItem("app_version");
-
-if(saved && saved!==APP_VERSION){
-document.getElementById("updateMessage").innerText=
-"Ver "+APP_VERSION+" に更新されました。\n\n更新内容:\n"+UPDATE_MESSAGE;
-
-document.getElementById("updateModal").style.display="flex";
-}
-
-localStorage.setItem("app_version",APP_VERSION);
-}
-
-function closeUpdateModal(){
-document.getElementById("updateModal").style.display="none";
-location.reload();
-}
-function goBack(){
-
-
- 
-if(player){
-player.destroy();
-}
-
-videoWrapper.style.display="none";
-home.style.display="block";
-
-chapterPanel.style.right="-320px";
-chapterOpen=false;
-
-}
-checkVersion();
-const versionArea = document.getElementById("topVersion");
-
-versionArea.addEventListener("click",function(){
-
-adminTapCount++;
-
-if(adminTapCount===5){
-
-let pass = prompt("管理者パスワード");
-
-if(pass==="1234"){
- 
-document.getElementById("summaryBtn").style.display="block";
-
-adminMode=true;
-username="管理者";
-
-nameInputModal.style.display="none";
-loader.style.display="none";
-
-document.getElementById("topVersion").style.display="none";
- 
-document.getElementById("topBarHome").style.display = "flex";
- 
-const viewer = document.getElementById("viewerStatus");
-viewer.innerText = "管理者として視聴中";
-viewer.style.display = "block";
-
-updateViewedDates();  // ←追加
-
-alert("管理者モードON");
-
-}
-
-adminTapCount=0;
-}
-
-clearTimeout(adminTapTimer);
-
-adminTapTimer=setTimeout(()=>{
-adminTapCount=0;
-},2000);
-
-});
-function logout(){
-
-  // 確認ダイアログ（いらなければ消してOK）
-  if(!confirm("ログアウトしますか？")){
+  let target = e.target.value/100*player.getDuration();
+
+  if(!adminMode && !localStorage.getItem(username+"_complete_"+currentVideoId) && target > maxWatchedTime+5){
+    showToast("まだ視聴していない場所には移動できません");
+    progress.value = maxWatchedTime/player.getDuration()*100;
     return;
   }
 
-  // 再生中の動画があれば破棄（エラー防止）
-  if(player){
-    try{
-      player.destroy();
-    }catch(e){}
+  player.seekTo(target,true);
+  showUI();
+});
+
+function showToast(msg){
+  const toast=document.getElementById("toast");
+  toast.innerText=msg;
+  toast.style.opacity="1";
+  setTimeout(()=>{ toast.style.opacity="0"; },2000);
+}
+
+function hideUI(){
+  centralUI.classList.add("hideUI");
+  bottomControls.classList.add("hideUI");
+  backBtn.classList.add("hideUI");
+  chapterBtn.classList.add("hideUI");
+}
+function showUI(){
+  centralUI.classList.remove("hideUI");
+  bottomControls.classList.remove("hideUI");
+  backBtn.classList.remove("hideUI");
+  chapterBtn.classList.remove("hideUI");
+  startUITimer();
+}
+
+function startUITimer(){
+  clearTimeout(uiTimer);
+  uiTimer=setTimeout(()=>{
+    if(!chapterOpen && player.getPlayerState()===1){
+      hideUI();
+    }
+  },3000);
+}
+
+videoWrapper.addEventListener("click",(e)=>{
+  if(e.target.id==="skipIntro"||e.target.id==="skipBar") return;
+  showUI();
+});
+
+function skipIntroClick(e){
+  e.stopPropagation();
+  player.seekTo(57,true);
+  skipIntro.style.display="none";
+  introActive=false;
+}
+
+function goTo(sec){
+  if(adminMode || localStorage.getItem(username+"_complete_"+currentVideoId)){
+    player.seekTo(sec,true);
+    showUI();
+    return;
   }
 
-  // 一時データだけ消す（任意）
-  sessionStorage.clear();
+  if(sec > maxWatchedTime+5){
+    showToast("この章はまだ視聴していません");
+    return;
+  }
 
-  // 画面を完全リセット（これが本体）
+  player.seekTo(sec,true);
+  chapterPanel.style.right="-320px";
+  chapterOpen=false;
+  showUI();
+}
+
+function toggleChapters(){
+  if(chapterPanel.style.right==="0px"){
+    chapterPanel.style.right="-320px";
+    chapterOpen=false;
+    startUITimer();
+  }else{
+    chapterPanel.style.right="0px";
+    chapterOpen=true;
+    centralUI.classList.add("hideUI");
+    bottomControls.classList.add("hideUI");
+  }
+}
+
+function checkVersion(){
+  const saved=localStorage.getItem("app_version");
+  if(saved && saved!==APP_VERSION){
+    document.getElementById("updateMessage").innerText="Ver "+APP_VERSION+" に更新されました。\n\n更新内容:\n"+UPDATE_MESSAGE;
+    document.getElementById("updateModal").style.display="flex";
+  }
+  localStorage.setItem("app_version",APP_VERSION);
+}
+
+function closeUpdateModal(){
+  document.getElementById("updateModal").style.display="none";
   location.reload();
+}
 
+function goBack(){
+  if(player){
+    try { player.destroy(); } catch(e){}
+  }
+  videoWrapper.style.display="none";
+  home.style.display="block";
+  chapterPanel.style.right="-320px";
+  chapterOpen=false;
+  renderVideoList();
+}
+
+checkVersion();
+
+const versionArea = document.getElementById("topVersion");
+versionArea.addEventListener("click",function(){
+  adminTapCount++;
+  if(adminTapCount===5){
+    let pass = prompt("管理者パスワード");
+    if(pass==="1234"){
+      document.getElementById("summaryBtn").style.display="block";
+      adminMode=true;
+      username="管理者";
+
+      nameInputModal.style.display="none";
+      loader.style.display="none";
+      document.getElementById("topVersion").style.display="none";
+      document.getElementById("topBarHome").style.display = "flex";
+
+      const viewer = document.getElementById("viewerStatus");
+      viewer.innerText = "管理者として視聴中";
+      viewer.style.display = "block";
+
+      renderVideoList();
+      alert("管理者モードON");
+    }
+    adminTapCount=0;
+  }
+  clearTimeout(adminTapTimer);
+  adminTapTimer=setTimeout(()=>{ adminTapCount=0; },2000);
+});
+
+function logout(){
+  if(!confirm("ログアウトしますか？")) return;
+  if(player){
+    try{ player.destroy(); }catch(e){}
+  }
+  sessionStorage.clear();
+  location.reload();
 }
 
 function startQuiz(videoId){
-
-if(!localStorage.getItem(username+"_complete_"+videoId)){
-
-showToast("動画を最後まで視聴するとテストを受けられます");
-
-return;
-
+  if(!localStorage.getItem(username+"_complete_"+videoId)){
+    showToast("動画を最後まで視聴するとテストを受けられます");
+    return;
+  }
+  localStorage.setItem("quizUser",username);
+  window.location.href="quiz.html";
 }
-
-localStorage.setItem("quizUser",username);
-
-window.location.href="quiz.html";
-
-}
-
 
 function startSurvey(videoId){
-
-if(!localStorage.getItem(username+"_complete_"+videoId)){
-
-showToast("動画を最後まで視聴するとアンケートに回答できます");
-
-return;
-
-}
-
-window.open(
-"https://docs.google.com/forms/d/e/1FAIpQLSc7J4cA9X8WkHXmv6KITaTR3SE23LXhxzyZHyQbCq_eZRuohQ/viewform?usp=header",
-"_blank"
-);
-
+  if(!localStorage.getItem(username+"_complete_"+videoId)){
+    showToast("動画を最後まで視聴するとアンケートに回答できます");
+    return;
+  }
+  window.open("https://docs.google.com/forms/d/e/1FAIpQLSc7J4cA9X8WkHXmv6KITaTR3SE23LXhxzyZHyQbCq_eZRuohQ/viewform?usp=header", "_blank");
 }
 
 function skipThinkingClick(e){
-
-e.stopPropagation();
-
-player.seekTo(thinkingStartTime+30,true);
-
-skipThinking.style.display="none";
-
-clearInterval(thinkingTimer);
-
-thinkingActive=false;
-
+  e.stopPropagation();
+  player.seekTo(thinkingStartTime+30,true);
+  skipThinking.style.display="none";
+  clearInterval(thinkingTimer);
+  thinkingActive=false;
 }
 
 function showResult(id){
-
-window.location.href = "quiz_result.html";
-
+  window.location.href = "quiz_result.html";
 }
+
 function startReview(videoId){
-
-if(!localStorage.getItem(username+"_quiz_done_"+videoId)){
-showToast("テスト受験後に復習できます");
-return;
+  if(!localStorage.getItem(username+"_quiz_done_"+videoId)){
+    showToast("テスト受験後に復習できます");
+    return;
+  }
+  let wrong = JSON.parse(localStorage.getItem(username+"_wrong_"+videoId) || "[]");
+  if(wrong.length === 0){
+    showToast("復習する問題はありません");
+    return;
+  }
+  localStorage.setItem("reviewMode", "true");
+  localStorage.setItem("reviewVideoId", videoId);
+  window.location.href = "quiz.html";
 }
 
-let wrong = JSON.parse(localStorage.getItem(username+"_wrong_"+videoId) || "[]");
-
-if(wrong.length === 0){
-showToast("復習する問題はありません");
-return;
-}
-
-localStorage.setItem("reviewMode", "true");
-localStorage.setItem("reviewVideoId", videoId);
-
-window.location.href = "quiz.html";
-
-}
 function drawChart(data){
-
-  // ワースト3抽出
   const worst = data.questions
     .map((rate,i)=>({q:i+1, rate}))
     .sort((a,b)=>a.rate-b.rate)
     .slice(0,3);
 
   const ctx = document.getElementById("questionChart");
-
   new Chart(ctx, {
     type: 'pie',
     data: {
       labels: worst.map(w => "Q" + w.q),
       datasets: [{
-        data: worst.map(w => 100 - w.rate) // 不正解率にする
+        data: worst.map(w => 100 - w.rate)
       }]
     }
   });
 }
 
-
-
 async function showSummary(){
-
   if(!adminMode){
     showToast("管理者のみ閲覧できます");
     return;
   }
-
   try{
-
     const res = await fetch("https://script.google.com/macros/s/AKfycbxt_kxbO6BITi8GiqZbzvERHrrmjGSf-VsjjLNRpgWLZgLtoprj6EKkqEn_DY0IN9IA/exec?type=summary");
-
     const data = await res.json();
 
     document.getElementById("summaryArea").style.display="block";
-
-    // ===== 数値のみ =====
     document.getElementById("summaryTable").innerHTML = `
       <p>受講者数：${data.total}</p>
       <p>合格者数：${data.passed}</p>
       <p>平均点：${data.avg}点</p>
     `;
 
-    // ===== 苦手問題テキスト =====
     const worst = data.questions
       .map((rate,i)=>({q:i+1, rate}))
       .sort((a,b)=>a.rate-b.rate)
@@ -1479,36 +1136,14 @@ async function showSummary(){
       ${worst.map(w=>`<p>Q${w.q}（正答率 ${w.rate}%）</p>`).join("")}
     `;
 
-    // ===== 円グラフ =====
     drawChart(data);
-
   }catch(e){
     showToast("取得エラー");
     console.error(e);
   }
 }
-function updateSurveyButton(){
 
-const id = "YpA2e9nQO1k";
-
-const btn = document.querySelector("#video_"+id+" .quizBtn");
-
-if(!btn) return;
-
-if(localStorage.getItem(username+"_complete_"+id)){
-
-btn.classList.remove("locked");
-btn.innerText = "アンケートに答える";
-
-}else{
-
-btn.classList.add("locked");
-btn.innerText = "アンケートに答える（動画視聴後）";
-
-}
-
-}
-let currentTeam = "infection"; // 初期表示チーム
+let currentTeam = "infection";
 
 const videosData = [
   {
@@ -1536,8 +1171,6 @@ const videosData = [
   }
 ];
 
-
-// チーム切り替え処理
 function switchTeam(teamName){
   currentTeam = teamName;
   document.getElementById("tab_infection").classList.toggle("active", teamName === "infection");
@@ -1545,7 +1178,6 @@ function switchTeam(teamName){
   renderVideoList();
 }
 
-// サムネイル・タイトルクリックで直接再生ではなく modal 表示にする
 function renderVideoList(){
   const listEl = document.getElementById("videoList");
   if(!listEl) return;
@@ -1587,7 +1219,6 @@ function renderVideoList(){
   });
 }
 
-// 単体動画の進捗・ボタン表示状態の更新
 function updateSingleVideoStatus(id, duration){
   const time = parseFloat(localStorage.getItem(username+"_"+id)) || 0;
   const date = localStorage.getItem(username+"_date_"+id);
@@ -1606,49 +1237,11 @@ function updateSingleVideoStatus(id, duration){
     if(date) displayText += "（最終視聴：" + date + "）";
     text.innerText = displayText;
   }
-
-  const quizBtn = document.querySelector("#video_"+id+" .quizBtn");
-  if(quizBtn){
-    if(id === "HyyeZRsWGkw"){
-      if(localStorage.getItem(username+"_quiz_done_"+id)){
-        quizBtn.classList.remove("locked");
-        quizBtn.innerText="回答結果を見る";
-        quizBtn.onclick=function(){ showResult(id); };
-      }else if(!localStorage.getItem(username+"_complete_"+id)){
-        quizBtn.classList.add("locked");
-        quizBtn.innerText="確認テスト（動画視聴後）";
-      }else{
-        quizBtn.classList.remove("locked");
-        quizBtn.innerText="確認テストを実施する";
-      }
-    } else if(id === "YpA2e9nQO1k"){
-      if(localStorage.getItem(username+"_complete_"+id)){
-        quizBtn.classList.remove("locked");
-        quizBtn.innerText = "アンケートに答える";
-      }else{
-        quizBtn.classList.add("locked");
-        quizBtn.innerText = "アンケートに答える（動画視聴後）";
-      }
-    }
-  }
-
-  const reviewBtn = document.querySelector("#video_"+id+" .reviewBtn");
-  if(reviewBtn){
-    let wrong = JSON.parse(localStorage.getItem(username+"_wrong_"+id) || "[]");
-    reviewBtn.classList.add("locked");
-
-    if(!localStorage.getItem(username+"_quiz_done_"+id) || wrong.length === 0){
-      reviewBtn.classList.add("hidden");
-    } else {
-      reviewBtn.classList.remove("hidden");
-      reviewBtn.classList.remove("locked");
-    }
-  }
 }
+
 let currentModalVideoId = null;
 
-
-// モーダルを開く関数（再生処理の連携を強化）
+/* モーダルを開く関数（localStorageの判定に正しく変更） */
 function openModal(id){
   const video = videosData.find(v => v.id === id);
   if(!video || video.locked) return;
@@ -1663,62 +1256,79 @@ function openModal(id){
   const actionsEl = document.getElementById("modalActions");
   actionsEl.innerHTML = "";
 
-  // 1. 動画再生ボタン（押したらモーダルを閉じて動画プレイヤーへ移動・再生）
+  // 1. 動画再生ボタン
   const playBtn = document.createElement("button");
-  playBtn.style.cssText = "background:#fff; color:#000; border:none; cursor:pointer; font-weight:bold; padding:12px; border-radius:6px; width:100%;";
+  playBtn.style.cssText = "background:#fff; color:#000; border:none; cursor:pointer; font-weight:bold; padding:12px; border-radius:8px; width:100%; font-size:14px;";
   playBtn.innerText = "▶ 動画を再生する";
   playBtn.onclick = function(){
     closeModalDirect();
-    // 既存のplayVideo関数を呼び出す
     if(typeof playVideo === "function"){
       playVideo(id);
     }
   };
   actionsEl.appendChild(playBtn);
 
-  // 2. テスト or アンケートボタンの動的追加
-  const user = (typeof users !== 'undefined' && typeof currentUser !== 'undefined') ? users[currentUser] : null;
-  const viewed = user && user.viewed ? user.viewed[id] : null;
-  const isCompleted = viewed && viewed.percentage >= 100; // 視聴完了判定
+  // 視聴完了判定（localStorageから正確に取得）
+  const isCompleted = localStorage.getItem(username + "_complete_" + id) === "true";
+  const quizDone = localStorage.getItem(username + "_quiz_done_" + id);
+  const wrongList = JSON.parse(localStorage.getItem(username + "_wrong_" + id) || "[]");
 
+  // 2. テスト or アンケートボタン
   if (video.type === "quiz") {
-    // 感染対策チーム（ノロウイルスなど）
     const quizBtn = document.createElement("button");
-    quizBtn.className = "quizBtn" + (isCompleted ? "" : " locked");
-    quizBtn.style.cssText = "margin-top:8px; padding:12px; border-radius:6px; font-weight:bold; width:100%;";
+    quizBtn.style.cssText = "padding:12px; border-radius:8px; font-weight:bold; width:100%; font-size:14px; border:none; transition:0.2s;";
 
-    if (user && user.quizResults && user.quizResults[id]) {
+    if (quizDone) {
+      quizBtn.style.background = "#e50914";
+      quizBtn.style.color = "#fff";
+      quizBtn.style.cursor = "pointer";
       quizBtn.innerText = "回答結果を見る";
+      quizBtn.onclick = function() { closeModalDirect(); showResult(id); };
+    } else if (isCompleted) {
+      quizBtn.style.background = "#e50914";
+      quizBtn.style.color = "#fff";
+      quizBtn.style.cursor = "pointer";
+      quizBtn.innerText = "確認テストを実施する";
       quizBtn.onclick = function() { closeModalDirect(); startQuiz(id); };
     } else {
-      quizBtn.innerText = isCompleted ? "確認テストを実施する" : "確認テスト（動画視聴後）";
-      quizBtn.onclick = isCompleted ? function() { closeModalDirect(); startQuiz(id); } : null;
+      quizBtn.style.background = "#333";
+      quizBtn.style.color = "#888";
+      quizBtn.style.cursor = "not-allowed";
+      quizBtn.innerText = "確認テスト（動画視聴後）";
     }
     actionsEl.appendChild(quizBtn);
 
     // 復習ボタン
-    if (user && user.quizResults && user.quizResults[id] && user.quizResults[id].wrongAnswers && user.quizResults[id].wrongAnswers.length > 0) {
+    if (quizDone && wrongList.length > 0) {
       const reviewBtn = document.createElement("button");
-      reviewBtn.className = "reviewBtn";
-      reviewBtn.style.cssText = "margin-top:8px; padding:12px; border-radius:6px; font-weight:bold; background:#ff9800; color:#fff; border:none; width:100%;";
+      reviewBtn.style.cssText = "padding:12px; border-radius:8px; font-weight:bold; background:#ff9800; color:#fff; border:none; width:100%; font-size:14px; cursor:pointer;";
       reviewBtn.innerText = "復習する";
       reviewBtn.onclick = function() { closeModalDirect(); startReview(id); };
       actionsEl.appendChild(reviewBtn);
     }
 
   } else if (video.type === "survey") {
-    // 学習会チーム（排泄ケアなど）
     const surveyBtn = document.createElement("button");
-    surveyBtn.className = "quizBtn" + (isCompleted ? "" : " locked");
-    surveyBtn.style.cssText = "margin-top:8px; padding:12px; border-radius:6px; font-weight:bold; width:100%;";
-    surveyBtn.innerText = isCompleted ? "アンケートに答える" : "アンケートに答える（動画視聴後）";
-    surveyBtn.onclick = isCompleted ? function() { closeModalDirect(); startSurvey(id); } : null;
+    surveyBtn.style.cssText = "padding:12px; border-radius:8px; font-weight:bold; width:100%; font-size:14px; border:none; transition:0.2s;";
+
+    if (isCompleted) {
+      surveyBtn.style.background = "#e50914";
+      surveyBtn.style.color = "#fff";
+      surveyBtn.style.cursor = "pointer";
+      surveyBtn.innerText = "アンケートに答える";
+      surveyBtn.onclick = function() { closeModalDirect(); startSurvey(id); };
+    } else {
+      surveyBtn.style.background = "#333";
+      surveyBtn.style.color = "#888";
+      surveyBtn.style.cursor = "not-allowed";
+      surveyBtn.innerText = "アンケートに答える（動画視聴後）";
+    }
     actionsEl.appendChild(surveyBtn);
   }
 
   document.getElementById("videoModal").classList.add("active");
 }
-// モーダルを再生して閉じる
+
 function playModalVideo(){
   if(currentModalVideoId){
     const id = currentModalVideoId;
@@ -1727,7 +1337,6 @@ function playModalVideo(){
   }
 }
 
-// モーダルを閉じる処理
 function closeModal(e){
   if(e.target.classList.contains("modal-overlay")){
     closeModalDirect();
@@ -1738,10 +1347,7 @@ function closeModalDirect(){
   document.getElementById("videoModal").classList.remove("active");
   currentModalVideoId = null;
 }
-
-
 </script>
-<div id="toast"></div>  
+<div id="toast"></div> 
 </body>
 </html>
-
