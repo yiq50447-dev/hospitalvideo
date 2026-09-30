@@ -403,7 +403,7 @@ body,html{
   flex: 1;
 }
 
-/* 動画詳細モーダル（レイアウトズレ防止の修正を加えた部分） */
+/* 動画詳細モーダル */
 .modal-overlay {
   display: none;
   position: fixed;
@@ -512,18 +512,20 @@ body,html{
 
 .modal-meta {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   align-items: center;
   font-size: 12px;
   color: #aaa;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 .modal-badge {
-  border: 1px solid #aaa;
-  padding: 1px 4px;
+  border: 1px solid #666;
+  color: #ccc;
+  padding: 0px 4px;
   border-radius: 3px;
   font-size: 10px;
+  font-weight: bold;
 }
 
 .modal-desc {
@@ -590,6 +592,9 @@ body,html{
         <h3 id="modalTitle"></h3>
         <div class="modal-meta">
           <span id="modalDuration"></span>
+          <span>•</span>
+          <span id="modalDate"></span>
+          <span>•</span>
           <span class="modal-badge">HD</span>
         </div>
         <p id="modalDesc" class="modal-desc"></p>
@@ -1145,6 +1150,7 @@ async function showSummary(){
 
 let currentTeam = "infection";
 
+/* 動画データ（公開日 publishedAt を追加しています） */
 const videosData = [
   {
     id: "HyyeZRsWGkw",
@@ -1152,7 +1158,8 @@ const videosData = [
     title: "第一回オンライン勉強会 ノロウイルスの対応について",
     desc: "ノロウイルス発生時の初期対応、二次感染を防ぐための嘔吐物処理手順について解説します。",
     type: "quiz",
-    duration: 2063
+    duration: 2063,
+    publishedAt: "2026/03/13"
   },
   {
     id: "PPE_LOCKED",
@@ -1167,7 +1174,8 @@ const videosData = [
     title: "第二回オンライン勉強会 より良い排泄ケアを目指して",
     desc: "利用者様の尊厳を守る排泄介助の基本と、適切なオムツ選定・あて方について学びます。",
     type: "survey",
-    duration: 1200
+    duration: 1200,
+    publishedAt: "2026/08/05"
   }
 ];
 
@@ -1241,7 +1249,6 @@ function updateSingleVideoStatus(id, duration){
 
 let currentModalVideoId = null;
 
-/* モーダルを開く関数（localStorageの判定に正しく変更） */
 function openModal(id){
   const video = videosData.find(v => v.id === id);
   if(!video || video.locked) return;
@@ -1251,14 +1258,17 @@ function openModal(id){
   document.getElementById("modalThumb").src = `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
   document.getElementById("modalTitle").innerText = video.title;
   document.getElementById("modalDesc").innerText = video.desc || "説明はありません。";
+
+  // メタ情報の設定（再生時間・公開日）
   document.getElementById("modalDuration").innerText = Math.floor((video.duration || 0) / 60) + "分";
+  document.getElementById("modalDate").innerText = video.publishedAt || "公開日未定";
 
   const actionsEl = document.getElementById("modalActions");
   actionsEl.innerHTML = "";
 
-  // 1. 動画再生ボタン
+  // 1. 動画再生ボタン（メインアクションとして赤色プライマリデザインに強化）
   const playBtn = document.createElement("button");
-  playBtn.style.cssText = "background:#fff; color:#000; border:none; cursor:pointer; font-weight:bold; padding:12px; border-radius:8px; width:100%; font-size:14px;";
+  playBtn.style.cssText = "background:#e50914; color:#fff; border:none; cursor:pointer; font-weight:bold; padding:12px; border-radius:8px; width:100%; font-size:15px; box-shadow: 0 4px 10px rgba(229, 9, 20, 0.4);";
   playBtn.innerText = "▶ 動画を再生する";
   playBtn.onclick = function(){
     closeModalDirect();
@@ -1268,31 +1278,32 @@ function openModal(id){
   };
   actionsEl.appendChild(playBtn);
 
-  // 視聴完了判定（localStorageから正確に取得）
+  // 視聴完了判定
   const isCompleted = localStorage.getItem(username + "_complete_" + id) === "true";
   const quizDone = localStorage.getItem(username + "_quiz_done_" + id);
   const wrongList = JSON.parse(localStorage.getItem(username + "_wrong_" + id) || "[]");
 
-  // 2. テスト or アンケートボタン
+  // 2. テスト or アンケートボタン（2番目のアクションとして落ち着いたデザイン）
   if (video.type === "quiz") {
     const quizBtn = document.createElement("button");
     quizBtn.style.cssText = "padding:12px; border-radius:8px; font-weight:bold; width:100%; font-size:14px; border:none; transition:0.2s;";
 
     if (quizDone) {
-      quizBtn.style.background = "#e50914";
+      quizBtn.style.background = "#333";
       quizBtn.style.color = "#fff";
+      quizBtn.style.border = "1px solid #555";
       quizBtn.style.cursor = "pointer";
       quizBtn.innerText = "回答結果を見る";
       quizBtn.onclick = function() { closeModalDirect(); showResult(id); };
     } else if (isCompleted) {
-      quizBtn.style.background = "#e50914";
+      quizBtn.style.background = "#2e7d32"; // 緑色でテスト受験を促す
       quizBtn.style.color = "#fff";
       quizBtn.style.cursor = "pointer";
       quizBtn.innerText = "確認テストを実施する";
       quizBtn.onclick = function() { closeModalDirect(); startQuiz(id); };
     } else {
-      quizBtn.style.background = "#333";
-      quizBtn.style.color = "#888";
+      quizBtn.style.background = "#222";
+      quizBtn.style.color = "#666";
       quizBtn.style.cursor = "not-allowed";
       quizBtn.innerText = "確認テスト（動画視聴後）";
     }
@@ -1312,14 +1323,14 @@ function openModal(id){
     surveyBtn.style.cssText = "padding:12px; border-radius:8px; font-weight:bold; width:100%; font-size:14px; border:none; transition:0.2s;";
 
     if (isCompleted) {
-      surveyBtn.style.background = "#e50914";
+      surveyBtn.style.background = "#2e7d32";
       surveyBtn.style.color = "#fff";
       surveyBtn.style.cursor = "pointer";
       surveyBtn.innerText = "アンケートに答える";
       surveyBtn.onclick = function() { closeModalDirect(); startSurvey(id); };
     } else {
-      surveyBtn.style.background = "#333";
-      surveyBtn.style.color = "#888";
+      surveyBtn.style.background = "#222";
+      surveyBtn.style.color = "#666";
       surveyBtn.style.cursor = "not-allowed";
       surveyBtn.innerText = "アンケートに答える（動画視聴後）";
     }
