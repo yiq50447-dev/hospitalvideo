@@ -989,7 +989,7 @@
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.4.2";
+const APP_VERSION = "1.4.3";
 const PPE_PASSWORD = "ppe123"; // 🔑 PPE動画の閲覧用パスワード
 
 let videoWrapper, home, skipIntro, skipThinking, skipBar, resumeInline, playBtn, centralUI, bottomControls, backBtn, chapterBtn, chapterPanel, progress, currentTime, duration;
@@ -1855,7 +1855,19 @@ function closeModalDirect(){
  document.getElementById("videoModal").classList.remove("active");
  currentModalVideoId = null;
 }
+/* 追加：アンケート遷移用関数 */
+function startSurvey(videoId){
+  // 視聴完了（または管理者モード）のチェック
+  const isCompleted = localStorage.getItem(username + "_complete_" + videoId) === "true";
 
+  if (!adminMode && !isCompleted) {
+    showToast("動画を最後まで視聴するとアンケートに回答できます");
+    return;
+  }
+
+  // Googleフォームへ直接画面遷移
+  window.location.href = "https://docs.google.com/forms/d/e/1FAIpQLSc7J4cA9X8WkHXmv6KITaTR3SE23LXhxzyZHyQbCq_eZRuohQ/viewform?usp=header";
+}
 </script>
 </body>
 </html>
