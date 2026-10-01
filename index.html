@@ -11,894 +11,895 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
 <style>
-  /* ==========================================================================
-     1. ベース設定 & リセット
-     ========================================================================== */
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  button, div[role="button"] {
-    touch-action: manipulation;
-    cursor: pointer;
-  }
-
-  body, html {
-    width: 100%;
-    height: 100%;
-    background: #121212;
-    overflow: hidden;
-    color: #fff;
-  }
-
-  #loader {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: #111;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-  }
-
-  /* ==========================================================================
-     2. ログインモーダル画面
-     ========================================================================== */
-  #nameInputModal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: #121212;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    z-index: 101;
-    text-align: center;
-    padding: calc(20px + env(safe-area-inset-top)) calc(20px + env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) calc(20px + env(safe-area-inset-left));
-  }
-
-  .app-brand {
-    position: absolute;
-    top: calc(15px + env(safe-area-inset-top));
-    left: calc(20px + env(safe-area-inset-left));
-    text-align: left;
-  }
-  .app-brand .app-logo {
-    font-size: 20px;
-    font-weight: 800;
-    color: #e50914;
-    letter-spacing: 0.5px;
-    line-height: 1.1;
-  }
-  .app-brand .app-subtitle {
-    font-size: 10px;
-    color: #aaa;
-    margin-top: 2px;
-  }
-
-  #nameInputModal h3 {
-    font-size: 16px;
-    font-weight: 600;
-    color: #fff;
-    margin-bottom: 4px;
-    text-align: center;
-  }
-
-  .input-group {
-    width: 100%;
-    max-width: 320px;
-    margin: 16px 0 8px 0;
-  }
-  #nameInputModal input {
-    width: 100%;
-    padding: 14px 16px;
-    font-size: 15px;
-    border-radius: 8px;
-    border: 1px solid #333;
-    background: #1e1e1e;
-    color: #fff;
-    outline: none;
-    text-align: center;
-    transition: border-color 0.2s;
-  }
-  #nameInputModal input::placeholder {
-    color: #666;
-    text-align: center;
-  }
-  #nameInputModal input:focus {
-    border-color: #e50914;
-  }
-
-  #nameInputModal button {
-    width: 100%;
-    max-width: 320px;
-    padding: 14px;
-    background: #e50914;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    font-size: 15px;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 8px;
-  }
-
-  .login-notice {
-    width: 100%;
-    max-width: 320px;
-    margin-top: 20px;
-    padding: 14px 16px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid #2a2a2a;
-    border-radius: 8px;
-    text-align: left;
-  }
-  .login-notice-title {
-    font-size: 13px;
-    font-weight: bold;
-    color: #e50914;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-  .login-notice-text {
-    font-size: 12px;
-    color: #ccc;
-    line-height: 1.6;
-  }
-
-  #topVersion {
-    position: absolute;
-    bottom: calc(16px + env(safe-area-inset-bottom));
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 13px;
-    color: #666;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-    z-index: 102;
-    padding: 6px 12px;
-  }
-
-  /* ==========================================================================
-     3. メイン画面：ヘッダー & アバターポップアップ
-     ========================================================================== */
-  #topBarHome {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    justify-content: space-between;
-    align-items: center;
-    padding: calc(12px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) 12px calc(16px + env(safe-area-inset-left));
-    background: #121212;
-    border-bottom: 1px solid #222;
-    z-index: 99;
-  }
-
-  .header-brand .header-logo {
-    font-size: 18px;
-    font-weight: 800;
-    color: #e50914;
-    letter-spacing: 0.5px;
-  }
-  .header-brand .header-subtitle {
-    font-size: 9px;
-    color: #aaa;
-  }
-
-  .avatar-btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: #e50914;
-    color: #fff;
-    font-weight: bold;
-    font-size: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    border: 2px solid #333;
-  }
-
-  .profile-popover {
-    display: none;
-    position: fixed;
-    top: calc(60px + env(safe-area-inset-top));
-    right: calc(16px + env(safe-area-inset-right));
-    width: 220px;
-    background: #1e1e1e;
-    border: 1px solid #333;
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.6);
-    z-index: 200;
-    padding: 16px;
-  }
-  .profile-popover.active {
-    display: block;
-  }
-  .profile-info {
-    border-bottom: 1px solid #333;
-    padding-bottom: 12px;
-    margin-bottom: 12px;
-  }
-  .profile-name {
-    font-size: 15px;
-    font-weight: bold;
-    color: #fff;
-  }
-  .profile-status {
-    font-size: 11px;
-    color: #888;
-    margin-top: 2px;
-  }
-  .profile-logout-btn {
-    width: 100%;
-    padding: 10px;
-    background: rgba(229, 9, 20, 0.15);
-    color: #e50914;
-    border: 1px solid rgba(229, 9, 20, 0.4);
-    border-radius: 6px;
-    font-weight: bold;
-    font-size: 13px;
-    cursor: pointer;
-  }
-
-  /* ==========================================================================
-     4. メインコンテンツ & 各ページレイアウト
-     ========================================================================== */
-  #home, #infection, #study, #setting {
-    display: block;
-    width: 100%;
-    height: 100%;
-    overflow-y: auto;
-    padding-top: calc(65px + env(safe-area-inset-top));
-    padding-bottom: calc(80px + env(safe-area-inset-bottom));
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .section-title {
-    margin-top: 10px;
-    margin-bottom: 10px;
-    padding: 0 16px;
-    font-size: 16px;
-    font-weight: bold;
-  }
-
-  .resume-card {
-    margin: 10px 16px 15px 16px;
-    background: linear-gradient(135deg, #1f1f1f 0%, #2a1113 100%);
-    border: 1px solid #e50914;
-    border-radius: 12px;
-    padding: 14px;
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    box-shadow: 0 4px 15px rgba(229, 9, 20, 0.2);
-  }
-  .resume-thumb {
-    position: relative;
-    width: 100px;
-    height: 56px;
-    border-radius: 6px;
-    overflow: hidden;
-    flex-shrink: 0;
-  }
-  .resume-thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  .resume-info {
-    flex: 1;
-    min-width: 0;
-  }
-  .resume-badge {
-    font-size: 10px;
-    color: #e50914;
-    font-weight: bold;
-    letter-spacing: 0.5px;
-  }
-  .resume-title {
-    font-size: 13px;
-    font-weight: bold;
-    color: #fff;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-top: 2px;
-  }
-  .resume-progress-text {
-    font-size: 11px;
-    color: #aaa;
-    margin-top: 4px;
-  }
-  .resume-btn {
-    background: #e50914;
-    color: #fff;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: bold;
-    cursor: pointer;
-    flex-shrink: 0;
-  }
-
-  /* --- 横スライド動画コンテナ（中央揃え修正） --- */
-  .horizontal-scroll-container {
-    display: flex;
-    gap: 12px;
-    overflow-x: auto;
-    padding: 5px 16px 15px 16px;
-    -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x mandatory;
-    align-items: center; /* 修正: 上下中央揃え */
-  }
-
-  /* 横スライドカード */
-  .horizontal-video-card {
-    flex: 0 0 calc(75vw - 12px);
-    max-width: 280px;
-    background: #1a1a1a;
-    border-radius: 12px;
-    overflow: hidden;
-    border: 1px solid #2a2a2a;
-    cursor: pointer;
-    position: relative;
-    scroll-snap-align: center; /* 修正: スナップ位置も中央に */
-    display: flex;
-    flex-direction: column;
-  }
-
-  .protected-badge {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    background: rgba(0, 0, 0, 0.75);
-    color: #ff4d4d;
-    font-size: 10px;
-    font-weight: bold;
-    padding: 3px 6px;
-    border-radius: 4px;
-    border: 1px solid #ff4d4d;
-    z-index: 5;
-  }
-
-  .horizontal-thumb {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    background: #000;
-    flex-shrink: 0;
-  }
-
-  .horizontal-thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .horizontal-info {
-    padding: 12px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    flex-grow: 1;
-  }
-
-  .horizontal-title {
-    font-size: 13px;
-    font-weight: bold;
-    color: #fff;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    line-height: 1.3;
-  }
-
-  .horizontal-sub {
-    font-size: 11px;
-    color: #888;
-    margin-top: 6px;
-  }
-
-  #videoList { list-style: none; padding: 0 16px 20px 16px; }
-  #videoList li {
-    padding: 12px;
-    margin-bottom: 10px;
-    background: rgba(255,255,255,0.05);
-    border-radius: 8px;
-    cursor: pointer;
-  }
-  .locked { opacity: .4; cursor: default; }
-  .viewedDate { font-size: 12px; color: #aaa; margin-top: 4px; }
-
-  .videoCard {
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-  }
-
-  .thumbnailBox {
-    position: relative;
-    width: 120px;
-    height: 68px;
-    background: #222;
-    border-radius: 6px;
-    overflow: hidden;
-    flex-shrink: 0;
-    cursor: pointer;
-  }
-
-  .thumbnailBox img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .noThumb {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    color: #666;
-    background: #1a1a1a;
-    text-align: center;
-  }
-
-  .videoCardInfo { flex: 1; }
-  .videoTitle { flex: 1; cursor: pointer; font-size: 14px; font-weight: bold; }
-
-  .progressBar {
-    width: 100%;
-    height: 6px;
-    background: #333;
-    border-radius: 4px;
-    margin-top: 6px;
-    overflow: hidden;
-  }
-
-  .progressFill {
-    height: 100%;
-    width: 0%;
-    background: #e50914;
-    transition: 0.3s;
-  }
-
-  .progressText {
-    font-size: 11px;
-    color: #aaa;
-    margin-top: 4px;
-  }
-
-  /* --- 設定画面スタイル --- */
-  .setting-container {
-    padding: 0 16px 30px 16px;
-  }
-  .setting-group {
-    background: #1e1e1e;
-    border-radius: 12px;
-    border: 1px solid #2a2a2a;
-    margin-bottom: 20px;
-    overflow: hidden;
-  }
-  .setting-group-title {
-    font-size: 12px;
-    font-weight: bold;
-    color: #888;
-    padding: 12px 16px 6px 16px;
-    text-transform: uppercase;
-  }
-  .setting-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 14px 16px;
-    border-bottom: 1px solid #2a2a2a;
-  }
-  .setting-item:last-child {
-    border-bottom: none;
-  }
-  .setting-label {
-    font-size: 14px;
-    color: #fff;
-  }
-  .setting-sublabel {
-    font-size: 11px;
-    color: #888;
-    margin-top: 2px;
-  }
-  .setting-select {
-    background: #2a2a2a;
-    color: #fff;
-    border: 1px solid #444;
-    padding: 6px 10px;
-    border-radius: 6px;
-    font-size: 13px;
-    outline: none;
-  }
-
-  /* スイッチトグル */
-  .switch {
-    position: relative;
-    display: inline-block;
-    width: 44px;
-    height: 24px;
-  }
-  .switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-  .slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-color: #333;
-    transition: .3s;
-    border-radius: 24px;
-  }
-  .slider:before {
-    position: absolute;
-    content: "";
-    height: 18px;
-    width: 18px;
-    left: 3px;
-    bottom: 3px;
-    background-color: white;
-    transition: .3s;
-    border-radius: 50%;
-  }
-  input:checked + .slider {
-    background-color: #e50914;
-  }
-  input:checked + .slider:before {
-    transform: translateX(20px);
-  }
-
-  .setting-btn-danger {
-    width: 100%;
-    padding: 12px;
-    background: transparent;
-    color: #ff4d4d;
-    border: none;
-    font-size: 14px;
-    font-weight: bold;
-    text-align: left;
-    cursor: pointer;
-  }
-
-  /* お知らせバナー */
-  .notice-banner-container {
-    padding: 0 16px;
-    margin-top: 10px;
-    margin-bottom: 15px;
-  }
-
-  .notice-banner {
-    background: linear-gradient(135deg, #221a1a 0%, #161616 100%);
-    border: 1px solid #3d2222;
-    border-left: 4px solid #e50914;
-    border-radius: 10px;
-    padding: 14px 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-  }
-
-  .notice-tag {
-    align-self: flex-start;
-    background: #e50914;
-    color: #fff;
-    font-size: 10px;
-    font-weight: bold;
-    padding: 2px 8px;
-    border-radius: 4px;
-  }
-
-  .notice-title {
-    color: #ffffff;
-    font-size: 14px;
-    font-weight: bold;
-  }
-
-  .notice-desc {
-    color: #aaaaaa;
-    font-size: 12px;
-    line-height: 1.4;
-  }
-
-  /* ==========================================================================
-     5. ボトムナビゲーションバー
-     ========================================================================== */
-  .bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background: #121212;
-    border-top: 1px solid #222;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding-top: 8px;
-    padding-bottom: calc(8px + env(safe-area-inset-bottom));
-    z-index: 99;
-  }
-  .nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3px;
-    color: #777;
-    font-size: 10px;
-    border: none;
-    background: none;
-    cursor: pointer;
-  }
-  .nav-item.active {
-    color: #e50914;
-  }
-  .nav-icon {
-    font-size: 18px;
-  }
-
-  /* ==========================================================================
-     6. 動画プレイヤー・各種モーダル関連
-     ========================================================================== */
-  #videoWrapper {
-    width: 100vw;
-    height: 100vh;
-    position: fixed;
-    top: 0;
-    left: 0;
-    display: none;
-    background: #000;
-    overflow: hidden;
-    z-index: 1010;
-  }
-
-  #playerContainer {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100vw;
-    height: calc(100vw * 9 / 16);
-    max-width: 100vw;
-    max-height: 100vh;
-  }
-
-  #playerContainer #player, #player {
-    width: 100% !important;
-    height: 100% !important;
-    border: none;
-    pointer-events: none;
-  }
-
-  @media (orientation: landscape) {
-    #playerContainer {
-      position: absolute;
-      top: 50%;
-      left: calc(50% - 55px);
-      transform: translate(-50%, -50%);
-      width: 100vw;
-      height: calc(100vw * 9 / 16);
-      max-width: 100vw;
-      max-height: 100vh;
-      aspect-ratio: 16 / 9;
-    }
-  }
-
-  .centralUI {
-    position: absolute; top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex; gap: 20px; z-index: 50; transition: .3s;
-  }
-  .centralUI button {
-    font-size: 22px; padding: 14px;
-    background: rgba(180, 180, 180, .6);
-    border: none; color: #fff; border-radius: 6px;
-  }
-
-  #bottomControls {
-    position: absolute;
-    bottom: 0; left: 0; width: 100%;
-    background: rgba(0,0,0,.6);
-    display: flex; align-items: center;
-    padding: 8px calc(8px + env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) calc(8px + env(safe-area-inset-left));
-    gap: 8px; z-index: 40; transition: .3s;
-  }
-  #progress { flex: 1; }
-  .hideUI { opacity: 0; pointer-events: none; }
-
-  #speedBtn {
-    background: rgba(255,255,255,0.15);
-    border: none; color: #fff;
-    padding: 6px 10px; border-radius: 6px;
-    font-size: 14px; min-width: 55px;
-  }
-
-  #resumeInline {
-    position: absolute; top: 60%; left: 50%;
-    transform: translateX(-50%);
-    display: none; background: rgba(0,0,0,.9);
-    padding: 12px 20px; border-radius: 8px;
-    z-index: 60; text-align: center;
-  }
-
-  #skipIntro {
-    position: absolute;
-    right: calc(15px + env(safe-area-inset-right));
-    bottom: calc(20px + env(safe-area-inset-bottom));
-    background: rgba(0,0,0,.9);
-    padding: 10px 16px; border-radius: 6px;
-    display: none; z-index: 999; overflow: hidden; cursor: pointer;
-  }
-  #skipBar {
-    position: absolute; bottom: 0; left: 0; height: 4px;
-    background: #e50914; width: 0%;
-  }
-
-  #skipThinking {
-    position: absolute;
-    right: calc(15px + env(safe-area-inset-right));
-    bottom: calc(20px + env(safe-area-inset-bottom));
-    background: rgba(0,0,0,.9);
-    padding: 10px 16px; border-radius: 6px;
-    display: none; z-index: 999; cursor: pointer; color: #fff; font-size: 14px;
-  }
-
-  #chapterBtn {
-    position: absolute;
-    top: calc(20px + env(safe-area-inset-top));
-    right: calc(20px + env(safe-area-inset-right));
-    z-index: 70; background: rgba(229,9,20,0.6);
-    border: none; color: #fff; padding: 8px 14px;
-    border-radius: 8px; backdrop-filter: blur(6px);
-  }
-
-  #chapterPanel {
-    position: absolute; top: 0; right: -350px;
-    width: 320px; height: 100%;
-    background: rgba(0,0,0,0.95);
-    overflow-y: auto;
-    padding: calc(20px + env(safe-area-inset-top)) 20px 20px 20px;
-    transition: .3s; z-index: 65;
-  }
-  #chapterPanel p { margin: 8px 0; cursor: pointer; }
-  .groupTitle { margin-top: 15px; font-weight: bold; color: #e50914; }
-
-  #backBtn {
-    position: absolute;
-    top: calc(20px + env(safe-area-inset-top));
-    left: calc(20px + env(safe-area-inset-left));
-    z-index: 80; font-size: 18px; padding: 12px;
-    background: rgba(180,180,180,.6); border: none;
-    color: #fff; border-radius: 6px; transition: .3s;
-  }
-
-  #updateModal {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.7); display: none;
-    align-items: center; justify-content: center; z-index: 300;
-  }
-
-  /* パスワード入力用モーダル */
-  #passwordModal {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.8); display: none;
-    align-items: center; justify-content: center; z-index: 2000;
-  }
-  .pass-modal-box {
-    background: #1e1e1e; padding: 24px; border-radius: 12px;
-    width: 90%; max-width: 320px; text-align: center; border: 1px solid #333;
-  }
-  .pass-modal-box h4 { font-size: 16px; margin-bottom: 8px; }
-  .pass-modal-box p { font-size: 12px; color: #aaa; margin-bottom: 16px; }
-  .pass-modal-box input {
-    width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #444;
-    background: #111; color: #fff; text-align: center; font-size: 16px; margin-bottom: 12px;
-  }
-  .pass-btn-group { display: flex; gap: 8px; }
-  .pass-btn-group button {
-    flex: 1; padding: 10px; border-radius: 6px; border: none; font-weight: bold; font-size: 13px;
-  }
-
-  #toast {
-    position: fixed;
-    bottom: calc(120px + env(safe-area-inset-bottom));
-    left: 50%; transform: translateX(-50%);
-    background: rgba(0,0,0,0.85); color: #fff;
-    padding: 12px 20px; border-radius: 8px;
-    font-size: 14px; opacity: 0; transition: 0.3s; z-index: 999;
-    pointer-events: none;
-  }
-
-  .modal-overlay {
-    display: none; position: fixed; top: 0; left: 0;
-    width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75);
-    z-index: 1000; justify-content: center; align-items: flex-end;
-    backdrop-filter: blur(4px);
-  }
-  .modal-overlay.active { display: flex; }
-
-  .modal-content {
-    background: #181818; width: 100%; max-width: 500px;
-    border-radius: 16px 16px 0 0; overflow: hidden;
-    position: relative; box-shadow: 0 -4px 20px rgba(0,0,0,0.8);
-    animation: slideUp 0.3s ease-out; max-height: 90vh;
-    display: flex; flex-direction: column;
-  }
-  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-
-  .modal-close-btn {
-    position: absolute; top: 10px; right: 15px;
-    background: rgba(0,0,0,0.6); color: #fff;
-    border: none; font-size: 22px; width: 32px; height: 32px;
-    border-radius: 50%; cursor: pointer; z-index: 10;
-  }
-
-  .modal-hero { position: relative; width: 100%; padding-top: 56.25%; background: #000; flex-shrink: 0; }
-  .modal-hero img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
-  .modal-play-overlay {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; cursor: pointer;
-  }
-  .play-icon {
-    width: 50px; height: 50px; background: rgba(229, 9, 20, 0.9);
-    color: #fff; border-radius: 50%; display: flex; align-items: center;
-    justify-content: center; font-size: 20px; padding-left: 3px;
-  }
-
-  .modal-body { padding: 16px 20px calc(20px + env(safe-area-inset-bottom)) 20px; color: #fff; overflow-y: auto; }
-  .modal-body h3 { margin: 0 0 8px 0; font-size: 17px; }
-  .modal-meta { display: flex; gap: 8px; align-items: center; font-size: 12px; color: #aaa; margin-bottom: 12px; }
-  .modal-badge { border: 1px solid #666; color: #ccc; padding: 0px 4px; border-radius: 3px; font-size: 10px; font-weight: bold; }
-  .modal-desc { font-size: 13px; color: #ccc; line-height: 1.4; margin-bottom: 16px; }
-
-  .btn-play-red {
-    width: 100%;
-    background-color: #e50914;
-    color: white;
-    border: none;
-    padding: 12px;
-    border-radius: 8px;
-    font-weight: bold;
-    font-size: 16px;
-    margin-bottom: 10px;
-    cursor: pointer;
-  }
-
-  .btn-survey-green {
-    width: 100%;
-    background-color: #2e7d32;
-    color: white;
-    border: none;
-    padding: 12px;
-    border-radius: 8px;
-    font-weight: bold;
-    font-size: 16px;
-    cursor: pointer;
-  }
+  <style>
+/* ==========================================================================
+    1. ベース設定 & リセット
+    ========================================================================== */
+ * {
+   box-sizing: border-box;
+   margin: 0;
+   padding: 0;
+   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+   -webkit-tap-highlight-color: transparent;
+ }
+
+ button, div[role="button"] {
+   touch-action: manipulation;
+   cursor: pointer;
+ }
+
+ body, html {
+   width: 100%;
+   height: 100%;
+   background: #121212;
+   overflow: hidden;
+   color: #fff;
+ }
+
+ #loader {
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background: #111;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   z-index: 100;
+ }
+
+ /* ==========================================================================
+    2. ログインモーダル画面
+    ========================================================================== */
+ #nameInputModal {
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background: #121212;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   flex-direction: column;
+   z-index: 101;
+   text-align: center;
+   padding: calc(20px + env(safe-area-inset-top)) calc(20px + env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) calc(20px + env(safe-area-inset-left));
+ }
+
+ .app-brand {
+   position: absolute;
+   top: calc(15px + env(safe-area-inset-top));
+   left: calc(20px + env(safe-area-inset-left));
+   text-align: left;
+ }
+ .app-brand .app-logo {
+   font-size: 20px;
+   font-weight: 800;
+   color: #e50914;
+   letter-spacing: 0.5px;
+   line-height: 1.1;
+ }
+ .app-brand .app-subtitle {
+   font-size: 10px;
+   color: #aaa;
+   margin-top: 2px;
+ }
+
+ #nameInputModal h3 {
+   font-size: 16px;
+   font-weight: 600;
+   color: #fff;
+   margin-bottom: 4px;
+   text-align: center;
+ }
+
+ .input-group {
+   width: 100%;
+   max-width: 320px;
+   margin: 16px 0 8px 0;
+ }
+ #nameInputModal input {
+   width: 100%;
+   padding: 14px 16px;
+   font-size: 15px;
+   border-radius: 8px;
+   border: 1px solid #333;
+   background: #1e1e1e;
+   color: #fff;
+   outline: none;
+   text-align: center;
+   transition: border-color 0.2s;
+ }
+ #nameInputModal input::placeholder {
+   color: #666;
+   text-align: center;
+ }
+ #nameInputModal input:focus {
+   border-color: #e50914;
+ }
+
+ #nameInputModal button {
+   width: 100%;
+   max-width: 320px;
+   padding: 14px;
+   background: #e50914;
+   color: #fff;
+   border: none;
+   border-radius: 8px;
+   font-size: 15px;
+   font-weight: bold;
+   cursor: pointer;
+   margin-top: 8px;
+ }
+
+ .login-notice {
+   width: 100%;
+   max-width: 320px;
+   margin-top: 20px;
+   padding: 14px 16px;
+   background: rgba(255, 255, 255, 0.05);
+   border: 1px solid #2a2a2a;
+   border-radius: 8px;
+   text-align: left;
+ }
+ .login-notice-title {
+   font-size: 13px;
+   font-weight: bold;
+   color: #e50914;
+   margin-bottom: 8px;
+   display: flex;
+   align-items: center;
+   gap: 4px;
+ }
+ .login-notice-text {
+   font-size: 12px;
+   color: #ccc;
+   line-height: 1.6;
+ }
+
+ #topVersion {
+   position: absolute;
+   bottom: calc(16px + env(safe-area-inset-bottom));
+   left: 50%;
+   transform: translateX(-50%);
+   font-size: 13px;
+   color: #666;
+   letter-spacing: 0.5px;
+   cursor: pointer;
+   z-index: 102;
+   padding: 6px 12px;
+ }
+
+ /* ==========================================================================
+    3. メイン画面：ヘッダー & アバターポップアップ
+    ========================================================================== */
+ #topBarHome {
+   display: none;
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   justify-content: space-between;
+   align-items: center;
+   padding: calc(12px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) 12px calc(16px + env(safe-area-inset-left));
+   background: #121212;
+   border-bottom: 1px solid #222;
+   z-index: 99;
+ }
+
+ .header-brand .header-logo {
+   font-size: 18px;
+   font-weight: 800;
+   color: #e50914;
+   letter-spacing: 0.5px;
+ }
+ .header-brand .header-subtitle {
+   font-size: 9px;
+   color: #aaa;
+ }
+
+ .avatar-btn {
+   width: 36px;
+   height: 36px;
+   border-radius: 50%;
+   background: #e50914;
+   color: #fff;
+   font-weight: bold;
+   font-size: 15px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   cursor: pointer;
+   border: 2px solid #333;
+ }
+
+ .profile-popover {
+   display: none;
+   position: fixed;
+   top: calc(60px + env(safe-area-inset-top));
+   right: calc(16px + env(safe-area-inset-right));
+   width: 220px;
+   background: #1e1e1e;
+   border: 1px solid #333;
+   border-radius: 12px;
+   box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+   z-index: 200;
+   padding: 16px;
+ }
+ .profile-popover.active {
+   display: block;
+ }
+ .profile-info {
+   border-bottom: 1px solid #333;
+   padding-bottom: 12px;
+   margin-bottom: 12px;
+ }
+ .profile-name {
+   font-size: 15px;
+   font-weight: bold;
+   color: #fff;
+ }
+ .profile-status {
+   font-size: 11px;
+   color: #888;
+   margin-top: 2px;
+ }
+ .profile-logout-btn {
+   width: 100%;
+   padding: 10px;
+   background: rgba(229, 9, 20, 0.15);
+   color: #e50914;
+   border: 1px solid rgba(229, 9, 20, 0.4);
+   border-radius: 6px;
+   font-weight: bold;
+   font-size: 13px;
+   cursor: pointer;
+ }
+
+ /* ==========================================================================
+    4. メインコンテンツ & 各ページレイアウト
+    ========================================================================== */
+ #home, #infection, #study, #setting {
+   display: block;
+   width: 100%;
+   height: 100%;
+   overflow-y: auto;
+   padding-top: calc(65px + env(safe-area-inset-top));
+   padding-bottom: calc(80px + env(safe-area-inset-bottom));
+   -webkit-overflow-scrolling: touch;
+ }
+
+ .section-title {
+   margin-top: 10px;
+   margin-bottom: 10px;
+   padding: 0 16px;
+   font-size: 16px;
+   font-weight: bold;
+ }
+
+ .resume-card {
+   margin: 10px 16px 15px 16px;
+   background: linear-gradient(135deg, #1f1f1f 0%, #2a1113 100%);
+   border: 1px solid #e50914;
+   border-radius: 12px;
+   padding: 14px;
+   display: flex;
+   gap: 12px;
+   align-items: center;
+   box-shadow: 0 4px 15px rgba(229, 9, 20, 0.2);
+ }
+ .resume-thumb {
+   position: relative;
+   width: 100px;
+   height: 56px;
+   border-radius: 6px;
+   overflow: hidden;
+   flex-shrink: 0;
+ }
+ .resume-thumb img {
+   width: 100%;
+   height: 100%;
+   object-fit: cover;
+ }
+ .resume-info {
+   flex: 1;
+   min-width: 0;
+ }
+ .resume-badge {
+   font-size: 10px;
+   color: #e50914;
+   font-weight: bold;
+   letter-spacing: 0.5px;
+ }
+ .resume-title {
+   font-size: 13px;
+   font-weight: bold;
+   color: #fff;
+   white-space: nowrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   margin-top: 2px;
+ }
+ .resume-progress-text {
+   font-size: 11px;
+   color: #aaa;
+   margin-top: 4px;
+ }
+ .resume-btn {
+   background: #e50914;
+   color: #fff;
+   border: none;
+   padding: 8px 12px;
+   border-radius: 6px;
+   font-size: 12px;
+   font-weight: bold;
+   cursor: pointer;
+   flex-shrink: 0;
+ }
+
+ /* --- 横スライド動画コンテナ --- */
+ .horizontal-scroll-container {
+   display: flex;
+   gap: 12px;
+   overflow-x: auto;
+   padding: 5px 16px 15px 16px;
+   -webkit-overflow-scrolling: touch;
+   scroll-snap-type: x mandatory;
+   align-items: center;
+ }
+
+ /* 横スライドカード */
+ .horizontal-video-card {
+   flex: 0 0 calc(75vw - 12px);
+   max-width: 280px;
+   background: #1a1a1a;
+   border-radius: 12px;
+   overflow: hidden;
+   border: 1px solid #2a2a2a;
+   cursor: pointer;
+   position: relative;
+   scroll-snap-align: center;
+   display: flex;
+   flex-direction: column;
+ }
+
+ .protected-badge {
+   position: absolute;
+   top: 8px;
+   right: 8px;
+   background: rgba(0, 0, 0, 0.75);
+   color: #ff4d4d;
+   font-size: 10px;
+   font-weight: bold;
+   padding: 3px 6px;
+   border-radius: 4px;
+   border: 1px solid #ff4d4d;
+   z-index: 5;
+ }
+
+ .horizontal-thumb {
+   position: relative;
+   width: 100%;
+   aspect-ratio: 16 / 9;
+   background: #000;
+   flex-shrink: 0;
+ }
+
+ .horizontal-thumb img {
+   width: 100%;
+   height: 100%;
+   object-fit: cover;
+ }
+
+ .horizontal-info {
+   padding: 12px;
+   display: flex;
+   flex-direction: column;
+   justify-content: space-between;
+   flex-grow: 1;
+ }
+
+ .horizontal-title {
+   font-size: 13px;
+   font-weight: bold;
+   color: #fff;
+   display: -webkit-box;
+   -webkit-line-clamp: 2;
+   -webkit-box-orient: vertical;
+   overflow: hidden;
+   line-height: 1.3;
+ }
+
+ .horizontal-sub {
+   font-size: 11px;
+   color: #888;
+   margin-top: 6px;
+ }
+
+ #videoList { list-style: none; padding: 0 16px 20px 16px; }
+ #videoList li {
+   padding: 12px;
+   margin-bottom: 10px;
+   background: rgba(255,255,255,0.05);
+   border-radius: 8px;
+   cursor: pointer;
+ }
+ .locked { opacity: .4; cursor: default; }
+ .viewedDate { font-size: 12px; color: #aaa; margin-top: 4px; }
+
+ .videoCard {
+   display: flex;
+   gap: 12px;
+   align-items: flex-start;
+ }
+
+ .thumbnailBox {
+   position: relative;
+   width: 120px;
+   height: 68px;
+   background: #222;
+   border-radius: 6px;
+   overflow: hidden;
+   flex-shrink: 0;
+   cursor: pointer;
+ }
+
+ .thumbnailBox img {
+   width: 100%;
+   height: 100%;
+   object-fit: cover;
+ }
+
+ .noThumb {
+   width: 100%;
+   height: 100%;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   font-size: 11px;
+   color: #666;
+   background: #1a1a1a;
+   text-align: center;
+ }
+
+ .videoCardInfo { flex: 1; }
+ .videoTitle { flex: 1; cursor: pointer; font-size: 14px; font-weight: bold; }
+
+ .progressBar {
+   width: 100%;
+   height: 6px;
+   background: #333;
+   border-radius: 4px;
+   margin-top: 6px;
+   overflow: hidden;
+ }
+
+ .progressFill {
+   height: 100%;
+   width: 0%;
+   background: #e50914;
+   transition: 0.3s;
+ }
+
+ .progressText {
+   font-size: 11px;
+   color: #aaa;
+   margin-top: 4px;
+ }
+
+ /* --- 設定画面スタイル --- */
+ .setting-container {
+   padding: 0 16px 30px 16px;
+ }
+ .setting-group {
+   background: #1e1e1e;
+   border-radius: 12px;
+   border: 1px solid #2a2a2a;
+   margin-bottom: 20px;
+   overflow: hidden;
+ }
+ .setting-group-title {
+   font-size: 12px;
+   font-weight: bold;
+   color: #888;
+   padding: 12px 16px 6px 16px;
+   text-transform: uppercase;
+ }
+ .setting-item {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   padding: 14px 16px;
+   border-bottom: 1px solid #2a2a2a;
+ }
+ .setting-item:last-child {
+   border-bottom: none;
+ }
+ .setting-label {
+   font-size: 14px;
+   color: #fff;
+ }
+ .setting-sublabel {
+   font-size: 11px;
+   color: #888;
+   margin-top: 2px;
+ }
+ .setting-select {
+   background: #2a2a2a;
+   color: #fff;
+   border: 1px solid #444;
+   padding: 6px 10px;
+   border-radius: 6px;
+   font-size: 13px;
+   outline: none;
+ }
+
+ /* スイッチトグル */
+ .switch {
+   position: relative;
+   display: inline-block;
+   width: 44px;
+   height: 24px;
+ }
+ .switch input {
+   opacity: 0;
+   width: 0;
+   height: 0;
+ }
+ .slider {
+   position: absolute;
+   cursor: pointer;
+   top: 0; left: 0; right: 0; bottom: 0;
+   background-color: #333;
+   transition: .3s;
+   border-radius: 24px;
+ }
+ .slider:before {
+   position: absolute;
+   content: "";
+   height: 18px;
+   width: 18px;
+   left: 3px;
+   bottom: 3px;
+   background-color: white;
+   transition: .3s;
+   border-radius: 50%;
+ }
+ input:checked + .slider {
+   background-color: #e50914;
+ }
+ input:checked + .slider:before {
+   transform: translateX(20px);
+ }
+
+ .setting-btn-danger {
+   width: 100%;
+   padding: 12px;
+   background: transparent;
+   color: #ff4d4d;
+   border: none;
+   font-size: 14px;
+   font-weight: bold;
+   text-align: left;
+   cursor: pointer;
+ }
+
+ /* お知らせバナー */
+ .notice-banner-container {
+   padding: 0 16px;
+   margin-top: 10px;
+   margin-bottom: 15px;
+ }
+
+ .notice-banner {
+   background: linear-gradient(135deg, #221a1a 0%, #161616 100%);
+   border: 1px solid #3d2222;
+   border-left: 4px solid #e50914;
+   border-radius: 10px;
+   padding: 14px 16px;
+   display: flex;
+   flex-direction: column;
+   gap: 6px;
+   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+ }
+
+ .notice-tag {
+   align-self: flex-start;
+   background: #e50914;
+   color: #fff;
+   font-size: 10px;
+   font-weight: bold;
+   padding: 2px 8px;
+   border-radius: 4px;
+ }
+
+ .notice-title {
+   color: #ffffff;
+   font-size: 14px;
+   font-weight: bold;
+ }
+
+ .notice-desc {
+   color: #aaaaaa;
+   font-size: 12px;
+   line-height: 1.4;
+ }
+
+ /* ==========================================================================
+    5. ボトムナビゲーションバー
+    ========================================================================== */
+ .bottom-nav {
+   position: fixed;
+   bottom: 0;
+   left: 0;
+   width: 100%;
+   background: #121212;
+   border-top: 1px solid #222;
+   display: flex;
+   justify-content: space-around;
+   align-items: center;
+   padding-top: 8px;
+   padding-bottom: calc(8px + env(safe-area-inset-bottom));
+   z-index: 99;
+ }
+ .nav-item {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   gap: 3px;
+   color: #777;
+   font-size: 10px;
+   border: none;
+   background: none;
+   cursor: pointer;
+ }
+ .nav-item.active {
+   color: #e50914;
+ }
+ .nav-icon {
+   font-size: 18px;
+ }
+
+ /* ==========================================================================
+    6. 動画プレイヤー・各種モーダル関連
+    ========================================================================== */
+ #videoWrapper {
+   width: 100vw;
+   height: 100vh;
+   position: fixed;
+   top: 0;
+   left: 0;
+   display: none;
+   background: #000;
+   overflow: hidden;
+   z-index: 1010;
+ }
+
+ #playerContainer {
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+   width: 100vw;
+   height: calc(100vw * 9 / 16);
+   max-width: 100vw;
+   max-height: 100vh;
+ }
+
+ #playerContainer #player, #player {
+   width: 100% !important;
+   height: 100% !important;
+   border: none;
+   pointer-events: none;
+ }
+
+ @media (orientation: landscape) {
+   #playerContainer {
+     position: absolute;
+     top: 50%;
+     left: calc(50% - 55px);
+     transform: translate(-50%, -50%);
+     width: 100vw;
+     height: calc(100vw * 9 / 16);
+     max-width: 100vw;
+     max-height: 100vh;
+     aspect-ratio: 16 / 9;
+   }
+ }
+
+ .centralUI {
+   position: absolute; top: 50%; left: 50%;
+   transform: translate(-50%, -50%);
+   display: flex; gap: 20px; z-index: 50; transition: .3s;
+ }
+ .centralUI button {
+   font-size: 22px; padding: 14px;
+   background: rgba(180, 180, 180, .6);
+   border: none; color: #fff; border-radius: 6px;
+ }
+
+ #bottomControls {
+   position: absolute;
+   bottom: 0; left: 0; width: 100%;
+   background: rgba(0,0,0,.6);
+   display: flex; align-items: center;
+   padding: 8px calc(8px + env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) calc(8px + env(safe-area-inset-left));
+   gap: 8px; z-index: 40; transition: .3s;
+ }
+ #progress { flex: 1; }
+ .hideUI { opacity: 0; pointer-events: none; }
+
+ #speedBtn {
+   background: rgba(255,255,255,0.15);
+   border: none; color: #fff;
+   padding: 6px 10px; border-radius: 6px;
+   font-size: 14px; min-width: 55px;
+ }
+
+ #resumeInline {
+   position: absolute; top: 60%; left: 50%;
+   transform: translateX(-50%);
+   display: none; background: rgba(0,0,0,.9);
+   padding: 12px 20px; border-radius: 8px;
+   z-index: 60; text-align: center;
+ }
+
+ #skipIntro {
+   position: absolute;
+   right: calc(15px + env(safe-area-inset-right));
+   bottom: calc(20px + env(safe-area-inset-bottom));
+   background: rgba(0,0,0,.9);
+   padding: 10px 16px; border-radius: 6px;
+   display: none; z-index: 999; overflow: hidden; cursor: pointer;
+ }
+ #skipBar {
+   position: absolute; bottom: 0; left: 0; height: 4px;
+   background: #e50914; width: 0%;
+ }
+
+ #skipThinking {
+   position: absolute;
+   right: calc(15px + env(safe-area-inset-right));
+   bottom: calc(20px + env(safe-area-inset-bottom));
+   background: rgba(0,0,0,.9);
+   padding: 10px 16px; border-radius: 6px;
+   display: none; z-index: 999; cursor: pointer; color: #fff; font-size: 14px;
+ }
+
+ #chapterBtn {
+   position: absolute;
+   top: calc(20px + env(safe-area-inset-top));
+   right: calc(20px + env(safe-area-inset-right));
+   z-index: 70; background: rgba(229,9,20,0.6);
+   border: none; color: #fff; padding: 8px 14px;
+   border-radius: 8px; backdrop-filter: blur(6px);
+ }
+
+ #chapterPanel {
+   position: absolute; top: 0; right: -350px;
+   width: 320px; height: 100%;
+   background: rgba(0,0,0,0.95);
+   overflow-y: auto;
+   padding: calc(20px + env(safe-area-inset-top)) 20px 20px 20px;
+   transition: .3s; z-index: 65;
+ }
+ #chapterPanel p { margin: 8px 0; cursor: pointer; }
+ .groupTitle { margin-top: 15px; font-weight: bold; color: #e50914; }
+
+ #backBtn {
+   position: absolute;
+   top: calc(20px + env(safe-area-inset-top));
+   left: calc(20px + env(safe-area-inset-left));
+   z-index: 80; font-size: 18px; padding: 12px;
+   background: rgba(180,180,180,.6); border: none;
+   color: #fff; border-radius: 6px; transition: .3s;
+ }
+
+ #updateModal {
+   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+   background: rgba(0,0,0,0.7); display: none;
+   align-items: center; justify-content: center; z-index: 300;
+ }
+
+ /* パスワード入力用モーダル */
+ #passwordModal {
+   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+   background: rgba(0,0,0,0.8); display: none;
+   align-items: center; justify-content: center; z-index: 2000;
+ }
+ .pass-modal-box {
+   background: #1e1e1e; padding: 24px; border-radius: 12px;
+   width: 90%; max-width: 320px; text-align: center; border: 1px solid #333;
+ }
+ .pass-modal-box h4 { font-size: 16px; margin-bottom: 8px; }
+ .pass-modal-box p { font-size: 12px; color: #aaa; margin-bottom: 16px; }
+ .pass-modal-box input {
+   width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #444;
+   background: #111; color: #fff; text-align: center; font-size: 16px; margin-bottom: 12px;
+ }
+ .pass-btn-group { display: flex; gap: 8px; }
+ .pass-btn-group button {
+   flex: 1; padding: 10px; border-radius: 6px; border: none; font-weight: bold; font-size: 13px;
+ }
+
+ #toast {
+   position: fixed;
+   bottom: calc(120px + env(safe-area-inset-bottom));
+   left: 50%; transform: translateX(-50%);
+   background: rgba(0,0,0,0.85); color: #fff;
+   padding: 12px 20px; border-radius: 8px;
+   font-size: 14px; opacity: 0; transition: 0.3s; z-index: 999;
+   pointer-events: none;
+ }
+
+ .modal-overlay {
+   display: none; position: fixed; top: 0; left: 0;
+   width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75);
+   z-index: 1000; justify-content: center; align-items: flex-end;
+   backdrop-filter: blur(4px);
+ }
+ .modal-overlay.active { display: flex; }
+
+ .modal-content {
+   background: #181818; width: 100%; max-width: 500px;
+   border-radius: 16px 16px 0 0; overflow: hidden;
+   position: relative; box-shadow: 0 -4px 20px rgba(0,0,0,0.8);
+   animation: slideUp 0.3s ease-out; max-height: 90vh;
+   display: flex; flex-direction: column;
+ }
+ @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+ .modal-close-btn {
+   position: absolute; top: 10px; right: 15px;
+   background: rgba(0,0,0,0.6); color: #fff;
+   border: none; font-size: 22px; width: 32px; height: 32px;
+   border-radius: 50%; cursor: pointer; z-index: 10;
+ }
+
+ .modal-hero { position: relative; width: 100%; padding-top: 56.25%; background: #000; flex-shrink: 0; }
+ .modal-hero img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+ .modal-play-overlay {
+   position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+   background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; cursor: pointer;
+ }
+ .play-icon {
+   width: 50px; height: 50px; background: rgba(229, 9, 20, 0.9);
+   color: #fff; border-radius: 50%; display: flex; align-items: center;
+   justify-content: center; font-size: 20px; padding-left: 3px;
+ }
+
+ .modal-body { padding: 16px 20px calc(20px + env(safe-area-inset-bottom)) 20px; color: #fff; overflow-y: auto; }
+ .modal-body h3 { margin: 0 0 8px 0; font-size: 17px; }
+ .modal-meta { display: flex; gap: 8px; align-items: center; font-size: 12px; color: #aaa; margin-bottom: 12px; }
+ .modal-badge { border: 1px solid #666; color: #ccc; padding: 0px 4px; border-radius: 3px; font-size: 10px; font-weight: bold; }
+ .modal-desc { font-size: 13px; color: #ccc; line-height: 1.4; margin-bottom: 16px; }
+
+ .btn-play-red {
+   width: 100%;
+   background-color: #e50914;
+   color: white;
+   border: none;
+   padding: 12px;
+   border-radius: 8px;
+   font-weight: bold;
+   font-size: 16px;
+   margin-bottom: 10px;
+   cursor: pointer;
+ }
+
+ .btn-survey-green {
+   width: 100%;
+   background-color: #2e7d32;
+   color: white;
+   border: none;
+   padding: 12px;
+   border-radius: 8px;
+   font-weight: bold;
+   font-size: 16px;
+   cursor: pointer;
+ }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -908,299 +909,299 @@
 
 <!-- ログイン画面 -->
 <div id="nameInputModal">
-  <div class="app-brand">
-    <div class="app-logo">EFI Pocket</div>
-    <div class="app-subtitle">いつでも学べる病棟研修ポータル</div>
-  </div>
+ <div class="app-brand">
+   <div class="app-logo">EFI Pocket</div>
+   <div class="app-subtitle">いつでも学べる病棟研修ポータル</div>
+ </div>
 
-  <h3>視聴する方の名前を入力してください</h3>
-  <p style="font-size:13px; color:#888; margin-top:2px; text-align:center;">次回視聴時も続きから再生できます</p>
+ <h3>視聴する方の名前を入力してください</h3>
+ <p style="font-size:13px; color:#888; margin-top:2px; text-align:center;">次回視聴時も続きから再生できます</p>
 
-  <div class="input-group">
-    <input id="usernameInput" placeholder="例：洞爺 太郎" autocomplete="off">
-  </div>
-  <p id="nameError" style="color:#ff4d4d; font-size:12px; display:none; margin-bottom:8px;">名前を入力してください</p>
+ <div class="input-group">
+   <input id="usernameInput" placeholder="例：洞爺 太郎" autocomplete="off">
+ </div>
+ <p id="nameError" style="color:#ff4d4d; font-size:12px; display:none; margin-bottom:8px;">名前を入力してください</p>
 
-  <button onclick="setUsername()">学習を開始する</button>
+ <button onclick="setUsername()">学習を開始する</button>
 
-  <div class="login-notice">
-    <div class="login-notice-title">📢 お知らせ・テスト実施期間</div>
-    <div class="login-notice-text">
-      ・第2回 <b>より良い排泄ケアを目指して</b> は受講期限：<b>2026年10月31日(土)まで</b><br>
-      ・動画を最後まで視聴するとテストが解放されます。
-    </div>
-  </div>
+ <div class="login-notice">
+   <div class="login-notice-title">📢 お知らせ・テスト実施期間</div>
+   <div class="login-notice-text">
+     ・第2回 <b>より良い排泄ケアを目指して</b> は受講期限：<b>2026年10月31日(土)まで</b><br>
+     ・動画を最後まで視聴するとテストが解放されます。
+   </div>
+ </div>
 
-  <div id="topVersion"></div>
+ <div id="topVersion"></div>
 </div>
 
 <!-- ヘッダー -->
 <div id="topBarHome">
-  <div class="header-brand">
-    <div class="header-logo">EFI Pocket</div>
-    <div class="header-subtitle">いつでも学べる病棟研修ポータル</div>
-  </div>
+ <div class="header-brand">
+   <div class="header-logo">EFI Pocket</div>
+   <div class="header-subtitle">いつでも学べる病棟研修ポータル</div>
+ </div>
 
-  <div class="avatar-btn" id="userAvatar" onclick="toggleProfileMenu()">名</div>
+ <div class="avatar-btn" id="userAvatar" onclick="toggleProfileMenu()">名</div>
 
-  <div class="profile-popover" id="profileMenu">
-    <div class="profile-info">
-      <div class="profile-name" id="profileNameDisplay">ゲスト</div>
-      <div class="profile-status" id="profileStatusDisplay">ログイン中</div>
-    </div>
-    <button class="profile-logout-btn" onclick="logout()">ログアウト</button>
-  </div>
+ <div class="profile-popover" id="profileMenu">
+   <div class="profile-info">
+     <div class="profile-name" id="profileNameDisplay">ゲスト</div>
+     <div class="profile-status" id="profileStatusDisplay">ログイン中</div>
+   </div>
+   <button class="profile-logout-btn" onclick="logout()">ログアウト</button>
+ </div>
 </div>
 
 <!-- メインコンテンツ -->
 <div id="home">
-  <!-- 📌 続きから再生カード -->
-  <div id="resumeCardArea"></div>
+ <!-- 📌 続きから再生カード -->
+ <div id="resumeCardArea"></div>
 
-  <!-- 最新の研修動画エリア -->
-  <div id="recentSection">
-    <div class="section-title">最新の動画一覧</div>
-    <div class="horizontal-scroll-container" id="recentVideoList"></div>
-  </div>
+ <!-- 最新の研修動画エリア -->
+ <div id="recentSection">
+   <div class="section-title">最新の動画一覧</div>
+   <div class="horizontal-scroll-container" id="recentVideoList"></div>
+ </div>
 
 <div class="notice-banner-container">
-  <div class="notice-banner">
-    <div class="notice-tag">お知らせ</div>
-    <div class="notice-content">
-      <div class="notice-title">オンライン病棟研修の実施について</div>
-      <div class="notice-desc">今月中にPPE着脱手順の解説動画を公開予定です。各自確認お願いします。</div>
-    </div>
-  </div>
+ <div class="notice-banner">
+   <div class="notice-tag">お知らせ</div>
+   <div class="notice-content">
+     <div class="notice-title">オンライン病棟研修の実施について</div>
+     <div class="notice-desc">今月中にPPE着脱手順の解説動画を公開予定です。各自確認お願いします。</div>
+   </div>
+ </div>
 </div>
 
- <!-- 管理者用ボタン&集計 -->
-  <button id="summaryBtn" onclick="showSummary()" style="display:none;margin:10px 20px;padding:10px 16px;background:#e50914;color:#fff;border:none;border-radius:6px;font-weight:bold;">
-    テスト全体集計
-  </button>
-  <div id="summaryArea" style="display:none;padding:20px;">
-    <h3>全体集計</h3>
-    <div id="summaryTable" style="margin-top:20px;"></div>
-    <canvas id="questionChart" style="margin-top:20px;"></canvas>
-  </div>
+<!-- 管理者用ボタン&集計 -->
+ <button id="summaryBtn" onclick="showSummary()" style="display:none;margin:10px 20px;padding:10px 16px;background:#e50914;color:#fff;border:none;border-radius:6px;font-weight:bold;">
+   テスト全体集計
+ </button>
+ <div id="summaryArea" style="display:none;padding:20px;">
+   <h3>全体集計</h3>
+   <div id="summaryTable" style="margin-top:20px;"></div>
+   <canvas id="questionChart" style="margin-top:20px;"></canvas>
+ </div>
 
-  <!-- ボトムタブ（感染/学習）選択時表示リスト -->
-  <div id="listSection" style="display:none;">
-    <div class="section-title" id="listSectionTitle">📚 研修動画</div>
-    <ul id="videoList"></ul>
-  </div>
+ <!-- ボトムタブ（感染/学習）選択時表示リスト -->
+ <div id="listSection" style="display:none;">
+   <div class="section-title" id="listSectionTitle">📚 研修動画</div>
+   <ul id="videoList"></ul>
+ </div>
 
-  <!-- 設定画面（新設機能） -->
-  <div id="settingSection" style="display:none;">
-    <div class="section-title">⚙ 設定</div>
-    <div class="setting-container">
+ <!-- 設定画面 -->
+ <div id="settingSection" style="display:none;">
+   <div class="section-title">⚙ 設定</div>
+   <div class="setting-container">
 
-      <!-- 再生設定 -->
-      <div class="setting-group">
-        <div class="setting-group-title">再生設定</div>
-        <div class="setting-item">
-          <div>
-            <div class="setting-label">画質の設定</div>
-            <div class="setting-sublabel">動画再生時のデフォルト画質</div>
-          </div>
-          <select class="setting-select" id="qualitySetting" onchange="saveSetting('quality', this.value)">
-            <option value="auto">自動</option>
-            <option value="hd1080">1080p (高画質)</option>
-            <option value="hd720">720p (標準)</option>
-            <option value="large">480p</option>
-            <option value="medium">360p (節約)</option>
-          </select>
-        </div>
-        <div class="setting-item">
-          <div>
-            <div class="setting-label">動画の自動再生</div>
-            <div class="setting-sublabel">詳細画面を開いてすぐ再生</div>
-          </div>
-          <label class="switch">
-            <input type="checkbox" id="autoplaySetting" onchange="saveSetting('autoplay', this.checked)">
-            <span class="slider"></span>
-          </label>
-        </div>
-      </div>
+     <!-- 再生設定 -->
+     <div class="setting-group">
+       <div class="setting-group-title">再生設定</div>
+       <div class="setting-item">
+         <div>
+           <div class="setting-label">画質の設定</div>
+           <div class="setting-sublabel">動画再生時のデフォルト画質</div>
+         </div>
+         <select class="setting-select" id="qualitySetting" onchange="saveSetting('quality', this.value)">
+           <option value="auto">自動</option>
+           <option value="hd1080">1080p (高画質)</option>
+           <option value="hd720">720p (標準)</option>
+           <option value="large">480p</option>
+           <option value="medium">360p (節約)</option>
+         </select>
+       </div>
+       <div class="setting-item">
+         <div>
+           <div class="setting-label">動画の自動再生</div>
+           <div class="setting-sublabel">詳細画面を開いてすぐ再生</div>
+         </div>
+         <label class="switch">
+           <input type="checkbox" id="autoplaySetting" onchange="saveSetting('autoplay', this.checked)">
+           <span class="slider"></span>
+         </label>
+       </div>
+     </div>
 
-      <!-- 表示・アプリ設定 -->
-      <div class="setting-group">
-        <div class="setting-group-title">表示・通知設定</div>
-        <div class="setting-item">
-          <div>
-            <div class="setting-label">ダークモード</div>
-            <div class="setting-sublabel">背景テーマ設定（常にダーク推奨）</div>
-          </div>
-          <label class="switch">
-            <input type="checkbox" checked disabled style="opacity: 0.5;">
-            <span class="slider" style="opacity: 0.5;"></span>
-          </label>
-        </div>
-        <div class="setting-item">
-          <div>
-            <div class="setting-label">新着動画の更新通知</div>
-            <div class="setting-sublabel">新しい研修が追加された際にお知らせ</div>
-          </div>
-          <label class="switch">
-            <input type="checkbox" id="notifySetting" checked onchange="saveSetting('notify', this.checked)">
-            <span class="slider"></span>
-          </label>
-        </div>
-      </div>
+     <!-- 表示・アプリ設定 -->
+     <div class="setting-group">
+       <div class="setting-group-title">表示・通知設定</div>
+       <div class="setting-item">
+         <div>
+           <div class="setting-label">ダークモード</div>
+           <div class="setting-sublabel">背景テーマ設定（常にダーク推奨）</div>
+         </div>
+         <label class="switch">
+           <input type="checkbox" checked disabled style="opacity: 0.5;">
+           <span class="slider" style="opacity: 0.5;"></span>
+         </label>
+       </div>
+       <div class="setting-item">
+         <div>
+           <div class="setting-label">新着動画の更新通知</div>
+           <div class="setting-sublabel">新しい研修が追加された際にお知らせ</div>
+         </div>
+         <label class="switch">
+           <input type="checkbox" id="notifySetting" checked onchange="saveSetting('notify', this.checked)">
+           <span class="slider"></span>
+         </label>
+       </div>
+     </div>
 
-      <!-- アカウント管理 -->
-      <div class="setting-group">
-        <div class="setting-group-title">データ・管理</div>
-        <div class="setting-item" style="padding:0;">
-          <button class="setting-btn-danger" onclick="clearAppData()">視聴キャッシュのクリア</button>
-        </div>
-      </div>
+     <!-- アカウント管理 -->
+     <div class="setting-group">
+       <div class="setting-group-title">データ・管理</div>
+       <div class="setting-item" style="padding:0;">
+         <button class="setting-btn-danger" onclick="clearAppData()">視聴キャッシュのクリア</button>
+       </div>
+     </div>
 
-    </div>
-  </div>
+   </div>
+ </div>
 </div>
 
 <!-- ボトムナビゲーション -->
 <div class="bottom-nav" id="bottomNav" style="display:none;">
-  <button class="nav-item active" id="nav-home" onclick="switchNav('home', this)">
-    <span class="nav-icon">🏠</span>
-    <span>ホーム</span>
-  </button>
-  <button class="nav-item" id="nav-infection" onclick="switchNav('infection', this)">
-    <span class="nav-icon">🦠</span>
-    <span>感染チーム</span>
-  </button>
-  <button class="nav-item" id="nav-study" onclick="switchNav('study', this)">
-    <span class="nav-icon">📖</span>
-    <span>学習チーム</span>
-  </button>
-  <button class="nav-item" id="nav-setting" onclick="switchNav('setting', this)">
-    <span class="nav-icon">⚙️</span>
-    <span>設定</span>
-  </button>
+ <button class="nav-item active" id="nav-home" onclick="switchNav('home', this)">
+   <span class="nav-icon">🏠</span>
+   <span>ホーム</span>
+ </button>
+ <button class="nav-item" id="nav-infection" onclick="switchNav('infection', this)">
+   <span class="nav-icon">🦠</span>
+   <span>感染チーム</span>
+ </button>
+ <button class="nav-item" id="nav-study" onclick="switchNav('study', this)">
+   <span class="nav-icon">📖</span>
+   <span>学習チーム</span>
+ </button>
+ <button class="nav-item" id="nav-setting" onclick="switchNav('setting', this)">
+   <span class="nav-icon">⚙️</span>
+   <span>設定</span>
+ </button>
 </div>
 
 <!-- モーダル -->
 <div id="videoModal" class="modal-overlay" onclick="closeModal(event)">
-  <div class="modal-content">
-    <button class="modal-close-btn" onclick="closeModalDirect()">×</button>
-    <div class="modal-hero">
-      <img id="modalThumb" src="" alt="サムネイル">
-      <div class="modal-play-overlay" onclick="playModalVideo()">
-        <div class="play-icon">▶</div>
-      </div>
-    </div>
-    <div class="modal-body">
-      <h3 id="modalTitle"></h3>
-      <div class="modal-meta">
-        <span id="modalDuration"></span>
-        <span>•</span>
-        <span id="modalDate"></span>
-        <span>•</span>
-        <span class="modal-badge">HD</span>
-      </div>
-      <p id="modalDesc" class="modal-desc"></p>
-      <div id="modalActions" class="modal-actions"></div>
-    </div>
-  </div>
+ <div class="modal-content">
+   <button class="modal-close-btn" onclick="closeModalDirect()">×</button>
+   <div class="modal-hero">
+     <img id="modalThumb" src="" alt="サムネイル">
+     <div class="modal-play-overlay" onclick="playModalVideo()">
+       <div class="play-icon">▶</div>
+     </div>
+   </div>
+   <div class="modal-body">
+     <h3 id="modalTitle"></h3>
+     <div class="modal-meta">
+       <span id="modalDuration"></span>
+       <span>•</span>
+       <span id="modalDate"></span>
+       <span>•</span>
+       <span class="modal-badge">HD</span>
+     </div>
+     <p id="modalDesc" class="modal-desc"></p>
+     <div id="modalActions" class="modal-actions"></div>
+   </div>
+ </div>
 </div>
 
 <!-- パスワード入力モーダル -->
 <div id="passwordModal">
-  <div class="pass-modal-box">
-    <h4>🔒 閲覧制限動画</h4>
-    <p>この動画を視聴するにはパスワードが必要です。</p>
-    <input type="password" id="videoPassInput" placeholder="パスワードを入力">
-    <div class="pass-btn-group">
-      <button onclick="closePasswordModal()" style="background:#444; color:#fff;">キャンセル</button>
-      <button onclick="submitVideoPassword()" style="background:#e50914; color:#fff;">認証</button>
-    </div>
-  </div>
+ <div class="pass-modal-box">
+   <h4>🔒 閲覧制限動画</h4>
+   <p>この動画を視聴するにはパスワードが必要です。</p>
+   <input type="password" id="videoPassInput" placeholder="パスワードを入力">
+   <div class="pass-btn-group">
+     <button onclick="closePasswordModal()" style="background:#444; color:#fff;">キャンセル</button>
+     <button onclick="submitVideoPassword()" style="background:#e50914; color:#fff;">認証</button>
+   </div>
+ </div>
 </div>
 
 <!-- プレイヤー -->
 <div id="videoWrapper">
-  <button id="backBtn" onclick="goBack()">ホームに戻る</button>
+ <button id="backBtn" onclick="goBack()">ホームに戻る</button>
 
-  <div id="playerContainer">
-    <div id="player"></div>
-  </div>
+ <div id="playerContainer">
+   <div id="player"></div>
+ </div>
 
-  <div class="centralUI" id="centralUI">
-    <button onclick="rewind10()">«10</button>
-    <button id="playBtn" onclick="togglePlay()">▶</button>
-    <button onclick="forward10()">»10</button>
-  </div>
+ <div class="centralUI" id="centralUI">
+   <button onclick="rewind10()">«10</button>
+   <button id="playBtn" onclick="togglePlay()">▶</button>
+   <button onclick="forward10()">»10</button>
+ </div>
 
-  <div id="resumeInline">
-    <div style="margin-bottom:8px;">前回の続きから再生しますか？</div>
-    <button onclick="resumeFrom()">続きから見る</button>
-    <button onclick="startFromBeginning()">初めから見る</button>
-  </div>
+ <div id="resumeInline">
+   <div style="margin-bottom:8px;">前回の続きから再生しますか？</div>
+   <button onclick="resumeFrom()">続きから見る</button>
+   <button onclick="startFromBeginning()">初めから見る</button>
+ </div>
 
-  <div id="skipIntro" onclick="skipIntroClick(event)">
-    イントロをスキップ
-    <div id="skipBar"></div>
-  </div>
+ <div id="skipIntro" onclick="skipIntroClick(event)">
+   イントロをスキップ
+   <div id="skipBar"></div>
+ </div>
 
-  <div id="skipThinking" onclick="skipThinkingClick(event)">
-    シンキングタイムをスキップ（30秒）
-  </div>
+ <div id="skipThinking" onclick="skipThinkingClick(event)">
+   シンキングタイムをスキップ（30秒）
+ </div>
 
-  <div id="bottomControls">
-    <span id="currentTime">0:00</span>
-    <input type="range" id="progress" min="0" max="100" value="0">
-    <span id="duration">0:00</span>
-    <button id="speedBtn" onclick="changeSpeed()">1.0x</button>
-  </div>
+ <div id="bottomControls">
+   <span id="currentTime">0:00</span>
+   <input type="range" id="progress" min="0" max="100" value="0">
+   <span id="duration">0:00</span>
+   <button id="speedBtn" onclick="changeSpeed()">1.0x</button>
+ </div>
 
-  <button id="chapterBtn" onclick="toggleChapters()">チャプター</button>
+ <button id="chapterBtn" onclick="toggleChapters()">チャプター</button>
 
-  <div id="chapterPanel">
-    <div class="groupTitle">📚 本章</div>
-    <p onclick="goTo(0)">オープニング</p>
-    <p onclick="goTo(58)">第1章　はじめに</p>
-    <p onclick="goTo(146)">第2章　ノロウィルスの基本知識</p>
-    <p onclick="goTo(327)">第3章　ノロウィルス感染予防</p>
-    <p onclick="goTo(424)">第4章　次亜塩素酸ナトリウム調整</p>
-    <p onclick="goTo(666)">第5章　吐物処理手順</p>
-    <p onclick="goTo(1047)">第6章　トイレ清拭手順</p>
-    <p onclick="goTo(1420)">第7章　リネンの取扱い</p>
-    <p onclick="goTo(1805)">第8章　高頻度接触面・物品管理</p>
-    <p onclick="goTo(1966)">エンディング</p>
+ <div id="chapterPanel">
+   <div class="groupTitle">📚 本章</div>
+   <p onclick="goTo(0)">オープニング</p>
+   <p onclick="goTo(58)">第1章　はじめに</p>
+   <p onclick="goTo(146)">第2章　ノロウィルスの基本知識</p>
+   <p onclick="goTo(327)">第3章　ノロウィルス感染予防</p>
+   <p onclick="goTo(424)">第4章　次亜塩素酸ナトリウム調整</p>
+   <p onclick="goTo(666)">第5章　吐物処理手順</p>
+   <p onclick="goTo(1047)">第6章　トイレ清拭手順</p>
+   <p onclick="goTo(1420)">第7章　リネンの取扱い</p>
+   <p onclick="goTo(1805)">第8章　高頻度接触面・物品管理</p>
+   <p onclick="goTo(1966)">エンディング</p>
 
-    <div class="groupTitle">🎬 実践動画</div>
-    <p onclick="goTo(550)">次亜塩素酸ナトリウム調整</p>
-    <p onclick="goTo(722)">吐物処理物品確認編</p>
-    <p onclick="goTo(834)">吐物処理回収編</p>
-    <p onclick="goTo(936)">吐物処理消毒編</p>
-    <p onclick="goTo(1133)">トイレ清拭物品確認編</p>
-    <p onclick="goTo(1238)">トイレ清拭清拭編</p>
-    <p onclick="goTo(1498)">リネン実践動画</p>
+   <div class="groupTitle">🎬 実践動画</div>
+   <p onclick="goTo(550)">次亜塩素酸ナトリウム調整</p>
+   <p onclick="goTo(722)">吐物処理物品確認編</p>
+   <p onclick="goTo(834)">吐物処理回収編</p>
+   <p onclick="goTo(936)">吐物処理消毒編</p>
+   <p onclick="goTo(1133)">トイレ清拭物品確認編</p>
+   <p onclick="goTo(1238)">トイレ清拭清拭編</p>
+   <p onclick="goTo(1498)">リネン実践動画</p>
 
-    <div class="groupTitle">⭐ ポイント</div>
-    <p onclick="goTo(260)">第2章ポイント</p>
-    <p onclick="goTo(604)">第4章ポイント</p>
-    <p onclick="goTo(987)">第5章ポイント</p>
-    <p onclick="goTo(1348)">第6章ポイント</p>
-    <p onclick="goTo(1707)">第7章ポイント</p>
-    <p onclick="goTo(1901)">第8章ポイント</p>
+   <div class="groupTitle">⭐ ポイント</div>
+   <p onclick="goTo(260)">第2章ポイント</p>
+   <p onclick="goTo(604)">第4章ポイント</p>
+   <p onclick="goTo(987)">第5章ポイント</p>
+   <p onclick="goTo(1348)">第6章ポイント</p>
+   <p onclick="goTo(1707)">第7章ポイント</p>
+   <p onclick="goTo(1901)">第8章ポイント</p>
 
-    <div class="groupTitle">🧠 thinking time</div>
-    <p onclick="goTo(287)">第2章</p>
-    <p onclick="goTo(628)">第4章</p>
-    <p onclick="goTo(1009)">第5章</p>
-    <p onclick="goTo(1376)">第6章</p>
-    <p onclick="goTo(1737)">第7章</p>
-    <p onclick="goTo(1930)">第8章</p>
-  </div>
+   <div class="groupTitle">🧠 thinking time</div>
+   <p onclick="goTo(287)">第2章</p>
+   <p onclick="goTo(628)">第4章</p>
+   <p onclick="goTo(1009)">第5章</p>
+   <p onclick="goTo(1376)">第6章</p>
+   <p onclick="goTo(1737)">第7章</p>
+   <p onclick="goTo(1930)">第8章</p>
+ </div>
 </div>
 
 <div id="updateModal">
-  <div style="background:#111;padding:25px;border-radius:12px;max-width:320px;text-align:left;">
-    <h3 style="color:#e50914;margin-bottom:10px;">アップデート情報</h3>
-    <p id="updateMessage" style="white-space:pre-line;font-size:14px;"></p>
-    <button onclick="closeUpdateModal()" style="margin-top:15px;background:#e50914;color:#fff;border:none;padding:8px 16px;border-radius:6px;">OK</button>
-  </div>
+ <div style="background:#111;padding:25px;border-radius:12px;max-width:320px;text-align:left;">
+   <h3 style="color:#e50914;margin-bottom:10px;">アップデート情報</h3>
+   <p id="updateMessage" style="white-space:pre-line;font-size:14px;"></p>
+   <button onclick="closeUpdateModal()" style="margin-top:15px;background:#e50914;color:#fff;border:none;padding:8px 16px;border-radius:6px;">OK</button>
+ </div>
 </div>
 
 <div id="toast"></div>
@@ -1213,40 +1214,40 @@ const PPE_PASSWORD = "ppe123"; // 🔑 PPE動画の閲覧用パスワード
 let videoWrapper, home, skipIntro, skipThinking, skipBar, resumeInline, playBtn, centralUI, bottomControls, backBtn, chapterBtn, chapterPanel, progress, currentTime, duration;
 
 document.addEventListener("DOMContentLoaded", function(){
-  document.getElementById("topVersion").innerText = "Ver " + APP_VERSION;
+ document.getElementById("topVersion").innerText = "Ver " + APP_VERSION;
 
-  videoWrapper = document.getElementById("videoWrapper");
-  home = document.getElementById("home");
-  skipIntro = document.getElementById("skipIntro");
-  skipThinking = document.getElementById("skipThinking");
-  skipBar = document.getElementById("skipBar");
-  resumeInline = document.getElementById("resumeInline");
-  playBtn = document.getElementById("playBtn");
-  centralUI = document.getElementById("centralUI");
-  bottomControls = document.getElementById("bottomControls");
-  backBtn = document.getElementById("backBtn");
-  chapterBtn = document.getElementById("chapterBtn");
-  chapterPanel = document.getElementById("chapterPanel");
-  progress = document.getElementById("progress");
-  currentTime = document.getElementById("currentTime");
-  duration = document.getElementById("duration");
+ videoWrapper = document.getElementById("videoWrapper");
+ home = document.getElementById("home");
+ skipIntro = document.getElementById("skipIntro");
+ skipThinking = document.getElementById("skipThinking");
+ skipBar = document.getElementById("skipBar");
+ resumeInline = document.getElementById("resumeInline");
+ playBtn = document.getElementById("playBtn");
+ centralUI = document.getElementById("centralUI");
+ bottomControls = document.getElementById("bottomControls");
+ backBtn = document.getElementById("backBtn");
+ chapterBtn = document.getElementById("chapterBtn");
+ chapterPanel = document.getElementById("chapterPanel");
+ progress = document.getElementById("progress");
+ currentTime = document.getElementById("currentTime");
+ duration = document.getElementById("duration");
 
-  if (progress) {
-    progress.addEventListener("input", e => {
-      if(!player || typeof player.getDuration !== 'function') return;
-      let target = e.target.value / 100 * player.getDuration();
-      if(!adminMode && !localStorage.getItem(username + "_complete_" + currentVideoId) && target > maxWatchedTime + 5){
-        showToast("まだ視聴していない場所には移動できません");
-        progress.value = maxWatchedTime / player.getDuration() * 100;
-        return;
-      }
-      player.seekTo(target, true);
-      showUI();
-    });
-  }
+ if (progress) {
+   progress.addEventListener("input", e => {
+     if(!player || typeof player.getDuration !== 'function') return;
+     let target = e.target.value / 100 * player.getDuration();
+     if(!adminMode && !localStorage.getItem(username + "_complete_" + currentVideoId) && target > maxWatchedTime + 5){
+       showToast("まだ視聴していない場所には移動できません");
+       progress.value = maxWatchedTime / player.getDuration() * 100;
+       return;
+     }
+     player.seekTo(target, true);
+     showUI();
+   });
+ }
 
-  loadUserSettings();
-  checkVersion();
+ loadUserSettings();
+ checkVersion();
 });
 
 const UPDATE_MESSAGE = `
@@ -1273,854 +1274,864 @@ let pendingVideoId = null;
 
 /* 設定の保存 & 読み込み */
 function loadUserSettings() {
-  const quality = localStorage.getItem("setting_quality") || "auto";
-  const autoplay = localStorage.getItem("setting_autoplay") === "true";
-  const notify = localStorage.getItem("setting_notify") !== "false";
+ const quality = localStorage.getItem("setting_quality") || "auto";
+ const autoplay = localStorage.getItem("setting_autoplay") === "true";
+ const notify = localStorage.getItem("setting_notify") !== "false";
 
-  const qEl = document.getElementById("qualitySetting");
-  const aEl = document.getElementById("autoplaySetting");
-  const nEl = document.getElementById("notifySetting");
+ const qEl = document.getElementById("qualitySetting");
+ const aEl = document.getElementById("autoplaySetting");
+ const nEl = document.getElementById("notifySetting");
 
-  if(qEl) qEl.value = quality;
-  if(aEl) aEl.checked = autoplay;
-  if(nEl) nEl.checked = notify;
+ if(qEl) qEl.value = quality;
+ if(aEl) aEl.checked = autoplay;
+ if(nEl) nEl.checked = notify;
 }
 
 function saveSetting(key, val) {
-  localStorage.setItem("setting_" + key, val);
-  showToast("設定を保存しました");
+ localStorage.setItem("setting_" + key, val);
+ showToast("設定を保存しました");
 }
 
 function clearAppData() {
-  if (confirm("一時視聴データをクリアしますか？\n（※視聴履歴自体は保持されます）")) {
-    showToast("キャッシュをクリアしました");
-  }
+ if (confirm("一時視聴データをクリアしますか？\n（※視聴履歴自体は保持されます）")) {
+   showToast("キャッシュをクリアしました");
+ }
 }
 
 /* アバターメニュー */
 function toggleProfileMenu() {
-  document.getElementById("profileMenu").classList.toggle("active");
+ document.getElementById("profileMenu").classList.toggle("active");
 }
 document.addEventListener("click", function(e) {
-  const avatar = document.getElementById("userAvatar");
-  const menu = document.getElementById("profileMenu");
-  if (avatar && menu && !avatar.contains(e.target) && !menu.contains(e.target)) {
-    menu.classList.remove("active");
-  }
+ const avatar = document.getElementById("userAvatar");
+ const menu = document.getElementById("profileMenu");
+ if (avatar && menu && !avatar.contains(e.target) && !menu.contains(e.target)) {
+   menu.classList.remove("active");
+ }
 });
 
 /* ログイン */
 function setUsername() {
-  const input = document.getElementById("usernameInput");
-  username = input.value.trim();
+ const input = document.getElementById("usernameInput");
+ username = input.value.trim();
 
-  if(!username){
-    document.getElementById("nameError").style.display = "block";
-    return;
-  }
+ if(!username){
+   document.getElementById("nameError").style.display = "block";
+   return;
+ }
 
-  document.getElementById("nameError").style.display = "none";
-  document.getElementById("nameInputModal").style.display = "none";
-  document.getElementById("loader").style.display = "none";
+ document.getElementById("nameError").style.display = "none";
+ document.getElementById("nameInputModal").style.display = "none";
+ document.getElementById("loader").style.display = "none";
 
-  document.getElementById("topBarHome").style.display = "flex";
-  document.getElementById("bottomNav").style.display = "flex";
+ document.getElementById("topBarHome").style.display = "flex";
+ document.getElementById("bottomNav").style.display = "flex";
 
-  document.getElementById("userAvatar").innerText = username.charAt(0);
-  document.getElementById("profileNameDisplay").innerText = username;
-  document.getElementById("profileStatusDisplay").innerText = "受講中";
+ document.getElementById("userAvatar").innerText = username.charAt(0);
+ document.getElementById("profileNameDisplay").innerText = username;
+ document.getElementById("profileStatusDisplay").innerText = "受講中";
 
-  checkResumeCard();
-  renderRecentVideos();
-  startAutoSlide();
+ checkResumeCard();
+ renderRecentVideos();
+ startAutoSlide();
 }
 
 function logout() {
-  if(!confirm("ログアウトしますか？")) return;
-  if(player){ try{ player.destroy(); }catch(e){} }
-  sessionStorage.clear();
-  location.reload();
+ if(!confirm("ログアウトしますか？")) return;
+ if(player){ try{ player.destroy(); }catch(e){} }
+ sessionStorage.clear();
+ location.reload();
 }
 
 /* 📌 続きから再生カード */
 function checkResumeCard() {
-  const container = document.getElementById("resumeCardArea");
-  if(!container) return;
-  container.innerHTML = "";
+ const container = document.getElementById("resumeCardArea");
+ if(!container) return;
+ container.innerHTML = "";
 
-  const playableVideos = videosData.filter(v => !v.locked);
-  let targetVideo = null;
-  let savedTime = 0;
+ const playableVideos = videosData.filter(v => !v.locked);
+ let targetVideo = null;
+ let savedTime = 0;
 
-  for (let v of playableVideos) {
-    const time = parseFloat(localStorage.getItem(username + "_" + v.id)) || 0;
-    const isCompleted = localStorage.getItem(username + "_complete_" + v.id) === "true";
+ for (let v of playableVideos) {
+   const time = parseFloat(localStorage.getItem(username + "_" + v.id)) || 0;
+   const isCompleted = localStorage.getItem(username + "_complete_" + v.id) === "true";
 
-    if (time > 10 && !isCompleted) {
-      targetVideo = v;
-      savedTime = time;
-      break;
-    }
-  }
+   if (time > 10 && !isCompleted) {
+     targetVideo = v;
+     savedTime = time;
+     break;
+   }
+ }
 
-  if (targetVideo) {
-    const totalDuration = targetVideo.duration || 2063;
-    const percent = Math.min(100, Math.floor((savedTime / totalDuration) * 100));
+ if (targetVideo) {
+   const totalDuration = targetVideo.duration || 2063;
+   const percent = Math.min(100, Math.floor((savedTime / totalDuration) * 100));
 
-    const card = document.createElement("div");
-    card.className = "resume-card";
-    card.innerHTML = `
-      <div class="resume-thumb">
-        <img src="https://img.youtube.com/vi/${targetVideo.id}/hqdefault.jpg" alt="thumb">
-      </div>
-      <div class="resume-info">
-        <div class="resume-badge">📌 続きから再生</div>
-        <div class="resume-title">${targetVideo.title}</div>
-        <div class="resume-progress-text">進捗率: ${percent}%（${formatTime(savedTime)}）</div>
-      </div>
-      <button class="resume-btn" onclick="startPlayProcess('${targetVideo.id}')">見る</button>
-    `;
-    container.appendChild(card);
-  }
+   const card = document.createElement("div");
+   card.className = "resume-card";
+   card.innerHTML = `
+     <div class="resume-thumb">
+       <img src="https://img.youtube.com/vi/${targetVideo.id}/hqdefault.jpg" alt="thumb">
+     </div>
+     <div class="resume-info">
+       <div class="resume-badge">📌 続きから再生</div>
+       <div class="resume-title">${targetVideo.title}</div>
+       <div class="resume-progress-text">進捗率: ${percent}%（${formatTime(savedTime)}）</div>
+     </div>
+     <button class="resume-btn" onclick="startPlayProcess('${targetVideo.id}')">見る</button>
+   `;
+   container.appendChild(card);
+ }
 }
 
 /* 動画リスト定義 */
 const videosData = [
-  {
-    id: "5r7eYR1RzAk",
-    team: "infection",
-    title: "PPE（個人防護具）の適切な着脱手順",
-    desc: "感染予防のための適切なPPE着脱手順と注意点を解説します。（限定公開）",
-    type: "none",
-    duration: 300,
-    publishedAt: "2026/10/01",
-    protected: true
-  },
-  {
-    id: "HyyeZRsWGkw",
-    team: "infection",
-    title: "第一回オンライン勉強会 ノロウイルスの対応について",
-    desc: "ノロウイルス発生時の初期対応、二次感染を防ぐための嘔吐物処理手順について解説します。",
-    type: "quiz",
-    duration: 2063,
-    publishedAt: "2026/03/13"
-  },
-  {
-    id: "YpA2e9nQO1k",
-    team: "study",
-    title: "第二回オンライン勉強会 より良い排泄ケアを目指して",
-    desc: "利用者様の尊厳を守る排泄介助の基本と、適切なオムツ選定・あて方について学びます。",
-    type: "survey",
-    duration: 1200,
-    publishedAt: "2026/08/05"
-  }
+ {
+   id: "5r7eYR1RzAk",
+   team: "infection",
+   title: "PPE（個人防護具）の適切な着脱手順",
+   desc: "感染予防のための適切なPPE着脱手順と注意点を解説します。（限定公開）",
+   type: "none",
+   duration: 300,
+   publishedAt: "2026/10/01",
+   protected: true
+ },
+ {
+   id: "HyyeZRsWGkw",
+   team: "infection",
+   title: "第一回オンライン勉強会 ノロウイルスの対応について",
+   desc: "ノロウイルス発生時の初期対応、二次感染を防ぐための嘔吐物処理手順について解説します。",
+   type: "quiz",
+   duration: 2063,
+   publishedAt: "2026/03/13"
+ },
+ {
+   id: "YpA2e9nQO1k",
+   team: "study",
+   title: "第二回オンライン勉強会 より良い排泄ケアを目指して",
+   desc: "利用者様の尊厳を守る排泄介助の基本と、適切なオムツ選定・あて方について学びます。",
+   type: "survey",
+   duration: 1200,
+   publishedAt: "2026/08/05"
+ }
 ];
 
 /* 無限ループ対応の動画カード描画 */
 function renderRecentVideos() {
-  const container = document.getElementById("recentVideoList");
-  if (!container) return;
-  container.innerHTML = "";
+ const container = document.getElementById("recentVideoList");
+ if (!container) return;
+ container.innerHTML = "";
 
-  container.style.paddingLeft = "16px";
-  container.style.boxSizing = "border-box";
+ container.style.paddingLeft = "16px";
+ container.style.boxSizing = "border-box";
 
-  const playableVideos = videosData.filter(v => !v.locked);
-  if (playableVideos.length === 0) return;
+ const playableVideos = videosData.filter(v => !v.locked);
+ if (playableVideos.length === 0) return;
 
-  const clones = [];
-  for (let i = 0; i < 50; i++) {
-    clones.push(playableVideos[i % playableVideos.length]);
-  }
+ const clones = [];
+ for (let i = 0; i < 50; i++) {
+   clones.push(playableVideos[i % playableVideos.length]);
+ }
 
-  const loopVideos = [...playableVideos, ...clones];
+ const loopVideos = [...playableVideos, ...clones];
 
-  loopVideos.forEach((v) => {
-    const card = document.createElement("div");
-    card.className = "horizontal-video-card";
-    card.onclick = () => openModal(v.id);
+ loopVideos.forEach((v) => {
+   const card = document.createElement("div");
+   card.className = "horizontal-video-card";
+   card.onclick = () => openModal(v.id);
 
-    const thumbUrl = `https://img.youtube.com/vi/${v.id}/hqdefault.jpg`;
+   const thumbUrl = `https://img.youtube.com/vi/${v.id}/hqdefault.jpg`;
 
-    card.innerHTML = `
-      ${v.protected ? `<div class="protected-badge">🔒 パスワード保護</div>` : ""}
-      <div class="horizontal-thumb">
-        <img src="${thumbUrl}" alt="thumbnail">
-      </div>
-      <div class="horizontal-info">
-        <div class="horizontal-title">${v.title}</div>
-        <div class="horizontal-sub">公開日: ${v.publishedAt || "未定"}</div>
-      </div>
-    `;
-    container.appendChild(card);
-  });
+   card.innerHTML = `
+     ${v.protected ? `<div class="protected-badge">🔒 パスワード保護</div>` : ""}
+     <div class="horizontal-thumb">
+       <img src="${thumbUrl}" alt="thumbnail">
+     </div>
+     <div class="horizontal-info">
+       <div class="horizontal-title">${v.title}</div>
+       <div class="horizontal-sub">公開日: ${v.publishedAt || "未定"}</div>
+     </div>
+   `;
+   container.appendChild(card);
+ });
 }
 
 /* シームレス無限自動スライド */
 function startAutoSlide() {
-  stopAutoSlide();
-  const container = document.getElementById("recentVideoList");
-  if (!container) return;
+ stopAutoSlide();
+ const container = document.getElementById("recentVideoList");
+ if (!container) return;
 
-  autoSlideInterval = setInterval(() => {
-    const cardWidth = 274;
-    const playableVideos = videosData.filter(v => !v.locked);
-    const originalCount = playableVideos.length;
+ autoSlideInterval = setInterval(() => {
+   const cardWidth = 274;
+   const playableVideos = videosData.filter(v => !v.locked);
+   const originalCount = playableVideos.length;
 
-    const maxOriginalScroll = cardWidth * originalCount;
-    const currentScroll = container.scrollLeft;
+   const maxOriginalScroll = cardWidth * originalCount;
+   const currentScroll = container.scrollLeft;
 
-    if (currentScroll >= maxOriginalScroll - 10) {
-      container.scrollTo({ left: currentScroll - maxOriginalScroll, behavior: 'auto' });
+   if (currentScroll >= maxOriginalScroll - 10) {
+     container.scrollTo({ left: currentScroll - maxOriginalScroll, behavior: 'auto' });
 
-      requestAnimationFrame(() => {
-        container.scrollBy({ left: cardWidth, behavior: 'smooth' });
-      });
-    } else {
-      container.scrollBy({ left: cardWidth, behavior: 'smooth' });
-    }
-  }, 3500);
+     requestAnimationFrame(() => {
+       container.scrollBy({ left: cardWidth, behavior: 'smooth' });
+     });
+   } else {
+     container.scrollBy({ left: cardWidth, behavior: 'smooth' });
+   }
+ }, 3500);
 
-  container.removeEventListener('touchstart', stopAutoSlide);
-  container.removeEventListener('mousedown', stopAutoSlide);
-  container.addEventListener('touchstart', stopAutoSlide, { passive: true });
-  container.addEventListener('mousedown', stopAutoSlide);
+ container.removeEventListener('touchstart', stopAutoSlide);
+ container.removeEventListener('mousedown', stopAutoSlide);
+ container.addEventListener('touchstart', stopAutoSlide, { passive: true });
+ container.addEventListener('mousedown', stopAutoSlide);
 }
 
 function stopAutoSlide() {
-  if (autoSlideInterval) {
-    clearInterval(autoSlideInterval);
-    autoSlideInterval = null;
-  }
+ if (autoSlideInterval) {
+   clearInterval(autoSlideInterval);
+   autoSlideInterval = null;
+ }
 }
 
 /* ナビ切り替え */
 let currentTeam = "infection";
 
 function switchNav(type, btnEl) {
-  document.querySelectorAll(".nav-item").forEach(el => el.classList.remove("active"));
-  btnEl.classList.add("active");
+ document.querySelectorAll(".nav-item").forEach(el => el.classList.remove("active"));
+ btnEl.classList.add("active");
 
-  const recentSec = document.getElementById("recentSection");
-  const listSec = document.getElementById("listSection");
-  const settingSec = document.getElementById("settingSection");
-  const resumeSec = document.getElementById("resumeCardArea");
+ const recentSec = document.getElementById("recentSection");
+ const listSec = document.getElementById("listSection");
+ const settingSec = document.getElementById("settingSection");
+ const resumeSec = document.getElementById("resumeCardArea");
 
-  if (type === "home") {
-    if(resumeSec) resumeSec.style.display = "block";
-    recentSec.style.display = "block";
-    listSec.style.display = "none";
-    settingSec.style.display = "none";
-    checkResumeCard();
-    startAutoSlide();
-  } else if (type === "infection") {
-    stopAutoSlide();
-    if(resumeSec) resumeSec.style.display = "none";
-    currentTeam = "infection";
-    recentSec.style.display = "none";
-    settingSec.style.display = "none";
-    listSec.style.display = "block";
-    document.getElementById("listSectionTitle").innerText = "🦠 感染対策チームの動画一覧";
-    renderVideoList();
-  } else if (type === "study") {
-    stopAutoSlide();
-    if(resumeSec) resumeSec.style.display = "none";
-    currentTeam = "study";
-    recentSec.style.display = "none";
-    settingSec.style.display = "none";
-    listSec.style.display = "block";
-    document.getElementById("listSectionTitle").innerText = "📖 学習会チームの動画一覧";
-    renderVideoList();
-  } else if (type === "setting") {
-    stopAutoSlide();
-    if(resumeSec) resumeSec.style.display = "none";
-    recentSec.style.display = "none";
-    listSec.style.display = "none";
-    settingSec.style.display = "block";
-  }
+ if (type === "home") {
+   if(resumeSec) resumeSec.style.display = "block";
+   recentSec.style.display = "block";
+   listSec.style.display = "none";
+   settingSec.style.display = "none";
+   checkResumeCard();
+   startAutoSlide();
+ } else if (type === "infection") {
+   stopAutoSlide();
+   if(resumeSec) resumeSec.style.display = "none";
+   currentTeam = "infection";
+   recentSec.style.display = "none";
+   settingSec.style.display = "none";
+   listSec.style.display = "block";
+   document.getElementById("listSectionTitle").innerText = "🦠 感染対策チームの動画一覧";
+   renderVideoList();
+ } else if (type === "study") {
+   stopAutoSlide();
+   if(resumeSec) resumeSec.style.display = "none";
+   currentTeam = "study";
+   recentSec.style.display = "none";
+   settingSec.style.display = "none";
+   listSec.style.display = "block";
+   document.getElementById("listSectionTitle").innerText = "📖 学習会チームの動画一覧";
+   renderVideoList();
+ } else if (type === "setting") {
+   stopAutoSlide();
+   if(resumeSec) resumeSec.style.display = "none";
+   recentSec.style.display = "none";
+   listSec.style.display = "none";
+   settingSec.style.display = "block";
+ }
 }
 
-/* 修正: リスト画面の描画（モーダル経由で保護） */
+/* リスト画面の描画 */
 function renderVideoList(){
-  const listEl = document.getElementById("videoList");
-  if(!listEl) return;
-  listEl.innerHTML = "";
+ const listEl = document.getElementById("videoList");
+ if(!listEl) return;
+ listEl.innerHTML = "";
 
-  const filtered = videosData.filter(v => v.team === currentTeam);
+ const filtered = videosData.filter(v => v.team === currentTeam);
 
-  filtered.forEach(v => {
-    const li = document.createElement("li");
-    li.id = "video_" + v.id;
-    if(v.locked) li.classList.add("locked");
+ filtered.forEach(v => {
+   const li = document.createElement("li");
+   li.id = "video_" + v.id;
+   if(v.locked) li.classList.add("locked");
 
-    const thumbUrl = v.locked ? "" : `https://img.youtube.com/vi/${v.id}/hqdefault.jpg`;
+   const thumbUrl = v.locked ? "" : `https://img.youtube.com/vi/${v.id}/hqdefault.jpg`;
 
-    let html = `
-      <div class="videoCard" onclick="${v.locked ? '' : `openModal('${v.id}')`}">
-        <div class="thumbnailBox">
-          ${v.locked
-            ? `<div class="noThumb">COMING SOON</div>`
-            : `<img src="${thumbUrl}" alt="サムネイル">`
-          }
-        </div>
-        <div class="videoCardInfo">
-          <div class="videoTitle">${v.title} ${v.protected ? '🔒' : ''}</div>
-          <div class="viewedDate">
-            <div class="progressBar"><div class="progressFill"></div></div>
-            <div class="progressText"></div>
-          </div>
-        </div>
-      </div>
-    `;
+   const liCard = document.createElement("div");
+   liCard.className = "videoCard";
+   if (!v.locked) {
+     liCard.onclick = () => openModal(v.id);
+   }
 
-    li.innerHTML = html;
-    listEl.appendChild(li);
+   liCard.innerHTML = `
+     <div class="thumbnailBox">
+       ${v.locked
+         ? `<div class="noThumb">COMING SOON</div>`
+         : `<img src="${thumbUrl}" alt="サムネイル">`
+       }
+     </div>
+     <div class="videoCardInfo">
+       <div class="videoTitle">${v.title} ${v.protected ? '🔒' : ''}</div>
+       <div class="viewedDate">
+         <div class="progressBar"><div class="progressFill"></div></div>
+         <div class="progressText"></div>
+       </div>
+     </div>
+   `;
 
-    if(!v.locked){
-      updateSingleVideoStatus(v.id, v.duration);
-    }
-  });
+   li.appendChild(liCard);
+   listEl.appendChild(li);
+
+   if(!v.locked){
+     updateSingleVideoStatus(v.id, v.duration);
+   }
+ });
 }
 
 function updateSingleVideoStatus(id, duration){
-  const time = parseFloat(localStorage.getItem(username+"_"+id)) || 0;
-  const date = localStorage.getItem(username+"_date_"+id);
+ const time = parseFloat(localStorage.getItem(username+"_"+id)) || 0;
+ const date = localStorage.getItem(username+"_date_"+id);
 
-  let percent = Math.floor((time / (duration || 2063)) * 100);
-  if(percent > 100) percent = 100;
-  if(time === 0) percent = 0;
-  if(localStorage.getItem(username+"_complete_"+id)) percent = 100;
+ let percent = Math.floor((time / (duration || 2063)) * 100);
+ if(percent > 100) percent = 100;
+ if(time === 0) percent = 0;
+ if(localStorage.getItem(username+"_complete_"+id)) percent = 100;
 
-  const fill = document.querySelector("#video_"+id+" .progressFill");
-  const text = document.querySelector("#video_"+id+" .progressText");
+ const fill = document.querySelector("#video_"+id+" .progressFill");
+ const text = document.querySelector("#video_"+id+" .progressText");
 
-  if(fill) fill.style.width = percent + "%";
-  if(text) {
-    let displayText = "視聴率：" + percent + "%";
-    if(date) displayText += "（最終視聴：" + date + "）";
-    text.innerText = displayText;
-  }
+ if(fill) fill.style.width = percent + "%";
+ if(text) {
+   let displayText = "視聴率：" + percent + "%";
+   if(date) displayText += "（最終視聴：" + date + "）";
+   text.innerText = displayText;
+ }
 }
 
 /* パスワード確認 & 再生フロー */
 function startPlayProcess(id) {
-  const video = videosData.find(v => v.id === id);
-  if (!video) return;
+ const video = videosData.find(v => v.id === id);
+ if (!video) return;
 
-  const isUnlocked = localStorage.getItem(username + "_pass_unlocked_" + id) === "true";
+ const isUnlocked = localStorage.getItem(username + "_pass_unlocked_" + id) === "true";
 
-  if (video.protected && !isUnlocked && !adminMode) {
-    pendingVideoId = id;
-    document.getElementById("videoPassInput").value = "";
-    document.getElementById("passwordModal").style.display = "flex";
-  } else {
-    playVideo(id);
-  }
+ if (video.protected && !isUnlocked && !adminMode) {
+   pendingVideoId = id;
+   document.getElementById("videoPassInput").value = "";
+   document.getElementById("passwordModal").style.display = "flex";
+ } else {
+   playVideo(id);
+ }
 }
 
 function submitVideoPassword() {
-  const input = document.getElementById("videoPassInput").value.trim();
-  if (input === PPE_PASSWORD) {
-    localStorage.setItem(username + "_pass_unlocked_" + pendingVideoId, "true");
-    closePasswordModal();
-    playVideo(pendingVideoId);
-  } else {
-    showToast("パスワードが違います");
-  }
+ const input = document.getElementById("videoPassInput").value.trim();
+ if (input === PPE_PASSWORD) {
+   localStorage.setItem(username + "_pass_unlocked_" + pendingVideoId, "true");
+   closePasswordModal();
+   playVideo(pendingVideoId);
+ } else {
+   showToast("パスワードが違います");
+ }
 }
 
 function closePasswordModal() {
-  document.getElementById("passwordModal").style.display = "none";
-  pendingVideoId = null;
+ document.getElementById("passwordModal").style.display = "none";
+ pendingVideoId = null;
 }
 
 /* 動画再生処理 */
 function playVideo(id){
-  currentVideoId = id;
-  if (chapterBtn) chapterBtn.style.display = isNoroVideo() ? "block" : "none";
-  if (skipIntro) skipIntro.style.display = "none";
-  if (skipThinking) skipThinking.style.display = "none";
-  introActive = false;
-  thinkingActive = false;
+ currentVideoId = id;
+ if (chapterBtn) chapterBtn.style.display = isNoroVideo() ? "block" : "none";
+ if (skipIntro) skipIntro.style.display = "none";
+ if (skipThinking) skipThinking.style.display = "none";
+ introActive = false;
+ thinkingActive = false;
 
-  if(thinkingTimer){ clearInterval(thinkingTimer); thinkingTimer = null; }
+ if(thinkingTimer){ clearInterval(thinkingTimer); thinkingTimer = null; }
 
-  resumeTime = parseFloat(localStorage.getItem(username+"_"+id)) || 0;
-  maxWatchedTime = resumeTime;
-  resumePromptShown = false;
+ resumeTime = parseFloat(localStorage.getItem(username+"_"+id)) || 0;
+ maxWatchedTime = resumeTime;
+ resumePromptShown = false;
 
-  if (home) home.style.display = "none";
-  if (videoWrapper) videoWrapper.style.display = "block";
+ if (home) home.style.display = "none";
+ if (videoWrapper) videoWrapper.style.display = "block";
 
-  if(uiInterval) clearInterval(uiInterval);
+ if(uiInterval) clearInterval(uiInterval);
 
-  if(player && typeof player.destroy === 'function') {
-    try { player.destroy(); } catch(e){}
-  }
+ if(player && typeof player.destroy === 'function') {
+   try { player.destroy(); } catch(e){}
+ }
 
-  // 設定されたデフォルト画質を取得
-  const preferredQuality = localStorage.getItem("setting_quality") || "auto";
+ // 設定されたデフォルト画質を取得
+ const preferredQuality = localStorage.getItem("setting_quality") || "auto";
 
-  player = new YT.Player('player',{
-    videoId: id,
-    playerVars: { controls: 0, rel: 0, modestbranding: 1, fs: 0, playsinline: 1 },
-    events: {
-      onReady: () => {
-        uiInterval = setInterval(updateUI, 500);
-        showUI();
-        if(preferredQuality !== "auto" && player.setPlaybackQuality) {
-          player.setPlaybackQuality(preferredQuality);
-        }
-        if(resumeTime > 5) {
-          player.seekTo(resumeTime, true);
-        }
-      },
-      onStateChange: (e) => {
-        if(e.data === YT.PlayerState.PLAYING) startUITimer();
-      }
-    }
-  });
+ player = new YT.Player('player',{
+   videoId: id,
+   playerVars: { controls: 0, rel: 0, modestbranding: 1, fs: 0, playsinline: 1 },
+   events: {
+     onReady: () => {
+       uiInterval = setInterval(updateUI, 500);
+       showUI();
+       if(preferredQuality !== "auto" && player.setPlaybackQuality) {
+         player.setPlaybackQuality(preferredQuality);
+       }
+       if(resumeTime > 5) {
+         player.seekTo(resumeTime, true);
+       }
+     },
+     onStateChange: (e) => {
+       if(e.data === YT.PlayerState.PLAYING) startUITimer();
+     }
+   }
+ });
 }
 
 function togglePlay(){
-  if(!resumePromptShown && resumeTime > 5){
-    if (resumeInline) resumeInline.style.display = "block";
-    resumePromptShown = true;
-    return;
-  }
-  let state = player.getPlayerState();
-  if(state === 1){ player.pauseVideo(); if(playBtn) playBtn.innerText = "▶"; }
-  else{ player.playVideo(); if(playBtn) playBtn.innerText = "❚❚"; }
-  showUI();
+ if(!resumePromptShown && resumeTime > 5){
+   if (resumeInline) resumeInline.style.display = "block";
+   resumePromptShown = true;
+   return;
+ }
+ let state = player.getPlayerState();
+ if(state === 1){ player.pauseVideo(); if(playBtn) playBtn.innerText = "▶"; }
+ else{ player.playVideo(); if(playBtn) playBtn.innerText = "❚❚"; }
+ showUI();
 }
 
 function resumeFrom(){ player.seekTo(resumeTime, true); player.playVideo(); if(resumeInline) resumeInline.style.display = "none"; }
 function startFromBeginning(){ localStorage.removeItem(username+"_"+currentVideoId); player.seekTo(0, true); player.playVideo(); if(resumeInline) resumeInline.style.display = "none"; }
 
 function changeSpeed(){
-  speedIndex++;
-  if(speedIndex >= speeds.length) speedIndex = 0;
-  let newSpeed = speeds[speedIndex];
-  player.setPlaybackRate(newSpeed);
-  document.getElementById("speedBtn").innerText = newSpeed + "x";
-  showUI();
+ speedIndex++;
+ if(speedIndex >= speeds.length) speedIndex = 0;
+ let newSpeed = speeds[speedIndex];
+ player.setPlaybackRate(newSpeed);
+ document.getElementById("speedBtn").innerText = newSpeed + "x";
+ showUI();
 }
 
 function updateUI(){
-  if(!player || typeof player.getDuration !== 'function' || !player.getDuration()) return;
+ if(!player || typeof player.getDuration !== 'function' || !player.getDuration()) return;
 
-  let c = player.getCurrentTime(), d = player.getDuration();
+ let c = player.getCurrentTime(), d = player.getDuration();
 
-  if(isNoroVideo()){
-    thinkingStarts.forEach(start => {
-      if(c >= start && c < start + 1 && !thinkingActive){
-        thinkingActive = true;
-        thinkingStartTime = start;
-        let remain = 30;
+ if(isNoroVideo()){
+   thinkingStarts.forEach(start => {
+     if(c >= start && c < start + 1 && !thinkingActive){
+       thinkingActive = true;
+       thinkingStartTime = start;
+       let remain = 30;
 
-        if (skipThinking) {
-          skipThinking.style.display = "block";
-          skipThinking.innerText = "シンキングタイム（" + remain + "秒）";
-        }
+       if (skipThinking) {
+         skipThinking.style.display = "block";
+         skipThinking.innerText = "シンキングタイム（" + remain + "秒）";
+       }
 
-        thinkingTimer = setInterval(() => {
-          remain--;
-          if (skipThinking) skipThinking.innerText = "シンキングタイム（" + remain + "秒）";
-          if(remain <= 0){
-            clearInterval(thinkingTimer);
-            if (skipThinking) skipThinking.style.display = "none";
-            thinkingActive = false;
-          }
-        }, 1000);
-      }
-    });
-  }
+       thinkingTimer = setInterval(() => {
+         remain--;
+         if (skipThinking) skipThinking.innerText = "シンキングタイム（" + remain + "秒）";
+         if(remain <= 0){
+           clearInterval(thinkingTimer);
+           if (skipThinking) skipThinking.style.display = "none";
+           thinkingActive = false;
+         }
+       }, 1000);
+     }
+   });
+ }
 
-  if(c > maxWatchedTime){ maxWatchedTime = c; }
+ if(c > maxWatchedTime){ maxWatchedTime = c; }
 
-  if(c >= d - 2){
-    localStorage.setItem(username + "_complete_" + currentVideoId, "true");
-    if(isNoroVideo()){
-      localStorage.setItem("quizUser", username);
-      window.location.href = "quiz.html";
-    }
-  }
+ if(c >= d - 2){
+   localStorage.setItem(username + "_complete_" + currentVideoId, "true");
+   if(isNoroVideo()){
+     localStorage.setItem("quizUser", username);
+     window.location.href = "quiz.html";
+   }
+ }
 
-  if (currentTime) currentTime.innerText = formatTime(c);
-  if (duration) duration.innerText = formatTime(d);
-  if (progress) progress.value = c / d * 100;
-  localStorage.setItem(username + "_" + currentVideoId, c);
-  localStorage.setItem(username + "_date_" + currentVideoId, new Date().toLocaleDateString());
+ if (currentTime) currentTime.innerText = formatTime(c);
+ if (duration) duration.innerText = formatTime(d);
+ if (progress) progress.value = c / d * 100;
+ localStorage.setItem(username + "_" + currentVideoId, c);
+ localStorage.setItem(username + "_date_" + currentVideoId, new Date().toLocaleDateString());
 
-  if(isNoroVideo() && c >= 22 && c <= 27 && !introActive){
-    introActive = true;
-    if (skipIntro) skipIntro.style.display = "block";
-    if (skipBar) {
-      skipBar.style.animation = "none";
-      void skipBar.offsetWidth;
-      skipBar.style.animation = "grow 5s linear forwards";
-    }
+ if(isNoroVideo() && c >= 22 && c <= 27 && !introActive){
+   introActive = true;
+   if (skipIntro) skipIntro.style.display = "block";
+   if (skipBar) {
+     skipBar.style.animation = "none";
+     void skipBar.offsetWidth;
+     skipBar.style.animation = "grow 5s linear forwards";
+   }
 
-    setTimeout(() => {
-      if (skipIntro) skipIntro.style.display = "none";
-      introActive = false;
-    }, 5000);
-  }
+   setTimeout(() => {
+     if (skipIntro) skipIntro.style.display = "none";
+     introActive = false;
+   }, 5000);
+ }
 }
 
 function rewind10(){ if(player) player.seekTo(player.getCurrentTime() - 10, true); showUI(); }
 function forward10(){
-  if(!player) return;
-  let target = player.getCurrentTime() + 10;
-  if(!adminMode && !localStorage.getItem(username+"_complete_"+currentVideoId) && target > maxWatchedTime + 5){
-    showToast("まだ先にはスキップできません");
-    return;
-  }
-  player.seekTo(target, true);
-  showUI();
+ if(!player) return;
+ let target = player.getCurrentTime() + 10;
+ if(!adminMode && !localStorage.getItem(username+"_complete_"+currentVideoId) && target > maxWatchedTime + 5){
+   showToast("まだ先にはスキップできません");
+   return;
+ }
+ player.seekTo(target, true);
+ showUI();
 }
 
 function formatTime(t){ let m = Math.floor(t / 60), s = Math.floor(t % 60); if(s < 10) s = "0" + s; return m + ":" + s; }
 
 function showToast(msg){
-  const toast = document.getElementById("toast");
-  if(!toast) return;
-  toast.innerText = msg;
-  toast.style.opacity = "1";
-  setTimeout(() => { toast.style.opacity = "0"; }, 2000);
+ const toast = document.getElementById("toast");
+ if(!toast) return;
+ toast.innerText = msg;
+ toast.style.opacity = "1";
+ setTimeout(() => { toast.style.opacity = "0"; }, 2000);
 }
 
 function hideUI(){
-  if(centralUI) centralUI.classList.add("hideUI");
-  if(bottomControls) bottomControls.classList.add("hideUI");
-  if(backBtn) backBtn.classList.add("hideUI");
-  if(chapterBtn) chapterBtn.classList.add("hideUI");
+ if(centralUI) centralUI.classList.add("hideUI");
+ if(bottomControls) bottomControls.classList.add("hideUI");
+ if(backBtn) backBtn.classList.add("hideUI");
+ if(chapterBtn) chapterBtn.classList.add("hideUI");
 }
 function showUI(){
-  if(centralUI) centralUI.classList.remove("hideUI");
-  if(bottomControls) bottomControls.classList.remove("hideUI");
-  if(backBtn) backBtn.classList.remove("hideUI");
-  if(chapterBtn) chapterBtn.classList.remove("hideUI");
-  startUITimer();
+ if(centralUI) centralUI.classList.remove("hideUI");
+ if(bottomControls) bottomControls.classList.remove("hideUI");
+ if(backBtn) backBtn.classList.remove("hideUI");
+ if(chapterBtn) chapterBtn.classList.remove("hideUI");
+ startUITimer();
 }
 
 function startUITimer(){
-  clearTimeout(uiTimer);
-  uiTimer = setTimeout(() => {
-    if(player && player.getPlayerState && player.getPlayerState() === 1 && !chapterOpen){
-      hideUI();
-    }
-  }, 3000);
+ clearTimeout(uiTimer);
+ uiTimer = setTimeout(() => {
+   if(player && player.getPlayerState && player.getPlayerState() === 1 && !chapterOpen){
+     hideUI();
+   }
+ }, 3000);
 }
 
 document.addEventListener("click", (e) => {
-  if (videoWrapper && videoWrapper.contains(e.target)) {
-    if(e.target.id === "skipIntro" || e.target.id === "skipBar") return;
-    showUI();
-  }
+ if (videoWrapper && videoWrapper.contains(e.target)) {
+   if(e.target.id === "skipIntro" || e.target.id === "skipBar") return;
+   showUI();
+ }
 });
 
 function skipIntroClick(e){
-  e.stopPropagation();
-  if(player) player.seekTo(57, true);
-  if(skipIntro) skipIntro.style.display = "none";
-  introActive = false;
+ e.stopPropagation();
+ if(player) player.seekTo(57, true);
+ if(skipIntro) skipIntro.style.display = "none";
+ introActive = false;
 }
 
 function goTo(sec){
-  if(!player) return;
-  if(adminMode || localStorage.getItem(username + "_complete_" + currentVideoId)){
-    player.seekTo(sec, true);
-    showUI();
-    return;
-  }
-  if(sec > maxWatchedTime + 5){
-    showToast("この章はまだ視聴していません");
-    return;
-  }
-  player.seekTo(sec, true);
-  if(chapterPanel) chapterPanel.style.right = "-320px";
-  chapterOpen = false;
-  showUI();
+ if(!player) return;
+ if(adminMode || localStorage.getItem(username + "_complete_" + currentVideoId)){
+   player.seekTo(sec, true);
+   showUI();
+   return;
+ }
+ if(sec > maxWatchedTime + 5){
+   showToast("この章はまだ視聴していません");
+   return;
+ }
+ player.seekTo(sec, true);
+ if(chapterPanel) chapterPanel.style.right = "-320px";
+ chapterOpen = false;
+ showUI();
 }
 
 function toggleChapters(){
-  if(!chapterPanel) return;
-  if(chapterPanel.style.right === "0px"){
-    chapterPanel.style.right = "-320px";
-    chapterOpen = false;
-    startUITimer();
-  }else{
-    chapterPanel.style.right = "0px";
-    chapterOpen = true;
-    if(centralUI) centralUI.classList.add("hideUI");
-    if(bottomControls) bottomControls.classList.add("hideUI");
-  }
+ if(!chapterPanel) return;
+ if(chapterPanel.style.right === "0px"){
+   chapterPanel.style.right = "-320px";
+   chapterOpen = false;
+   startUITimer();
+ }else{
+   chapterPanel.style.right = "0px";
+   chapterOpen = true;
+   if(centralUI) centralUI.classList.add("hideUI");
+   if(bottomControls) bottomControls.classList.add("hideUI");
+ }
 }
 
 function checkVersion(){
-  const saved = localStorage.getItem("app_version");
-  if(saved && saved !== APP_VERSION){
-    document.getElementById("updateMessage").innerText = "Ver " + APP_VERSION + " に更新されました。\n\n更新内容:\n" + UPDATE_MESSAGE;
-    document.getElementById("updateModal").style.display = "flex";
-  }
-  localStorage.setItem("app_version", APP_VERSION);
+ const saved = localStorage.getItem("app_version");
+ if(saved && saved !== APP_VERSION){
+   document.getElementById("updateMessage").innerText = "Ver " + APP_VERSION + " に更新されました。\n\n更新内容:\n" + UPDATE_MESSAGE;
+   document.getElementById("updateModal").style.display = "flex";
+ }
+ localStorage.setItem("app_version", APP_VERSION);
 }
 
 function closeUpdateModal(){
-  document.getElementById("updateModal").style.display = "none";
-  location.reload();
+ document.getElementById("updateModal").style.display = "none";
+ location.reload();
 }
 
 function goBack(){
-  if(player){ try { player.destroy(); } catch(e){} }
-  if(videoWrapper) videoWrapper.style.display = "none";
-  if(home) home.style.display = "block";
-  if(chapterPanel) chapterPanel.style.right = "-320px";
-  chapterOpen = false;
-  checkResumeCard();
-  renderVideoList();
-  renderRecentVideos();
-  if (document.getElementById("recentSection").style.display !== "none") {
-    startAutoSlide();
-  }
+ if(player){ try { player.destroy(); } catch(e){} }
+ if(videoWrapper) videoWrapper.style.display = "none";
+ if(home) home.style.display = "block";
+ if(chapterPanel) chapterPanel.style.right = "-320px";
+ chapterOpen = false;
+ checkResumeCard();
+ renderVideoList();
+ renderRecentVideos();
+ if (document.getElementById("recentSection").style.display !== "none") {
+   startAutoSlide();
+ }
 }
 
 /* 管理者モード用 隠しコマンド */
 const versionArea = document.getElementById("topVersion");
 if(versionArea) {
-  versionArea.addEventListener("click", function(){
-    adminTapCount++;
-    if(adminTapCount === 5){
-      let pass = prompt("管理者パスワード");
-      if(pass === "1234"){
-        document.getElementById("summaryBtn").style.display = "block";
-        adminMode = true;
-        username = "管理者";
+ versionArea.addEventListener("click", function(){
+   adminTapCount++;
+   if(adminTapCount === 5){
+     let pass = prompt("管理者パスワード");
+     if(pass === "1234"){
+       document.getElementById("summaryBtn").style.display = "block";
+       adminMode = true;
+       username = "管理者";
 
-        document.getElementById("nameInputModal").style.display = "none";
-        document.getElementById("loader").style.display = "none";
-        document.getElementById("topBarHome").style.display = "flex";
-        document.getElementById("bottomNav").style.display = "flex";
+       document.getElementById("nameInputModal").style.display = "none";
+       document.getElementById("loader").style.display = "none";
+       document.getElementById("topBarHome").style.display = "flex";
+       document.getElementById("bottomNav").style.display = "flex";
 
-        document.getElementById("userAvatar").innerText = "管";
-        document.getElementById("profileNameDisplay").innerText = "管理者";
-        document.getElementById("profileStatusDisplay").innerText = "管理者モード";
+       document.getElementById("userAvatar").innerText = "管";
+       document.getElementById("profileNameDisplay").innerText = "管理者";
+       document.getElementById("profileStatusDisplay").innerText = "管理者モード";
 
-        checkResumeCard();
-        renderRecentVideos();
-        startAutoSlide();
-        alert("管理者モードON");
-      }
-      adminTapCount = 0;
-    }
-    clearTimeout(adminTapTimer);
-    adminTapTimer = setTimeout(() => { adminTapCount = 0; }, 2000);
-  });
+       checkResumeCard();
+       renderRecentVideos();
+       startAutoSlide();
+       alert("管理者モードON");
+     }
+     adminTapCount = 0;
+   }
+   clearTimeout(adminTapTimer);
+   adminTapTimer = setTimeout(() => { adminTapCount = 0; }, 2000);
+ });
 }
 
 function skipThinkingClick(e){
-  e.stopPropagation();
-  if(player) player.seekTo(thinkingStartTime + 30, true);
-  if(skipThinking) skipThinking.style.display = "none";
-  clearInterval(thinkingTimer);
-  thinkingActive = false;
+ e.stopPropagation();
+ if(player) player.seekTo(thinkingStartTime + 30, true);
+ if(skipThinking) skipThinking.style.display = "none";
+ clearInterval(thinkingTimer);
+ thinkingActive = false;
+}
+
+function startQuiz(videoId){
+ localStorage.setItem("quizUser", username);
+ localStorage.setItem("currentQuizVideoId", videoId);
+ window.location.href = "quiz.html";
 }
 
 function showResult(id){ window.location.href = "quiz_result.html"; }
 
 function startReview(videoId){
-  if(!localStorage.getItem(username + "_quiz_done_" + videoId)){
-    showToast("テスト受験後に復習できます");
-    return;
-  }
-  let wrong = JSON.parse(localStorage.getItem(username + "_wrong_" + videoId) || "[]");
-  if(wrong.length === 0){
-    showToast("復習する問題はありません");
-    return;
-  }
-  localStorage.setItem("reviewMode", "true");
-  localStorage.setItem("reviewVideoId", videoId);
-  window.location.href = "quiz.html";
+ if(!localStorage.getItem(username + "_quiz_done_" + videoId)){
+   showToast("テスト受験後に復習できます");
+   return;
+ }
+ let wrong = JSON.parse(localStorage.getItem(username + "_wrong_" + videoId) || "[]");
+ if(wrong.length === 0){
+   showToast("復習する問題はありません");
+   return;
+ }
+ localStorage.setItem("reviewMode", "true");
+ localStorage.setItem("reviewVideoId", videoId);
+ window.location.href = "quiz.html";
 }
 
 function drawChart(data){
-  const worst = data.questions
-    .map((rate, i) => ({ q: i + 1, rate }))
-    .sort((a, b) => a.rate - b.rate)
-    .slice(0, 3);
+ const worst = data.questions
+   .map((rate, i) => ({ q: i + 1, rate }))
+   .sort((a, b) => a.rate - b.rate)
+   .slice(0, 3);
 
-  const ctx = document.getElementById("questionChart");
-  if(!ctx) return;
-  new Chart(ctx, {
-    type: 'pie',
-    data: {
-      labels: worst.map(w => "Q" + w.q),
-      datasets: [{ data: worst.map(w => 100 - w.rate) }]
-    }
-  });
+ const ctx = document.getElementById("questionChart");
+ if(!ctx) return;
+ new Chart(ctx, {
+   type: 'pie',
+   data: {
+     labels: worst.map(w => "Q" + w.q),
+     datasets: [{ data: worst.map(w => 100 - w.rate) }]
+   }
+ });
 }
 
 async function showSummary(){
-  if(!adminMode){ showToast("管理者のみ閲覧できます"); return; }
-  try{
-    const res = await fetch("https://script.google.com/macros/s/AKfycbxt_kxbO6BITi8GiqZbzvERHrrmjGSf-VsjjLNRpgWLZgLtoprj6EKkqEn_DY0IN9IA/exec?type=summary");
-    const data = await res.json();
+ if(!adminMode){ showToast("管理者のみ閲覧できます"); return; }
+ try{
+   const res = await fetch("https://script.google.com/macros/s/AKfycbxt_kxbO6BITi8GiqZbzvERHrrmjGSf-VsjjLNRpgWLZgLtoprj6EKkqEn_DY0IN9IA/exec?type=summary");
+   const data = await res.json();
 
-    document.getElementById("summaryArea").style.display = "block";
-    document.getElementById("summaryTable").innerHTML = `
-      <p>受講者数：${data.total}</p>
-      <p>合格者数：${data.passed}</p>
-      <p>平均点：${data.avg}点</p>
-    `;
+   document.getElementById("summaryArea").style.display = "block";
+   document.getElementById("summaryTable").innerHTML = `
+     <p>受講者数：${data.total}</p>
+     <p>合格者数：${data.passed}</p>
+     <p>平均点：${data.avg}点</p>
+   `;
 
-    const worst = data.questions
-      .map((rate, i) => ({ q: i + 1, rate }))
-      .sort((a, b) => a.rate - b.rate)
-      .slice(0, 3);
+   const worst = data.questions
+     .map((rate, i) => ({ q: i + 1, rate }))
+     .sort((a, b) => a.rate - b.rate)
+     .slice(0, 3);
 
-    document.getElementById("summaryTable").innerHTML += `
-      <p style="margin-top:10px;">間違いが多い問題：</p>
-      ${worst.map(w => `<p>Q${w.q}（正答率 ${w.rate}%）</p>`).join("")}
-    `;
+   document.getElementById("summaryTable").innerHTML += `
+     <p style="margin-top:10px;">間違いが多い問題：</p>
+     ${worst.map(w => `<p>Q${w.q}（正答率 ${w.rate}%）</p>`).join("")}
+   `;
 
-    drawChart(data);
-  }catch(e){
-    showToast("取得エラー");
-  }
+   drawChart(data);
+ }catch(e){
+   showToast("取得エラー");
+ }
 }
 
 let currentModalVideoId = null;
 
-/* 動画詳細モーダル（保護・自動再生対応） */
+/* 動画詳細モーダル */
 function openModal(id){
- const video = videosData.find(v => v.id === id);
- if(!video || video.locked) return;
+const video = videosData.find(v => v.id === id);
+if(!video || video.locked) return;
 
- const isUnlocked = localStorage.getItem(username + "_pass_unlocked_" + id) === "true";
- if (video.protected && !isUnlocked && !adminMode) {
-   pendingVideoId = id;
-   document.getElementById("videoPassInput").value = "";
-   document.getElementById("passwordModal").style.display = "flex";
-   return;
- }
+const isUnlocked = localStorage.getItem(username + "_pass_unlocked_" + id) === "true";
+if (video.protected && !isUnlocked && !adminMode) {
+  pendingVideoId = id;
+  document.getElementById("videoPassInput").value = "";
+  document.getElementById("passwordModal").style.display = "flex";
+  return;
+}
 
- const autoplay = localStorage.getItem("setting_autoplay") === "true";
- if (autoplay) {
-   playVideo(id);
-   return;
- }
+const autoplay = localStorage.getItem("setting_autoplay") === "true";
+if (autoplay) {
+  playVideo(id);
+  return;
+}
 
- currentModalVideoId = id;
+currentModalVideoId = id;
 
- document.getElementById("modalThumb").src = `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
- document.getElementById("modalTitle").innerText = video.title;
- document.getElementById("modalDesc").innerText = video.desc || "説明はありません。";
+document.getElementById("modalThumb").src = `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+document.getElementById("modalTitle").innerText = video.title;
+document.getElementById("modalDesc").innerText = video.desc || "説明はありません。";
 
- document.getElementById("modalDuration").innerText = Math.floor((video.duration || 0) / 60) + "分";
- document.getElementById("modalDate").innerText = video.publishedAt || "公開日未定";
+document.getElementById("modalDuration").innerText = Math.floor((video.duration || 0) / 60) + "分";
+document.getElementById("modalDate").innerText = video.publishedAt || "公開日未定";
 
- const actionsEl = document.getElementById("modalActions");
- actionsEl.innerHTML = "";
+const actionsEl = document.getElementById("modalActions");
+actionsEl.innerHTML = "";
 
- const playBtn = document.createElement("button");
- playBtn.style.cssText = "background:#e50914; color:#fff; border:none; cursor:pointer; font-weight:bold; padding:12px; border-radius:8px; width:100%; font-size:15px; box-shadow: 0 4px 10px rgba(229, 9, 20, 0.4);";
- playBtn.innerText = "▶ 動画を再生する";
- playBtn.onclick = function(){
-   closeModalDirect();
-   startPlayProcess(id);
- };
- actionsEl.appendChild(playBtn);
+const playBtn = document.createElement("button");
+playBtn.style.cssText = "background:#e50914; color:#fff; border:none; cursor:pointer; font-weight:bold; padding:12px; border-radius:8px; width:100%; font-size:15px; box-shadow: 0 4px 10px rgba(229, 9, 20, 0.4);";
+playBtn.innerText = "▶ 動画を再生する";
+playBtn.onclick = function(){
+  closeModalDirect();
+  startPlayProcess(id);
+};
+actionsEl.appendChild(playBtn);
 
- const isCompleted = localStorage.getItem(username + "_complete_" + id) === "true";
- const quizDone = localStorage.getItem(username + "_quiz_done_" + id);
- const wrongList = JSON.parse(localStorage.getItem(username + "_wrong_" + id) || "[]");
+const isCompleted = localStorage.getItem(username + "_complete_" + id) === "true";
+const quizDone = localStorage.getItem(username + "_quiz_done_" + id);
+const wrongList = JSON.parse(localStorage.getItem(username + "_wrong_" + id) || "[]");
 
- if (video.type === "quiz") {
-   const quizBtn = document.createElement("button");
-   quizBtn.style.cssText = "padding:12px; border-radius:8px; font-weight:bold; width:100%; font-size:14px; border:none; transition:0.2s;";
+if (video.type === "quiz") {
+  const quizBtn = document.createElement("button");
+  quizBtn.style.cssText = "padding:12px; border-radius:8px; font-weight:bold; width:100%; font-size:14px; border:none; transition:0.2s; margin-top:8px;";
 
-   if (quizDone) {
-     quizBtn.style.background = "#333";
-     quizBtn.style.color = "#fff";
-     quizBtn.style.border = "1px solid #555";
-     quizBtn.style.cursor = "pointer";
-     quizBtn.innerText = "回答結果を見る";
-     quizBtn.onclick = function() { closeModalDirect(); showResult(id); };
-   } else if (isCompleted || adminMode) {
-     quizBtn.style.background = "#2e7d32";
-     quizBtn.style.color = "#fff";
-     quizBtn.style.cursor = "pointer";
-     quizBtn.innerText = "確認テストを実施する";
-     quizBtn.onclick = function() { closeModalDirect(); startQuiz(id); };
-   } else {
-     quizBtn.style.background = "#222";
-     quizBtn.style.color = "#666";
-     quizBtn.style.cursor = "not-allowed";
-     quizBtn.innerText = "確認テスト（動画視聴後）";
-     quizBtn.onclick = function() { showToast("動画を最後まで視聴するとテストを受けられます"); };
-   }
-   actionsEl.appendChild(quizBtn);
+  if (quizDone) {
+    quizBtn.style.background = "#333";
+    quizBtn.style.color = "#fff";
+    quizBtn.style.border = "1px solid #555";
+    quizBtn.style.cursor = "pointer";
+    quizBtn.innerText = "回答結果を見る";
+    quizBtn.onclick = function() { closeModalDirect(); showResult(id); };
+  } else if (isCompleted || adminMode) {
+    quizBtn.style.background = "#2e7d32";
+    quizBtn.style.color = "#fff";
+    quizBtn.style.cursor = "pointer";
+    quizBtn.innerText = "確認テストを実施する";
+    quizBtn.onclick = function() { closeModalDirect(); startQuiz(id); };
+  } else {
+    quizBtn.style.background = "#222";
+    quizBtn.style.color = "#666";
+    quizBtn.style.cursor = "not-allowed";
+    quizBtn.innerText = "確認テスト（動画視聴後）";
+    quizBtn.onclick = function() { showToast("動画を最後まで視聴するとテストを受けられます"); };
+  }
+  actionsEl.appendChild(quizBtn);
 
-   if (quizDone && wrongList.length > 0) {
-     const reviewBtn = document.createElement("button");
-     reviewBtn.style.cssText = "padding:12px; border-radius:8px; font-weight:bold; background:#ff9800; color:#fff; border:none; width:100%; font-size:14px; cursor:pointer; margin-top:8px;";
-     reviewBtn.innerText = "復習する";
-     reviewBtn.onclick = function() { closeModalDirect(); startReview(id); };
-     actionsEl.appendChild(reviewBtn);
-   }
+  if (quizDone && wrongList.length > 0) {
+    const reviewBtn = document.createElement("button");
+    reviewBtn.style.cssText = "padding:12px; border-radius:8px; font-weight:bold; background:#ff9800; color:#fff; border:none; width:100%; font-size:14px; cursor:pointer; margin-top:8px;";
+    reviewBtn.innerText = "復習する";
+    reviewBtn.onclick = function() { closeModalDirect(); startReview(id); };
+    actionsEl.appendChild(reviewBtn);
+  }
 
- } else if (video.type === "survey") {
-   const surveyBtn = document.createElement("button");
-   surveyBtn.style.cssText = "padding:12px; border-radius:8px; font-weight:bold; width:100%; font-size:14px; border:none; transition:0.2s;";
+} else if (video.type === "survey") {
+  const surveyBtn = document.createElement("button");
+  surveyBtn.style.cssText = "padding:12px; border-radius:8px; font-weight:bold; width:100%; font-size:14px; border:none; transition:0.2s; margin-top:8px;";
 
-   if (isCompleted || adminMode) {
-     surveyBtn.style.background = "#2e7d32";
-     surveyBtn.style.color = "#fff";
-     surveyBtn.style.cursor = "pointer";
-     surveyBtn.innerText = "アンケートに答える";
-     surveyBtn.onclick = function() { closeModalDirect(); startSurvey(id); };
-   } else {
-     surveyBtn.style.background = "#222";
-     surveyBtn.style.color = "#666";
-     surveyBtn.style.cursor = "not-allowed";
-     surveyBtn.innerText = "アンケートに答える（動画視聴後）";
-     surveyBtn.onclick = function() { showToast("動画を最後まで視聴するとアンケートに回答できます"); };
-   }
-   actionsEl.appendChild(surveyBtn);
- }
+  if (isCompleted || adminMode) {
+    surveyBtn.style.background = "#2e7d32";
+    surveyBtn.style.color = "#fff";
+    surveyBtn.style.cursor = "pointer";
+    surveyBtn.innerText = "アンケートに答える";
+    surveyBtn.onclick = function() { closeModalDirect(); startSurvey(id); };
+  } else {
+    surveyBtn.style.background = "#222";
+    surveyBtn.style.color = "#666";
+    surveyBtn.style.cursor = "not-allowed";
+    surveyBtn.innerText = "アンケートに答える（動画視聴後）";
+    surveyBtn.onclick = function() { showToast("動画を最後まで視聴するとアンケートに回答できます"); };
+  }
+  actionsEl.appendChild(surveyBtn);
+}
 
- document.getElementById("videoModal").classList.add("active");
+document.getElementById("videoModal").classList.add("active");
 }
 
 function playModalVideo(){
- if(currentModalVideoId){
-   const id = currentModalVideoId;
-   closeModalDirect();
-   startPlayProcess(id);
- }
+if(currentModalVideoId){
+  const id = currentModalVideoId;
+  closeModalDirect();
+  startPlayProcess(id);
+}
 }
 
 function closeModal(e){
- if(e.target.classList.contains("modal-overlay")){
-   closeModalDirect();
- }
+if(e.target.classList.contains("modal-overlay")){
+  closeModalDirect();
+}
 }
 
 function closeModalDirect(){
- document.getElementById("videoModal").classList.remove("active");
- currentModalVideoId = null;
+document.getElementById("videoModal").classList.remove("active");
+currentModalVideoId = null;
 }
 
 function startSurvey(videoId){
-  const isCompleted = localStorage.getItem(username + "_complete_" + videoId) === "true";
+ const isCompleted = localStorage.getItem(username + "_complete_" + videoId) === "true";
 
-  if (!adminMode && !isCompleted) {
-    showToast("動画を最後まで視聴するとアンケートに回答できます");
-    return;
-  }
+ if (!adminMode && !isCompleted) {
+   showToast("動画を最後まで視聴するとアンケートに回答できます");
+   return;
+ }
 
-  window.location.href = "https://docs.google.com/forms/d/e/1FAIpQLSc7J4cA9X8WkHXmv6KITaTR3SE23LXhxzyZHyQbCq_eZRuohQ/viewform?usp=header";
+ window.location.href = "https://docs.google.com/forms/d/e/1FAIpQLSc7J4cA9X8WkHXmv6KITaTR3SE23LXhxzyZHyQbCq_eZRuohQ/viewform?usp=header";
 }
 </script>
 </body>
