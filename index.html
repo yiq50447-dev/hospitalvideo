@@ -338,12 +338,12 @@
     flex-shrink: 0;
   }
 
-  /* --- 横スライド動画コンテナ（見切れ防止調整版） --- */
+  /* --- 横スライド動画コンテナ --- */
   .horizontal-scroll-container {
     display: flex;
     gap: 12px;
     overflow-x: auto;
-    padding: 5px 16px 15px 16px; /* 左右余白を整えて端の切れを防止 */
+    padding: 5px 16px 15px 16px;
     -webkit-overflow-scrolling: touch;
     scroll-snap-type: x mandatory;
     align-items: stretch;
@@ -351,7 +351,7 @@
 
   /* 横スライドカード */
   .horizontal-video-card {
-    flex: 0 0 calc(75vw - 12px); /* 画面サイズに合わせて適切な幅に設定 */
+    flex: 0 0 calc(75vw - 12px);
     max-width: 280px;
     background: #1a1a1a;
     border-radius: 12px;
@@ -362,6 +362,21 @@
     scroll-snap-align: start;
     display: flex;
     flex-direction: column;
+  }
+
+  /* パスワード保護バッジ（追加分） */
+  .protected-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(0, 0, 0, 0.75);
+    color: #ff4d4d;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 3px 6px;
+    border-radius: 4px;
+    border: 1px solid #ff4d4d;
+    z-index: 5;
   }
 
   .horizontal-thumb {
@@ -795,7 +810,6 @@
     font-size: 16px;
     cursor: pointer;
   }
-  
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -859,7 +873,7 @@
     <div class="section-title">最新の動画一覧</div>
     <div class="horizontal-scroll-container" id="recentVideoList"></div>
   </div>
-  
+
 <div class="notice-banner-container">
   <div class="notice-banner">
     <div class="notice-tag">お知らせ</div>
@@ -869,7 +883,7 @@
     </div>
   </div>
 </div>
-  
+
  <!-- 管理者用ボタン&集計 -->
   <button id="summaryBtn" onclick="showSummary()" style="display:none;margin:10px 20px;padding:10px 16px;background:#e50914;color:#fff;border:none;border-radius:6px;font-weight:bold;">
     テスト全体集計
@@ -1222,20 +1236,18 @@ const videosData = [
   }
 ];
 
-/* 無限ループ対応の動画カード描画（クローン50個 ＆ 位置合わせ調整） */
+/* 無限ループ対応の動画カード描画 */
 function renderRecentVideos() {
   const container = document.getElementById("recentVideoList");
   if (!container) return;
   container.innerHTML = "";
 
-  // 「続きから再生」枠と左端の位置をピッタリ揃える調整
-  container.style.paddingLeft = "16px"; // 枠の左余白に合わせるpx（デザインに応じて12px~20pxで調整可）
+  container.style.paddingLeft = "16px";
   container.style.boxSizing = "border-box";
 
   const playableVideos = videosData.filter(v => !v.locked);
   if (playableVideos.length === 0) return;
 
-  // 50個分のクローンを作成して末尾に追加
   const clones = [];
   for (let i = 0; i < 50; i++) {
     clones.push(playableVideos[i % playableVideos.length]);
@@ -1264,22 +1276,20 @@ function renderRecentVideos() {
   });
 }
 
-/* 50個クローン対応 シームレス無限自動スライド */
+/* シームレス無限自動スライド */
 function startAutoSlide() {
   stopAutoSlide();
   const container = document.getElementById("recentVideoList");
   if (!container) return;
 
   autoSlideInterval = setInterval(() => {
-    const cardWidth = 274; // カード幅(260px) + gap(14px)
+    const cardWidth = 274;
     const playableVideos = videosData.filter(v => !v.locked);
     const originalCount = playableVideos.length;
 
-    // 元のデータセット全体のスクロール距離
     const maxOriginalScroll = cardWidth * originalCount;
     const currentScroll = container.scrollLeft;
 
-    // 元のリストの末尾（クローンエリア）に入ったら、見た目を変えずに先頭へ一瞬で戻す
     if (currentScroll >= maxOriginalScroll - 10) {
       container.scrollTo({ left: currentScroll - maxOriginalScroll, behavior: 'auto' });
 
@@ -1795,18 +1805,17 @@ async function showSummary(){
 
 let currentModalVideoId = null;
 
-/* 動画詳細モーダル（PPEなど protected: true の動画は事前にパスワード判定を実施） */
+/* 動画詳細モーダル */
 function openModal(id){
  const video = videosData.find(v => v.id === id);
  if(!video || video.locked) return;
 
- // 🔒 限定公開（protected）の動画で、まだ認証されておらず、管理者モードでもない場合
  const isUnlocked = localStorage.getItem(username + "_pass_unlocked_" + id) === "true";
  if (video.protected && !isUnlocked && !adminMode) {
    pendingVideoId = id;
    document.getElementById("videoPassInput").value = "";
    document.getElementById("passwordModal").style.display = "flex";
-   return; // パスワード認証前はモーダルを開かずに処理を中断
+   return;
  }
 
  currentModalVideoId = id;
@@ -1821,7 +1830,6 @@ function openModal(id){
  const actionsEl = document.getElementById("modalActions");
  actionsEl.innerHTML = "";
 
- // 1. 動画再生ボタン
  const playBtn = document.createElement("button");
  playBtn.style.cssText = "background:#e50914; color:#fff; border:none; cursor:pointer; font-weight:bold; padding:12px; border-radius:8px; width:100%; font-size:15px; box-shadow: 0 4px 10px rgba(229, 9, 20, 0.4);";
  playBtn.innerText = "▶ 動画を再生する";
@@ -1833,12 +1841,10 @@ function openModal(id){
  };
  actionsEl.appendChild(playBtn);
 
- // 視聴完了判定（100%見たか、または管理者モードか）
  const isCompleted = localStorage.getItem(username + "_complete_" + id) === "true";
  const quizDone = localStorage.getItem(username + "_quiz_done_" + id);
  const wrongList = JSON.parse(localStorage.getItem(username + "_wrong_" + id) || "[]");
 
- // 2. テスト (type: "quiz") または アンケート (type: "survey") のボタン分岐
  if (video.type === "quiz") {
    const quizBtn = document.createElement("button");
    quizBtn.style.cssText = "padding:12px; border-radius:8px; font-weight:bold; width:100%; font-size:14px; border:none; transition:0.2s;";
@@ -1896,7 +1902,6 @@ function openModal(id){
  document.getElementById("videoModal").classList.add("active");
 }
 
-
 function playModalVideo(){
  if(currentModalVideoId){
    const id = currentModalVideoId;
@@ -1915,9 +1920,8 @@ function closeModalDirect(){
  document.getElementById("videoModal").classList.remove("active");
  currentModalVideoId = null;
 }
-/* 追加：アンケート遷移用関数 */
+
 function startSurvey(videoId){
-  // 視聴完了（または管理者モード）のチェック
   const isCompleted = localStorage.getItem(username + "_complete_" + videoId) === "true";
 
   if (!adminMode && !isCompleted) {
@@ -1925,7 +1929,6 @@ function startSurvey(videoId){
     return;
   }
 
-  // Googleフォームへ直接画面遷移
   window.location.href = "https://docs.google.com/forms/d/e/1FAIpQLSc7J4cA9X8WkHXmv6KITaTR3SE23LXhxzyZHyQbCq_eZRuohQ/viewform?usp=header";
 }
 </script>
