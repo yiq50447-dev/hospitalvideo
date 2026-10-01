@@ -270,12 +270,13 @@
 }
 
 
-  .section-title {
-    font-size: 16px;
-    font-weight: bold;
-    color: #fff;
-    margin: 16px 20px 10px 20px;
-  }
+/* 動画一覧タイトルの上余白も詰める */
+.section-title {
+  margin-top: 10px !important;
+  margin-bottom: 12px;
+  padding: 0 20px;
+}
+
 
   .resume-card {
     margin: 10px 20px 20px 20px;
@@ -760,11 +761,11 @@
   font-size: 16px;
   cursor: pointer;
 }
-/* お知らせバナー用のスタイル */
+/* お知らせバナーの上の不要な余白をカット */
 .notice-banner-container {
   padding: 0 20px;
-  margin-top: 10px;
-  margin-bottom: 25px;
+  margin-top: 10px !important; /* 上の隙間を詰める */
+  margin-bottom: 20px;
 }
 
 .notice-banner {
@@ -799,6 +800,15 @@
   color: #aaaaaa;
   font-size: 12px;
   line-height: 1.4;
+}
+/* タブの切り替えコンテンツ（#infection や #study など）を上詰めに配置 */
+#infection, #study, #home, #setting {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start !important; /* 中央揃えを解除して上詰めに固定 */
+  align-items: stretch;
+  padding-top: 10px !important; /* ヘッダーとの隙間を最小限に */
+  margin-top: 0 !important;
 }
 
   
@@ -1047,7 +1057,7 @@
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.4.6";
+const APP_VERSION = "1.4.7";
 const PPE_PASSWORD = "ppe123"; // 🔑 PPE動画の閲覧用パスワード
 
 let videoWrapper, home, skipIntro, skipThinking, skipBar, resumeInline, playBtn, centralUI, bottomControls, backBtn, chapterBtn, chapterPanel, progress, currentTime, duration;
