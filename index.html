@@ -590,6 +590,7 @@
     background: rgba(0,0,0,0.85); color: #fff;
     padding: 12px 20px; border-radius: 8px;
     font-size: 14px; opacity: 0; transition: 0.3s; z-index: 999;
+    pointer-events: none;
   }
 
   /* モーダル */
@@ -854,9 +855,46 @@
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.2.9";
+const APP_VERSION = "1.3.0";
+
+// グローバル要素参照の宣言
+let videoWrapper, home, skipIntro, skipThinking, skipBar, resumeInline, playBtn, centralUI, bottomControls, backBtn, chapterBtn, chapterPanel, progress, currentTime, duration;
+
 document.addEventListener("DOMContentLoaded", function(){
   document.getElementById("topVersion").innerText = "Ver " + APP_VERSION;
+
+  // DOM要素の初期割り当て
+  videoWrapper = document.getElementById("videoWrapper");
+  home = document.getElementById("home");
+  skipIntro = document.getElementById("skipIntro");
+  skipThinking = document.getElementById("skipThinking");
+  skipBar = document.getElementById("skipBar");
+  resumeInline = document.getElementById("resumeInline");
+  playBtn = document.getElementById("playBtn");
+  centralUI = document.getElementById("centralUI");
+  bottomControls = document.getElementById("bottomControls");
+  backBtn = document.getElementById("backBtn");
+  chapterBtn = document.getElementById("chapterBtn");
+  chapterPanel = document.getElementById("chapterPanel");
+  progress = document.getElementById("progress");
+  currentTime = document.getElementById("currentTime");
+  duration = document.getElementById("duration");
+
+  if (progress) {
+    progress.addEventListener("input", e => {
+      if(!player || typeof player.getDuration !== 'function') return;
+      let target = e.target.value / 100 * player.getDuration();
+      if(!adminMode && !localStorage.getItem(username + "_complete_" + currentVideoId) && target > maxWatchedTime + 5){
+        showToast("まだ視聴していない場所には移動できません");
+        progress.value = maxWatchedTime / player.getDuration() * 100;
+        return;
+      }
+      player.seekTo(target, true);
+      showUI();
+    });
+  }
+
+  checkVersion();
 });
 
 const UPDATE_MESSAGE = `
@@ -969,9 +1007,11 @@ function startAutoSlide() {
     } else {
       container.scrollBy({ left: cardWidth, behavior: 'smooth' });
     }
-  }, 3000); // 3秒間隔で順次スライド
+  }, 3000);
 
-  // ユーザーが手動で触っている間は自動スライドを一旦ストップ
+  // ユーザー操作時の停止リスナーを安全に追加
+  container.removeEventListener('touchstart', stopAutoSlide);
+  container.removeEventListener('mousedown', stopAutoSlide);
   container.addEventListener('touchstart', stopAutoSlide, { passive: true });
   container.addEventListener('mousedown', stopAutoSlide);
 }
@@ -1118,9 +1158,9 @@ function updateSingleVideoStatus(id, duration){
 /* 動画再生・プレイヤー制御 */
 function playVideo(id){
   currentVideoId = id;
-  document.getElementById("chapterBtn").style.display = isNoroVideo() ? "block" : "none";
-  skipIntro.style.display = "none";
-  skipThinking.style.display = "none";
+  if (chapterBtn) chapterBtn.style.display = isNoroVideo() ? "block" : "none";
+  if (skipIntro) skipIntro.style.display = "none";
+  if (skipThinking) skipThinking.style.display = "none";
   introActive = false;
   thinkingActive = false;
 
@@ -1130,10 +1170,14 @@ function playVideo(id){
   maxWatchedTime = resumeTime;
   resumePromptShown = false;
 
-  home.style.display = "none";
-  videoWrapper.style.display = "block";
+  if (home) home.style.display = "none";
+  if (videoWrapper) videoWrapper.style.display = "block";
 
   if(uiInterval) clearInterval(uiInterval);
+
+  if(player && typeof player.destroy === 'function') {
+    try { player.destroy(); } catch(e){}
+  }
 
   player = new YT.Player('player',{
     videoId: id,
@@ -1152,18 +1196,18 @@ function playVideo(id){
 
 function togglePlay(){
   if(!resumePromptShown && resumeTime > 5){
-    resumeInline.style.display = "block";
+    if (resumeInline) resumeInline.style.display = "block";
     resumePromptShown = true;
     return;
   }
   let state = player.getPlayerState();
-  if(state === 1){ player.pauseVideo(); playBtn.innerText = "▶"; }
-  else{ player.playVideo(); playBtn.innerText = "❚❚"; }
+  if(state === 1){ player.pauseVideo(); if(playBtn) playBtn.innerText = "▶"; }
+  else{ player.playVideo(); if(playBtn) playBtn.innerText = "❚❚"; }
   showUI();
 }
 
-function resumeFrom(){ player.seekTo(resumeTime, true); player.playVideo(); resumeInline.style.display = "none"; }
-function startFromBeginning(){ localStorage.removeItem(username+"_"+currentVideoId); player.seekTo(0, true); player.playVideo(); resumeInline.style.display = "none"; }
+function resumeFrom(){ player.seekTo(resumeTime, true); player.playVideo(); if(resumeInline) resumeInline.style.display = "none"; }
+function startFromBeginning(){ localStorage.removeItem(username+"_"+currentVideoId); player.seekTo(0, true); player.playVideo(); if(resumeInline) resumeInline.style.display = "none"; }
 
 function changeSpeed(){
   speedIndex++;
@@ -1175,7 +1219,7 @@ function changeSpeed(){
 }
 
 function updateUI(){
-  if(!player.getDuration()) return;
+  if(!player || typeof player.getDuration !== 'function' || !player.getDuration()) return;
 
   let c = player.getCurrentTime(), d = player.getDuration();
 
@@ -1186,15 +1230,17 @@ function updateUI(){
         thinkingStartTime = start;
         let remain = 30;
 
-        skipThinking.style.display = "block";
-        skipThinking.innerText = "シンキングタイム（" + remain + "秒）";
+        if (skipThinking) {
+          skipThinking.style.display = "block";
+          skipThinking.innerText = "シンキングタイム（" + remain + "秒）";
+        }
 
         thinkingTimer = setInterval(() => {
           remain--;
-          skipThinking.innerText = "シンキングタイム（" + remain + "秒）";
+          if (skipThinking) skipThinking.innerText = "シンキングタイム（" + remain + "秒）";
           if(remain <= 0){
             clearInterval(thinkingTimer);
-            skipThinking.style.display = "none";
+            if (skipThinking) skipThinking.style.display = "none";
             thinkingActive = false;
           }
         }, 1000);
@@ -1212,28 +1258,31 @@ function updateUI(){
     }
   }
 
-  currentTime.innerText = formatTime(c);
-  duration.innerText = formatTime(d);
-  progress.value = c / d * 100;
+  if (currentTime) currentTime.innerText = formatTime(c);
+  if (duration) duration.innerText = formatTime(d);
+  if (progress) progress.value = c / d * 100;
   localStorage.setItem(username + "_" + currentVideoId, c);
   localStorage.setItem(username + "_date_" + currentVideoId, new Date().toLocaleDateString());
 
   if(isNoroVideo() && c >= 22 && c <= 27 && !introActive){
     introActive = true;
-    skipIntro.style.display = "block";
-    skipBar.style.animation = "none";
-    void skipBar.offsetWidth;
-    skipBar.style.animation = "grow 5s linear forwards";
+    if (skipIntro) skipIntro.style.display = "block";
+    if (skipBar) {
+      skipBar.style.animation = "none";
+      void skipBar.offsetWidth;
+      skipBar.style.animation = "grow 5s linear forwards";
+    }
 
     setTimeout(() => {
-      skipIntro.style.display = "none";
+      if (skipIntro) skipIntro.style.display = "none";
       introActive = false;
     }, 5000);
   }
 }
 
-function rewind10(){ player.seekTo(player.getCurrentTime() - 10, true); showUI(); }
+function rewind10(){ if(player) player.seekTo(player.getCurrentTime() - 10, true); showUI(); }
 function forward10(){
+  if(!player) return;
   let target = player.getCurrentTime() + 10;
   if(!adminMode && !localStorage.getItem(username+"_complete_"+currentVideoId) && target > maxWatchedTime + 5){
     showToast("まだ先にはスキップできません");
@@ -1245,58 +1294,51 @@ function forward10(){
 
 function formatTime(t){ let m = Math.floor(t / 60), s = Math.floor(t % 60); if(s < 10) s = "0" + s; return m + ":" + s; }
 
-progress.addEventListener("input", e => {
-  let target = e.target.value / 100 * player.getDuration();
-  if(!adminMode && !localStorage.getItem(username + "_complete_" + currentVideoId) && target > maxWatchedTime + 5){
-    showToast("まだ視聴していない場所には移動できません");
-    progress.value = maxWatchedTime / player.getDuration() * 100;
-    return;
-  }
-  player.seekTo(target, true);
-  showUI();
-});
-
 function showToast(msg){
   const toast = document.getElementById("toast");
+  if(!toast) return;
   toast.innerText = msg;
   toast.style.opacity = "1";
   setTimeout(() => { toast.style.opacity = "0"; }, 2000);
 }
 
 function hideUI(){
-  centralUI.classList.add("hideUI");
-  bottomControls.classList.add("hideUI");
-  backBtn.classList.add("hideUI");
-  chapterBtn.classList.add("hideUI");
+  if(centralUI) centralUI.classList.add("hideUI");
+  if(bottomControls) bottomControls.classList.add("hideUI");
+  if(backBtn) backBtn.classList.add("hideUI");
+  if(chapterBtn) chapterBtn.classList.add("hideUI");
 }
 function showUI(){
-  centralUI.classList.remove("hideUI");
-  bottomControls.classList.remove("hideUI");
-  backBtn.classList.remove("hideUI");
-  chapterBtn.classList.remove("hideUI");
+  if(centralUI) centralUI.classList.remove("hideUI");
+  if(bottomControls) bottomControls.classList.remove("hideUI");
+  if(backBtn) backBtn.classList.remove("hideUI");
+  if(chapterBtn) chapterBtn.classList.remove("hideUI");
   startUITimer();
 }
 
 function startUITimer(){
   clearTimeout(uiTimer);
   uiTimer = setTimeout(() => {
-    if(!chapterOpen && player.getPlayerState() === 1){ hideUI(); }
+    if(!chapterOpen && player && typeof player.getPlayerState === 'function' && player.getPlayerState() === 1){ hideUI(); }
   }, 3000);
 }
 
-videoWrapper.addEventListener("click", (e) => {
-  if(e.target.id === "skipIntro" || e.target.id === "skipBar") return;
-  showUI();
+document.addEventListener("click", (e) => {
+  if (videoWrapper && videoWrapper.contains(e.target)) {
+    if(e.target.id === "skipIntro" || e.target.id === "skipBar") return;
+    showUI();
+  }
 });
 
 function skipIntroClick(e){
   e.stopPropagation();
-  player.seekTo(57, true);
-  skipIntro.style.display = "none";
+  if(player) player.seekTo(57, true);
+  if(skipIntro) skipIntro.style.display = "none";
   introActive = false;
 }
 
 function goTo(sec){
+  if(!player) return;
   if(adminMode || localStorage.getItem(username + "_complete_" + currentVideoId)){
     player.seekTo(sec, true);
     showUI();
@@ -1307,12 +1349,13 @@ function goTo(sec){
     return;
   }
   player.seekTo(sec, true);
-  chapterPanel.style.right = "-320px";
+  if(chapterPanel) chapterPanel.style.right = "-320px";
   chapterOpen = false;
   showUI();
 }
 
 function toggleChapters(){
+  if(!chapterPanel) return;
   if(chapterPanel.style.right === "0px"){
     chapterPanel.style.right = "-320px";
     chapterOpen = false;
@@ -1320,8 +1363,8 @@ function toggleChapters(){
   }else{
     chapterPanel.style.right = "0px";
     chapterOpen = true;
-    centralUI.classList.add("hideUI");
-    bottomControls.classList.add("hideUI");
+    if(centralUI) centralUI.classList.add("hideUI");
+    if(bottomControls) bottomControls.classList.add("hideUI");
   }
 }
 
@@ -1341,9 +1384,9 @@ function closeUpdateModal(){
 
 function goBack(){
   if(player){ try { player.destroy(); } catch(e){} }
-  videoWrapper.style.display = "none";
-  home.style.display = "block";
-  chapterPanel.style.right = "-320px";
+  if(videoWrapper) videoWrapper.style.display = "none";
+  if(home) home.style.display = "block";
+  if(chapterPanel) chapterPanel.style.right = "-320px";
   chapterOpen = false;
   renderVideoList();
   renderRecentVideos();
@@ -1352,37 +1395,37 @@ function goBack(){
   }
 }
 
-checkVersion();
-
 /* 管理者モード用 隠しコマンド */
 const versionArea = document.getElementById("topVersion");
-versionArea.addEventListener("click", function(){
-  adminTapCount++;
-  if(adminTapCount === 5){
-    let pass = prompt("管理者パスワード");
-    if(pass === "1234"){
-      document.getElementById("summaryBtn").style.display = "block";
-      adminMode = true;
-      username = "管理者";
+if(versionArea) {
+  versionArea.addEventListener("click", function(){
+    adminTapCount++;
+    if(adminTapCount === 5){
+      let pass = prompt("管理者パスワード");
+      if(pass === "1234"){
+        document.getElementById("summaryBtn").style.display = "block";
+        adminMode = true;
+        username = "管理者";
 
-      document.getElementById("nameInputModal").style.display = "none";
-      document.getElementById("loader").style.display = "none";
-      document.getElementById("topBarHome").style.display = "flex";
-      document.getElementById("bottomNav").style.display = "flex";
+        document.getElementById("nameInputModal").style.display = "none";
+        document.getElementById("loader").style.display = "none";
+        document.getElementById("topBarHome").style.display = "flex";
+        document.getElementById("bottomNav").style.display = "flex";
 
-      document.getElementById("userAvatar").innerText = "管";
-      document.getElementById("profileNameDisplay").innerText = "管理者";
-      document.getElementById("profileStatusDisplay").innerText = "管理者モード";
+        document.getElementById("userAvatar").innerText = "管";
+        document.getElementById("profileNameDisplay").innerText = "管理者";
+        document.getElementById("profileStatusDisplay").innerText = "管理者モード";
 
-      renderRecentVideos();
-      startAutoSlide();
-      alert("管理者モードON");
+        renderRecentVideos();
+        startAutoSlide();
+        alert("管理者モードON");
+      }
+      adminTapCount = 0;
     }
-    adminTapCount = 0;
-  }
-  clearTimeout(adminTapTimer);
-  adminTapTimer = setTimeout(() => { adminTapCount = 0; }, 2000);
-});
+    clearTimeout(adminTapTimer);
+    adminTapTimer = setTimeout(() => { adminTapCount = 0; }, 2000);
+  });
+}
 
 /* テスト・アンケート連携 */
 function startQuiz(videoId){
@@ -1404,8 +1447,8 @@ function startSurvey(videoId){
 
 function skipThinkingClick(e){
   e.stopPropagation();
-  player.seekTo(thinkingStartTime + 30, true);
-  skipThinking.style.display = "none";
+  if(player) player.seekTo(thinkingStartTime + 30, true);
+  if(skipThinking) skipThinking.style.display = "none";
   clearInterval(thinkingTimer);
   thinkingActive = false;
 }
@@ -1434,6 +1477,7 @@ function drawChart(data){
     .slice(0, 3);
 
   const ctx = document.getElementById("questionChart");
+  if(!ctx) return;
   new Chart(ctx, {
     type: 'pie',
     data: {
@@ -1491,14 +1535,14 @@ function openModal(id){
   const actionsEl = document.getElementById("modalActions");
   actionsEl.innerHTML = "";
 
-  const playBtn = document.createElement("button");
-  playBtn.style.cssText = "background:#e50914; color:#fff; border:none; cursor:pointer; font-weight:bold; padding:12px; border-radius:8px; width:100%; font-size:15px; box-shadow: 0 4px 10px rgba(229, 9, 20, 0.4);";
-  playBtn.innerText = "▶ 動画を再生する";
-  playBtn.onclick = function(){
+  const playBtnEl = document.createElement("button");
+  playBtnEl.style.cssText = "background:#e50914; color:#fff; border:none; cursor:pointer; font-weight:bold; padding:12px; border-radius:8px; width:100%; font-size:15px; box-shadow: 0 4px 10px rgba(229, 9, 20, 0.4);";
+  playBtnEl.innerText = "▶ 動画を再生する";
+  playBtnEl.onclick = function(){
     closeModalDirect();
     if(typeof playVideo === "function"){ playVideo(id); }
   };
-  actionsEl.appendChild(playBtn);
+  actionsEl.appendChild(playBtnEl);
 
   const isCompleted = localStorage.getItem(username + "_complete_" + id) === "true";
   const quizDone = localStorage.getItem(username + "_quiz_done_" + id);
