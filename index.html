@@ -277,7 +277,6 @@
     margin: 16px 20px 10px 20px;
   }
 
-  /* 「続きから再生」カードスタイル */
   .resume-card {
     margin: 10px 20px 20px 20px;
     background: linear-gradient(135deg, #1f1f1f 0%, #2a1113 100%);
@@ -338,7 +337,6 @@
     flex-shrink: 0;
   }
 
-  /* 滑らかな自動横スクロール */
   .horizontal-scroll-container {
     display: flex;
     gap: 14px;
@@ -358,6 +356,7 @@
     overflow: hidden;
     border: 1px solid #2a2a2a;
     cursor: pointer;
+    position: relative;
   }
   .horizontal-thumb {
     position: relative;
@@ -386,8 +385,19 @@
     color: #888;
     margin-top: 4px;
   }
+  .protected-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(0, 0, 0, 0.75);
+    color: #ffca28;
+    border: 1px solid #ffca28;
+    font-size: 10px;
+    padding: 3px 6px;
+    border-radius: 4px;
+    font-weight: bold;
+  }
 
-  /* 感染・学習チーム用の縦並びリスト */
   #videoList { list-style: none; padding: 0 20px 20px 20px; }
   #videoList li {
     padding: 12px;
@@ -435,7 +445,6 @@
   }
 
   .videoCardInfo { flex: 1; }
-  .videoRow { display: flex; justify-content: space-between; align-items: center; }
   .videoTitle { flex: 1; cursor: pointer; font-size: 14px; font-weight: bold; }
 
   .progressBar {
@@ -644,6 +653,27 @@
     align-items: center; justify-content: center; z-index: 300;
   }
 
+  /* パスワード入力用モーダル */
+  #passwordModal {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8); display: none;
+    align-items: center; justify-content: center; z-index: 2000;
+  }
+  .pass-modal-box {
+    background: #1e1e1e; padding: 24px; border-radius: 12px;
+    width: 90%; max-width: 320px; text-align: center; border: 1px solid #333;
+  }
+  .pass-modal-box h4 { font-size: 16px; margin-bottom: 8px; }
+  .pass-modal-box p { font-size: 12px; color: #aaa; margin-bottom: 16px; }
+  .pass-modal-box input {
+    width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #444;
+    background: #111; color: #fff; text-align: center; font-size: 16px; margin-bottom: 12px;
+  }
+  .pass-btn-group { display: flex; gap: 8px; }
+  .pass-btn-group button {
+    flex: 1; padding: 10px; border-radius: 6px; border: none; font-weight: bold; font-size: 13px;
+  }
+
   #toast {
     position: fixed;
     bottom: calc(120px + env(safe-area-inset-bottom));
@@ -654,7 +684,6 @@
     pointer-events: none;
   }
 
-  /* モーダル */
   .modal-overlay {
     display: none; position: fixed; top: 0; left: 0;
     width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75);
@@ -752,7 +781,7 @@
 
 <!-- メインコンテンツ -->
 <div id="home">
-  <!-- 📌 続きから再生（視聴途中の動画がある場合のみ表示） -->
+  <!-- 📌 続きから再生カード -->
   <div id="resumeCardArea"></div>
 
   <!-- 最新の研修動画エリア -->
@@ -771,7 +800,7 @@
     <canvas id="questionChart" style="margin-top:20px;"></canvas>
   </div>
 
-  <!-- ボトムタブ（感染/学習）選択時のみ表示する動画リスト -->
+  <!-- ボトムタブ（感染/学習）選択時表示リスト -->
   <div id="listSection" style="display:none;">
     <div class="section-title" id="listSectionTitle">📚 研修動画</div>
     <ul id="videoList"></ul>
@@ -779,7 +808,7 @@
 
   <!-- 設定画面 -->
   <div id="settingSection" style="display:none;">
-    <div class="section-title">⚙️️ 設定</div>
+    <div class="section-title">⚙ 設定</div>
     <div class="setting-placeholder">設定項目は準備中です</div>
   </div>
 </div>
@@ -825,6 +854,19 @@
       </div>
       <p id="modalDesc" class="modal-desc"></p>
       <div id="modalActions" class="modal-actions"></div>
+    </div>
+  </div>
+</div>
+
+<!-- パスワード入力モーダル -->
+<div id="passwordModal">
+  <div class="pass-modal-box">
+    <h4>🔒 閲覧制限動画</h4>
+    <p>この動画を視聴するにはパスワードが必要です。</p>
+    <input type="password" id="videoPassInput" placeholder="パスワードを入力">
+    <div class="pass-btn-group">
+      <button onclick="closePasswordModal()" style="background:#444; color:#fff;">キャンセル</button>
+      <button onclick="submitVideoPassword()" style="background:#e50914; color:#fff;">認証</button>
     </div>
   </div>
 </div>
@@ -919,9 +961,9 @@
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.3.1";
+const APP_VERSION = "1.3.2";
+const PPE_PASSWORD = "ppe123"; // 🔑 PPE動画の閲覧用パスワード
 
-// グローバル要素参照の宣言
 let videoWrapper, home, skipIntro, skipThinking, skipBar, resumeInline, playBtn, centralUI, bottomControls, backBtn, chapterBtn, chapterPanel, progress, currentTime, duration;
 
 document.addEventListener("DOMContentLoaded", function(){
@@ -962,8 +1004,8 @@ document.addEventListener("DOMContentLoaded", function(){
 
 const UPDATE_MESSAGE = `
 【新機能】
-・ ホーム画面に「続きから再生」カードが表示されるようになりました。
-・ 研修動画一覧（横スライド）の表示方法を改善しました。
+・ 新規研修動画「PPEの着脱手順」を追加しました。
+・ 一部動画にパスワード保護機能を追加しました。
 `;
 
 let player, username = "guest", currentVideoId = "";
@@ -979,6 +1021,7 @@ let maxWatchedTime = 0, adminMode = false, adminTapCount = 0, adminTapTimer = nu
 let speeds = [1, 1.25, 1.5, 1.75, 2], speedIndex = 0;
 
 let autoSlideInterval = null;
+let pendingVideoId = null;
 
 /* アバターメニュー */
 function toggleProfileMenu() {
@@ -1025,15 +1068,12 @@ function logout() {
   location.reload();
 }
 
-/* ==========================================
-   📌 続きから再生カードの表示（新機能）
-   ========================================== */
+/* 📌 続きから再生カード */
 function checkResumeCard() {
   const container = document.getElementById("resumeCardArea");
   if(!container) return;
   container.innerHTML = "";
 
-  // 視聴途中の動画があるかチェック
   const playableVideos = videosData.filter(v => !v.locked);
   let targetVideo = null;
   let savedTime = 0;
@@ -1042,7 +1082,6 @@ function checkResumeCard() {
     const time = parseFloat(localStorage.getItem(username + "_" + v.id)) || 0;
     const isCompleted = localStorage.getItem(username + "_complete_" + v.id) === "true";
 
-    // 10秒以上視聴しており、かつ未完了のものを対象
     if (time > 10 && !isCompleted) {
       targetVideo = v;
       savedTime = time;
@@ -1065,15 +1104,44 @@ function checkResumeCard() {
         <div class="resume-title">${targetVideo.title}</div>
         <div class="resume-progress-text">進捗率: ${percent}%（${formatTime(savedTime)}）</div>
       </div>
-      <button class="resume-btn" onclick="playVideo('${targetVideo.id}')">見る</button>
+      <button class="resume-btn" onclick="startPlayProcess('${targetVideo.id}')">見る</button>
     `;
     container.appendChild(card);
   }
 }
 
-/* ==========================================
-   最新動画の描画 & 確実に動作する自動スライド
-   ========================================== */
+/* 動画リスト定義 */
+const videosData = [
+  {
+    id: "5r7eYR1RzAk",
+    team: "infection",
+    title: "PPE（個人防護具）の適切な着脱手順",
+    desc: "感染予防のための適切なPPE着脱手順と注意点を解説します。（限定公開）",
+    type: "none",
+    duration: 300,
+    publishedAt: "2026/10/01",
+    protected: true
+  },
+  {
+    id: "HyyeZRsWGkw",
+    team: "infection",
+    title: "第一回オンライン勉強会 ノロウイルスの対応について",
+    desc: "ノロウイルス発生時の初期対応、二次感染を防ぐための嘔吐物処理手順について解説します。",
+    type: "quiz",
+    duration: 2063,
+    publishedAt: "2026/03/13"
+  },
+  {
+    id: "YpA2e9nQO1k",
+    team: "study",
+    title: "第二回オンライン勉強会 より良い排泄ケアを目指して",
+    desc: "利用者様の尊厳を守る排泄介助の基本と、適切なオムツ選定・あて方について学びます。",
+    type: "survey",
+    duration: 1200,
+    publishedAt: "2026/08/05"
+  }
+];
+
 function renderRecentVideos() {
   const container = document.getElementById("recentVideoList");
   if (!container) return;
@@ -1089,6 +1157,7 @@ function renderRecentVideos() {
     const thumbUrl = `https://img.youtube.com/vi/${v.id}/hqdefault.jpg`;
 
     card.innerHTML = `
+      ${v.protected ? `<div class="protected-badge">🔒 パスワード保護</div>` : ""}
       <div class="horizontal-thumb">
         <img src="${thumbUrl}" alt="thumbnail">
       </div>
@@ -1132,9 +1201,7 @@ function stopAutoSlide() {
   }
 }
 
-/* ==========================================
-   ボトムナビ切り替え
-   ========================================== */
+/* ナビ切り替え */
 let currentTeam = "infection";
 
 function switchNav(type, btnEl) {
@@ -1180,35 +1247,6 @@ function switchNav(type, btnEl) {
   }
 }
 
-/* 動画データ */
-const videosData = [
-  {
-    id: "HyyeZRsWGkw",
-    team: "infection",
-    title: "第一回オンライン勉強会 ノロウイルスの対応について",
-    desc: "ノロウイルス発生時の初期対応、二次感染を防ぐための嘔吐物処理手順について解説します。",
-    type: "quiz",
-    duration: 2063,
-    publishedAt: "2026/03/13"
-  },
-  {
-    id: "YpA2e9nQO1k",
-    team: "study",
-    title: "第二回オンライン勉強会 より良い排泄ケアを目指して",
-    desc: "利用者様の尊厳を守る排泄介助の基本と、適切なオムツ選定・あて方について学びます。",
-    type: "survey",
-    duration: 1200,
-    publishedAt: "2026/08/05"
-  },
-  {
-    id: "PPE_LOCKED",
-    team: "infection",
-    title: "PPEの着脱手順（配信日未定）",
-    desc: "個人防護具（PPE）の正しい着用・脱衣順序に関する研修動画です。（準備中）",
-    locked: true
-  }
-];
-
 function renderVideoList(){
   const listEl = document.getElementById("videoList");
   if(!listEl) return;
@@ -1232,7 +1270,7 @@ function renderVideoList(){
           }
         </div>
         <div class="videoCardInfo">
-          <div class="videoTitle">${v.title}</div>
+          <div class="videoTitle">${v.title} ${v.protected ? '🔒' : ''}</div>
           <div class="viewedDate">
             <div class="progressBar"><div class="progressFill"></div></div>
             <div class="progressText"></div>
@@ -1270,7 +1308,39 @@ function updateSingleVideoStatus(id, duration){
   }
 }
 
-/* 動画再生・プレイヤー制御 */
+/* パスワード確認 & 再生フロー */
+function startPlayProcess(id) {
+  const video = videosData.find(v => v.id === id);
+  if (!video) return;
+
+  const isUnlocked = localStorage.getItem(username + "_pass_unlocked_" + id) === "true";
+
+  if (video.protected && !isUnlocked && !adminMode) {
+    pendingVideoId = id;
+    document.getElementById("videoPassInput").value = "";
+    document.getElementById("passwordModal").style.display = "flex";
+  } else {
+    playVideo(id);
+  }
+}
+
+function submitVideoPassword() {
+  const input = document.getElementById("videoPassInput").value.trim();
+  if (input === PPE_PASSWORD) {
+    localStorage.setItem(username + "_pass_unlocked_" + pendingVideoId, "true");
+    closePasswordModal();
+    playVideo(pendingVideoId);
+  } else {
+    showToast("パスワードが違います");
+  }
+}
+
+function closePasswordModal() {
+  document.getElementById("passwordModal").style.display = "none";
+  pendingVideoId = null;
+}
+
+/* 動画再生処理 */
 function playVideo(id){
   currentVideoId = id;
   if (chapterBtn) chapterBtn.style.display = isNoroVideo() ? "block" : "none";
@@ -1434,6 +1504,15 @@ function showUI(){
   startUITimer();
 }
 
+function startUITimer(){
+  clearTimeout(uiTimer);
+  uiTimer = setTimeout(() => {
+    if(player && player.getPlayerState && player.getPlayerState() === 1 && !chapterOpen){
+      hideUI();
+    }
+  }, 3000);
+}
+
 document.addEventListener("click", (e) => {
   if (videoWrapper && videoWrapper.contains(e.target)) {
     if(e.target.id === "skipIntro" || e.target.id === "skipBar") return;
@@ -1540,24 +1619,6 @@ if(versionArea) {
   });
 }
 
-/* テスト・アンケート連携 */
-function startQuiz(videoId){
-  if(!localStorage.getItem(username + "_complete_" + videoId)){
-    showToast("動画を最後まで視聴するとテストを受けられます");
-    return;
-  }
-  localStorage.setItem("quizUser", username);
-  window.location.href = "quiz.html";
-}
-
-function startSurvey(videoId){
-  if(!localStorage.getItem(username + "_complete_" + videoId)){
-    showToast("動画を最後まで視聴するとアンケートに回答できます");
-    return;
-  }
-  window.open("https://docs.google.com/forms/d/e/1FAIpQLSc7J4cA9X8WkHXmv6KITaTR3SE23LXhxzyZHyQbCq_eZRuohQ/viewform?usp=header", "_blank");
-}
-
 function skipThinkingClick(e){
   e.stopPropagation();
   if(player) player.seekTo(thinkingStartTime + 30, true);
@@ -1650,68 +1711,12 @@ function openModal(id){
 
   const playBtnEl = document.createElement("button");
   playBtnEl.style.cssText = "background:#e50914; color:#fff; border:none; cursor:pointer; font-weight:bold; padding:12px; border-radius:8px; width:100%; font-size:15px; box-shadow: 0 4px 10px rgba(229, 9, 20, 0.4);";
-  playBtnEl.innerText = "▶ 動画を再生する";
+  playBtnEl.innerText = video.protected ? "🔒 パスワードを入力して再生" : "▶ 動画を再生する";
   playBtnEl.onclick = function(){
     closeModalDirect();
-    if(typeof playVideo === "function"){ playVideo(id); }
+    startPlayProcess(id);
   };
   actionsEl.appendChild(playBtnEl);
-
-  const isCompleted = localStorage.getItem(username + "_complete_" + id) === "true";
-  const quizDone = localStorage.getItem(username + "_quiz_done_" + id);
-  const wrongList = JSON.parse(localStorage.getItem(username + "_wrong_" + id) || "[]");
-
-  if (video.type === "quiz") {
-    const quizBtn = document.createElement("button");
-    quizBtn.style.cssText = "padding:12px; border-radius:8px; font-weight:bold; width:100%; font-size:14px; border:none; transition:0.2s;";
-
-    if (quizDone) {
-      quizBtn.style.background = "#333";
-      quizBtn.style.color = "#fff";
-      quizBtn.style.border = "1px solid #555";
-      quizBtn.style.cursor = "pointer";
-      quizBtn.innerText = "回答結果を見る";
-      quizBtn.onclick = function() { closeModalDirect(); showResult(id); };
-    } else if (isCompleted) {
-      quizBtn.style.background = "#2e7d32";
-      quizBtn.style.color = "#fff";
-      quizBtn.style.cursor = "pointer";
-      quizBtn.innerText = "確認テストを実施する";
-      quizBtn.onclick = function() { closeModalDirect(); startQuiz(id); };
-    } else {
-      quizBtn.style.background = "#222";
-      quizBtn.style.color = "#666";
-      quizBtn.style.cursor = "not-allowed";
-      quizBtn.innerText = "確認テスト（動画視聴後）";
-    }
-    actionsEl.appendChild(quizBtn);
-
-    if (quizDone && wrongList.length > 0) {
-      const reviewBtn = document.createElement("button");
-      reviewBtn.style.cssText = "padding:12px; border-radius:8px; font-weight:bold; background:#ff9800; color:#fff; border:none; width:100%; font-size:14px; cursor:pointer;";
-      reviewBtn.innerText = "復習する";
-      reviewBtn.onclick = function() { closeModalDirect(); startReview(id); };
-      actionsEl.appendChild(reviewBtn);
-    }
-
-  } else if (video.type === "survey") {
-    const surveyBtn = document.createElement("button");
-    surveyBtn.style.cssText = "padding:12px; border-radius:8px; font-weight:bold; width:100%; font-size:14px; border:none; transition:0.2s;";
-
-    if (isCompleted) {
-      surveyBtn.style.background = "#2e7d32";
-      surveyBtn.style.color = "#fff";
-      surveyBtn.style.cursor = "pointer";
-      surveyBtn.innerText = "アンケートに答える";
-      surveyBtn.onclick = function() { closeModalDirect(); startSurvey(id); };
-    } else {
-      surveyBtn.style.background = "#222";
-      surveyBtn.style.color = "#666";
-      surveyBtn.style.cursor = "not-allowed";
-      surveyBtn.innerText = "アンケートに答える（動画視聴後）";
-    }
-    actionsEl.appendChild(surveyBtn);
-  }
 
   document.getElementById("videoModal").classList.add("active");
 }
@@ -1720,7 +1725,7 @@ function playModalVideo(){
   if(currentModalVideoId){
     const id = currentModalVideoId;
     closeModalDirect();
-    playVideo(id);
+    startPlayProcess(id);
   }
 }
 
