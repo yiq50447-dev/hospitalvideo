@@ -258,28 +258,28 @@
   }
 
   /* ==========================================================================
-     4. メインコンテンツ & 各ページレイアウト（上詰め統一）
+     4. メインコンテンツ & 各ページレイアウト
      ========================================================================== */
   #home, #infection, #study, #setting {
     display: block;
     width: 100%;
     height: 100%;
     overflow-y: auto;
-    padding-top: calc(65px + env(safe-area-inset-top)); /* ヘッダー直下からの配置 */
-    padding-bottom: calc(80px + env(safe-area-inset-bottom)); /* ボトムナビ被り防止 */
+    padding-top: calc(65px + env(safe-area-inset-top));
+    padding-bottom: calc(80px + env(safe-area-inset-bottom));
     -webkit-overflow-scrolling: touch;
   }
 
   .section-title {
     margin-top: 10px;
     margin-bottom: 10px;
-    padding: 0 20px;
+    padding: 0 16px;
     font-size: 16px;
     font-weight: bold;
   }
 
   .resume-card {
-    margin: 10px 20px 15px 20px;
+    margin: 10px 16px 15px 16px;
     background: linear-gradient(135deg, #1f1f1f 0%, #2a1113 100%);
     border: 1px solid #e50914;
     border-radius: 12px;
@@ -338,27 +338,30 @@
     flex-shrink: 0;
   }
 
-  /* 横スライド動画コンテナ */
+  /* --- 横スライド動画コンテナ（見切れ防止調整版） --- */
   .horizontal-scroll-container {
     display: flex;
-    gap: 16px;
+    gap: 12px;
     overflow-x: auto;
-    padding: 5px 20px 15px 20px;
+    padding: 5px 16px 15px 16px; /* 左右余白を整えて端の切れを防止 */
     -webkit-overflow-scrolling: touch;
-    scroll-behavior: smooth;
-    align-items: flex-start;
+    scroll-snap-type: x mandatory;
+    align-items: stretch;
   }
 
-  /* 動画カード（適切な横幅と縦横比に固定） */
+  /* 横スライドカード */
   .horizontal-video-card {
-    flex: 0 0 280px;
-    width: 280px;
+    flex: 0 0 calc(75vw - 12px); /* 画面サイズに合わせて適切な幅に設定 */
+    max-width: 280px;
     background: #1a1a1a;
     border-radius: 12px;
     overflow: hidden;
     border: 1px solid #2a2a2a;
     cursor: pointer;
     position: relative;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
   }
 
   .horizontal-thumb {
@@ -366,6 +369,7 @@
     width: 100%;
     aspect-ratio: 16 / 9;
     background: #000;
+    flex-shrink: 0;
   }
 
   .horizontal-thumb img {
@@ -373,36 +377,33 @@
     height: 100%;
     object-fit: cover;
   }
+
   .horizontal-info {
     padding: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-grow: 1;
   }
+
   .horizontal-title {
     font-size: 13px;
     font-weight: bold;
     color: #fff;
-    white-space: nowrap;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     overflow: hidden;
-    text-overflow: ellipsis;
+    line-height: 1.3;
   }
+
   .horizontal-sub {
     font-size: 11px;
     color: #888;
-    margin-top: 4px;
-  }
-  .protected-badge {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    background: rgba(0, 0, 0, 0.75);
-    color: #ffca28;
-    border: 1px solid #ffca28;
-    font-size: 10px;
-    padding: 3px 6px;
-    border-radius: 4px;
-    font-weight: bold;
+    margin-top: 6px;
   }
 
-  #videoList { list-style: none; padding: 0 20px 20px 20px; }
+  #videoList { list-style: none; padding: 0 16px 20px 16px; }
   #videoList li {
     padding: 12px;
     margin-bottom: 10px;
@@ -482,7 +483,7 @@
 
   /* お知らせバナー */
   .notice-banner-container {
-    padding: 0 20px;
+    padding: 0 16px;
     margin-top: 10px;
     margin-bottom: 15px;
   }
@@ -652,7 +653,6 @@
     position: absolute; bottom: 0; left: 0; height: 4px;
     background: #e50914; width: 0%;
   }
-  @keyframes grow { from { width: 0%; } to { width: 100%; } }
 
   #skipThinking {
     position: absolute;
@@ -770,9 +770,7 @@
   .modal-meta { display: flex; gap: 8px; align-items: center; font-size: 12px; color: #aaa; margin-bottom: 12px; }
   .modal-badge { border: 1px solid #666; color: #ccc; padding: 0px 4px; border-radius: 3px; font-size: 10px; font-weight: bold; }
   .modal-desc { font-size: 13px; color: #ccc; line-height: 1.4; margin-bottom: 16px; }
-  .modal-actions { display: flex; flex-direction: column; gap: 8px; }
 
-  /* モーダル内ボタンのスタイル */
   .btn-play-red {
     width: 100%;
     background-color: #e50914;
@@ -1043,7 +1041,7 @@
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.4.8";
+const APP_VERSION = "1.4.9";
 const PPE_PASSWORD = "ppe123"; // 🔑 PPE動画の閲覧用パスワード
 
 let videoWrapper, home, skipIntro, skipThinking, skipBar, resumeInline, playBtn, centralUI, bottomControls, backBtn, chapterBtn, chapterPanel, progress, currentTime, duration;
