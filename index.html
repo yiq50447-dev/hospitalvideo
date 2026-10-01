@@ -961,7 +961,7 @@
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.3.5";
+const APP_VERSION = "1.3.6";
 const PPE_PASSWORD = "ppe123"; // 🔑 PPE動画の閲覧用パスワード
 
 let videoWrapper, home, skipIntro, skipThinking, skipBar, resumeInline, playBtn, centralUI, bottomControls, backBtn, chapterBtn, chapterPanel, progress, currentTime, duration;
@@ -1157,7 +1157,6 @@ function renderRecentVideos() {
   loopVideos.forEach((v, index) => {
     const card = document.createElement("div");
     card.className = "horizontal-video-card";
-    // クローン要素（一番最後のカード）をクリックした時も正しい動画モーダルを開く
     card.onclick = () => openModal(v.id);
 
     const thumbUrl = `https://img.youtube.com/vi/${v.id}/hqdefault.jpg`;
@@ -1183,24 +1182,19 @@ function startAutoSlide() {
   if (!container) return;
 
   autoSlideInterval = setInterval(() => {
-    // カードの幅(260px) + gap(14px) = 274px
     const cardGapWidth = 274;
     const playableVideos = videosData.filter(v => !v.locked);
 
-    // クローン（最後の要素）の位置に達したかチェック
     const maxIndex = playableVideos.length;
     const currentScrollIndex = Math.round(container.scrollLeft / cardGapWidth);
 
     if (currentScrollIndex >= maxIndex) {
-      // 見た目が同じ「一番最初のカード」の位置へ一瞬でワープ（アニメーションなし）
       container.scrollTo({ left: 0, behavior: 'auto' });
 
-      // ワープ直後に1コマ分スライドさせる
       setTimeout(() => {
         container.scrollBy({ left: cardGapWidth, behavior: 'smooth' });
       }, 50);
     } else {
-      // 通常のスライド
       container.scrollBy({ left: cardGapWidth, behavior: 'smooth' });
     }
   }, 3500);
