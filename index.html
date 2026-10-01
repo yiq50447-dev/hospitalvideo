@@ -726,6 +726,34 @@
   .modal-badge { border: 1px solid #666; color: #ccc; padding: 0px 4px; border-radius: 3px; font-size: 10px; font-weight: bold; }
   .modal-desc { font-size: 13px; color: #ccc; line-height: 1.4; margin-bottom: 16px; }
   .modal-actions { display: flex; flex-direction: column; gap: 8px; }
+
+  
+/* モーダル内ボタンのスタイル */
+.btn-play-red {
+  width: 100%;
+  background-color: #e50914;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.btn-survey-green {
+  width: 100%;
+  background-color: #2e7d32;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+}
+  
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -961,7 +989,7 @@
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.3.9";
+const APP_VERSION = "1.4.0";
 const PPE_PASSWORD = "ppe123"; // 🔑 PPE動画の閲覧用パスワード
 
 let videoWrapper, home, skipIntro, skipThinking, skipBar, resumeInline, playBtn, centralUI, bottomControls, backBtn, chapterBtn, chapterPanel, progress, currentTime, duration;
@@ -1716,34 +1744,44 @@ async function showSummary(){
 /* モーダル表示 */
 let currentModalVideoId = null;
 
-function openModal(id){
-  const video = videosData.find(v => v.id === id);
-  if(!video || video.locked) return;
+/* モーダル表示関数（ボタン復元 ＆ クローンクリック対応） */
+function openModal(videoId) {
+  const video = videosData.find(v => v.id === videoId);
+  if (!video) return;
 
-  currentModalVideoId = id;
+  const modalContainer = document.getElementById("videoModal");
+  if (!modalContainer) return;
 
-  document.getElementById("modalThumb").src = `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
-  document.getElementById("modalTitle").innerText = video.title;
-  document.getElementById("modalDesc").innerText = video.desc || "説明はありません。";
+  const thumbUrl = `https://img.youtube.com/vi/${video.id}/hqdefault.jpg`;
 
-  document.getElementById("modalDuration").innerText = Math.floor((video.duration || 0) / 60) + "分";
-  document.getElementById("modalDate").innerText = video.publishedAt || "公開日未定";
+  modalContainer.innerHTML = `
+    <div class="modal-content">
+      <button class="modal-close-btn" onclick="closeModal()">✕</button>
+      <div class="modal-thumb-wrapper" onclick="playVideo('${video.id}')">
+        <img src="${thumbUrl}" alt="thumbnail" class="modal-thumb-img">
+        <div class="modal-play-overlay">
+          <div class="modal-play-icon">▶</div>
+        </div>
+      </div>
+      <div class="modal-body">
+        <h3 class="modal-title">${video.title}</h3>
+        <div class="modal-meta">
+          <span>${video.duration || "20分"}</span> ・
+          <span>${video.publishedAt || "2026/08/05"}</span>
+          <span class="hd-badge">HD</span>
+        </div>
+        <p class="modal-description">${video.description || ""}</p>
 
-  const actionsEl = document.getElementById("modalActions");
-  actionsEl.innerHTML = "";
+        <div class="modal-actions">
+          <button class="btn-play-red" onclick="playVideo('${video.id}')">▶ 動画を再生する</button>
+          <button class="btn-survey-green" onclick="openSurvey('${video.id}')">アンケートに答える</button>
+        </div>
+      </div>
+    </div>
+  `;
 
-  const playBtnEl = document.createElement("button");
-  playBtnEl.style.cssText = "background:#e50914; color:#fff; border:none; cursor:pointer; font-weight:bold; padding:12px; border-radius:8px; width:100%; font-size:15px; box-shadow: 0 4px 10px rgba(229, 9, 20, 0.4);";
-  playBtnEl.innerText = video.protected ? "🔒 パスワードを入力して再生" : "▶ 動画を再生する";
-  playBtnEl.onclick = function(){
-    closeModalDirect();
-    startPlayProcess(id);
-  };
-  actionsEl.appendChild(playBtnEl);
-
-  document.getElementById("videoModal").classList.add("active");
+  modalContainer.style.display = "block";
 }
-
 function playModalVideo(){
   if(currentModalVideoId){
     const id = currentModalVideoId;
@@ -1752,8 +1790,10 @@ function playModalVideo(){
   }
 }
 
-function closeModal(e){
-  if(e.target.classList.contains("modal-overlay")){ closeModalDirect(); }
+/* モーダルを閉じる関数 */
+function closeModal() {
+  const modalContainer = document.getElementById("videoModal");
+  if (modalContainer) modalContainer.style.display = "none";
 }
 
 function closeModalDirect(){
