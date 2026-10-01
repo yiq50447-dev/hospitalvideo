@@ -1047,7 +1047,7 @@
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.4.5";
+const APP_VERSION = "1.4.6";
 const PPE_PASSWORD = "ppe123"; // 🔑 PPE動画の閲覧用パスワード
 
 let videoWrapper, home, skipIntro, skipThinking, skipBar, resumeInline, playBtn, centralUI, bottomControls, backBtn, chapterBtn, chapterPanel, progress, currentTime, duration;
@@ -1801,10 +1801,19 @@ async function showSummary(){
 
 let currentModalVideoId = null;
 
-/* 動画詳細モーダル（テスト/アンケート/復習/回答結果の元の判定ロジックを完全再現） */
+/* 動画詳細モーダル（PPEなど protected: true の動画は事前にパスワード判定を実施） */
 function openModal(id){
  const video = videosData.find(v => v.id === id);
  if(!video || video.locked) return;
+
+ // 🔒 限定公開（protected）の動画で、まだ認証されておらず、管理者モードでもない場合
+ const isUnlocked = localStorage.getItem(username + "_pass_unlocked_" + id) === "true";
+ if (video.protected && !isUnlocked && !adminMode) {
+   pendingVideoId = id;
+   document.getElementById("videoPassInput").value = "";
+   document.getElementById("passwordModal").style.display = "flex";
+   return; // パスワード認証前はモーダルを開かずに処理を中断
+ }
 
  currentModalVideoId = id;
 
@@ -1874,7 +1883,6 @@ function openModal(id){
    const surveyBtn = document.createElement("button");
    surveyBtn.style.cssText = "padding:12px; border-radius:8px; font-weight:bold; width:100%; font-size:14px; border:none; transition:0.2s;";
 
-   // ★最後まで視聴しているか（または管理者モードか）で判定
    if (isCompleted || adminMode) {
      surveyBtn.style.background = "#2e7d32";
      surveyBtn.style.color = "#fff";
@@ -1882,7 +1890,6 @@ function openModal(id){
      surveyBtn.innerText = "アンケートに答える";
      surveyBtn.onclick = function() { closeModalDirect(); startSurvey(id); };
    } else {
-     // 未視聴時はグレーにして押すと「最後まで視聴すると〜」の案内を出す
      surveyBtn.style.background = "#222";
      surveyBtn.style.color = "#666";
      surveyBtn.style.cursor = "not-allowed";
@@ -1894,6 +1901,7 @@ function openModal(id){
 
  document.getElementById("videoModal").classList.add("active");
 }
+
 
 function playModalVideo(){
  if(currentModalVideoId){
