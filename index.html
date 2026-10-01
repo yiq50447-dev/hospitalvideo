@@ -989,7 +989,7 @@
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.4.0";
+const APP_VERSION = "1.4.1";
 const PPE_PASSWORD = "ppe123"; // 🔑 PPE動画の閲覧用パスワード
 
 let videoWrapper, home, skipIntro, skipThinking, skipBar, resumeInline, playBtn, centralUI, bottomControls, backBtn, chapterBtn, chapterPanel, progress, currentTime, duration;
@@ -1741,65 +1741,119 @@ async function showSummary(){
   }
 }
 
-/* モーダル表示 */
 let currentModalVideoId = null;
 
-/* モーダル表示関数（ボタン復元 ＆ クローンクリック対応） */
-function openModal(videoId) {
-  const video = videosData.find(v => v.id === videoId);
-  if (!video) return;
+/* 動画詳細モーダル（テスト/アンケート/復習/回答結果の元の判定ロジックを完全再現） */
+function openModal(id){
+ const video = videosData.find(v => v.id === id);
+ if(!video || video.locked) return;
 
-  const modalContainer = document.getElementById("videoModal");
-  if (!modalContainer) return;
+ currentModalVideoId = id;
 
-  const thumbUrl = `https://img.youtube.com/vi/${video.id}/hqdefault.jpg`;
+ document.getElementById("modalThumb").src = `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+ document.getElementById("modalTitle").innerText = video.title;
+ document.getElementById("modalDesc").innerText = video.desc || "説明はありません。";
 
-  modalContainer.innerHTML = `
-    <div class="modal-content">
-      <button class="modal-close-btn" onclick="closeModal()">✕</button>
-      <div class="modal-thumb-wrapper" onclick="playVideo('${video.id}')">
-        <img src="${thumbUrl}" alt="thumbnail" class="modal-thumb-img">
-        <div class="modal-play-overlay">
-          <div class="modal-play-icon">▶</div>
-        </div>
-      </div>
-      <div class="modal-body">
-        <h3 class="modal-title">${video.title}</h3>
-        <div class="modal-meta">
-          <span>${video.duration || "20分"}</span> ・
-          <span>${video.publishedAt || "2026/08/05"}</span>
-          <span class="hd-badge">HD</span>
-        </div>
-        <p class="modal-description">${video.description || ""}</p>
+ // メタ情報（再生時間・公開日）の設定
+ document.getElementById("modalDuration").innerText = Math.floor((video.duration || 0) / 60) + "分";
+ document.getElementById("modalDate").innerText = video.publishedAt || "公開日未定";
 
-        <div class="modal-actions">
-          <button class="btn-play-red" onclick="playVideo('${video.id}')">▶ 動画を再生する</button>
-          <button class="btn-survey-green" onclick="openSurvey('${video.id}')">アンケートに答える</button>
-        </div>
-      </div>
-    </div>
-  `;
+ const actionsEl = document.getElementById("modalActions");
+ actionsEl.innerHTML = "";
 
-  modalContainer.style.display = "block";
+ // 1. 動画再生ボタン
+ const playBtn = document.createElement("button");
+ playBtn.style.cssText = "background:#e50914; color:#fff; border:none; cursor:pointer; font-weight:bold; padding:12px; border-radius:8px; width:100%; font-size:15px; box-shadow: 0 4px 10px rgba(229, 9, 20, 0.4);";
+ playBtn.innerText = "▶ 動画を再生する";
+ playBtn.onclick = function(){
+   closeModalDirect();
+   if(typeof playVideo === "function"){
+     playVideo(id);
+   }
+ };
+ actionsEl.appendChild(playBtn);
+
+ // 視聴完了およびテスト状態の判定
+ const isCompleted = localStorage.getItem(username + "_complete_" + id) === "true";
+ const quizDone = localStorage.getItem(username + "_quiz_done_" + id);
+ const wrongList = JSON.parse(localStorage.getItem(username + "_wrong_" + id) || "[]");
+
+ // 2. テスト (type: "quiz") または アンケート (type: "survey") のボタン分岐
+ if (video.type === "quiz") {
+   const quizBtn = document.createElement("button");
+   quizBtn.style.cssText = "padding:12px; border-radius:8px; font-weight:bold; width:100%; font-size:14px; border:none; transition:0.2s;";
+
+   if (quizDone) {
+     quizBtn.style.background = "#333";
+     quizBtn.style.color = "#fff";
+     quizBtn.style.border = "1px solid #555";
+     quizBtn.style.cursor = "pointer";
+     quizBtn.innerText = "回答結果を見る";
+     quizBtn.onclick = function() { closeModalDirect(); showResult(id); };
+   } else if (isCompleted) {
+     quizBtn.style.background = "#2e7d32"; // 緑色でテスト実施
+     quizBtn.style.color = "#fff";
+     quizBtn.style.cursor = "pointer";
+     quizBtn.innerText = "確認テストを実施する";
+     quizBtn.onclick = function() { closeModalDirect(); startQuiz(id); };
+   } else {
+     quizBtn.style.background = "#222";
+     quizBtn.style.color = "#666";
+     quizBtn.style.cursor = "not-allowed";
+     quizBtn.innerText = "確認テスト（動画視聴後）";
+   }
+   actionsEl.appendChild(quizBtn);
+
+   // 復習ボタン（間違えた問題がある場合）
+   if (quizDone && wrongList.length > 0) {
+     const reviewBtn = document.createElement("button");
+     reviewBtn.style.cssText = "padding:12px; border-radius:8px; font-weight:bold; background:#ff9800; color:#fff; border:none; width:100%; font-size:14px; cursor:pointer; margin-top:8px;";
+     reviewBtn.innerText = "復習する";
+     reviewBtn.onclick = function() { closeModalDirect(); startReview(id); };
+     actionsEl.appendChild(reviewBtn);
+   }
+
+ } else if (video.type === "survey") {
+   const surveyBtn = document.createElement("button");
+   surveyBtn.style.cssText = "padding:12px; border-radius:8px; font-weight:bold; width:100%; font-size:14px; border:none; transition:0.2s;";
+
+   if (isCompleted) {
+     surveyBtn.style.background = "#2e7d32";
+     surveyBtn.style.color = "#fff";
+     surveyBtn.style.cursor = "pointer";
+     surveyBtn.innerText = "アンケートに答える";
+     surveyBtn.onclick = function() { closeModalDirect(); startSurvey(id); };
+   } else {
+     surveyBtn.style.background = "#222";
+     surveyBtn.style.color = "#666";
+     surveyBtn.style.cursor = "not-allowed";
+     surveyBtn.innerText = "アンケートに答える（動画視聴後）";
+   }
+   actionsEl.appendChild(surveyBtn);
+ }
+
+ document.getElementById("videoModal").classList.add("active");
 }
+
 function playModalVideo(){
-  if(currentModalVideoId){
-    const id = currentModalVideoId;
-    closeModalDirect();
-    startPlayProcess(id);
-  }
+ if(currentModalVideoId){
+   const id = currentModalVideoId;
+   closeModalDirect();
+   playVideo(id);
+ }
 }
 
-/* モーダルを閉じる関数 */
-function closeModal() {
-  const modalContainer = document.getElementById("videoModal");
-  if (modalContainer) modalContainer.style.display = "none";
+function closeModal(e){
+ if(e.target.classList.contains("modal-overlay")){
+   closeModalDirect();
+ }
 }
 
 function closeModalDirect(){
-  document.getElementById("videoModal").classList.remove("active");
-  currentModalVideoId = null;
+ document.getElementById("videoModal").classList.remove("active");
+ currentModalVideoId = null;
 }
+
 </script>
 </body>
 </html>
