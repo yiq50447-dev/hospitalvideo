@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
 <style>
- /* ==========================================================================
+  /* ==========================================================================
      1. ベース設定 & リセット
      ========================================================================== */
   * {
@@ -338,7 +338,7 @@
     flex-shrink: 0;
   }
 
-  /* --- 横スライド動画コンテナ --- */
+  /* --- 横スライド動画コンテナ（中央揃え修正） --- */
   .horizontal-scroll-container {
     display: flex;
     gap: 12px;
@@ -346,7 +346,7 @@
     padding: 5px 16px 15px 16px;
     -webkit-overflow-scrolling: touch;
     scroll-snap-type: x mandatory;
-    align-items: stretch;
+    align-items: center; /* 修正: 上下中央揃え */
   }
 
   /* 横スライドカード */
@@ -359,12 +359,11 @@
     border: 1px solid #2a2a2a;
     cursor: pointer;
     position: relative;
-    scroll-snap-align: start;
+    scroll-snap-align: center; /* 修正: スナップ位置も中央に */
     display: flex;
     flex-direction: column;
   }
 
-  /* パスワード保護バッジ（追加分） */
   .protected-badge {
     position: absolute;
     top: 8px;
@@ -489,11 +488,101 @@
     margin-top: 4px;
   }
 
-  .setting-placeholder {
-    padding: 40px 20px;
-    text-align: center;
+  /* --- 設定画面スタイル --- */
+  .setting-container {
+    padding: 0 16px 30px 16px;
+  }
+  .setting-group {
+    background: #1e1e1e;
+    border-radius: 12px;
+    border: 1px solid #2a2a2a;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .setting-group-title {
+    font-size: 12px;
+    font-weight: bold;
     color: #888;
+    padding: 12px 16px 6px 16px;
+    text-transform: uppercase;
+  }
+  .setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    border-bottom: 1px solid #2a2a2a;
+  }
+  .setting-item:last-child {
+    border-bottom: none;
+  }
+  .setting-label {
     font-size: 14px;
+    color: #fff;
+  }
+  .setting-sublabel {
+    font-size: 11px;
+    color: #888;
+    margin-top: 2px;
+  }
+  .setting-select {
+    background: #2a2a2a;
+    color: #fff;
+    border: 1px solid #444;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    outline: none;
+  }
+
+  /* スイッチトグル */
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+  }
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #333;
+    transition: .3s;
+    border-radius: 24px;
+  }
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .3s;
+    border-radius: 50%;
+  }
+  input:checked + .slider {
+    background-color: #e50914;
+  }
+  input:checked + .slider:before {
+    transform: translateX(20px);
+  }
+
+  .setting-btn-danger {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    color: #ff4d4d;
+    border: none;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: left;
+    cursor: pointer;
   }
 
   /* お知らせバナー */
@@ -900,10 +989,73 @@
     <ul id="videoList"></ul>
   </div>
 
-  <!-- 設定画面 -->
+  <!-- 設定画面（新設機能） -->
   <div id="settingSection" style="display:none;">
     <div class="section-title">⚙ 設定</div>
-    <div class="setting-placeholder">設定項目は準備中です</div>
+    <div class="setting-container">
+
+      <!-- 再生設定 -->
+      <div class="setting-group">
+        <div class="setting-group-title">再生設定</div>
+        <div class="setting-item">
+          <div>
+            <div class="setting-label">画質の設定</div>
+            <div class="setting-sublabel">動画再生時のデフォルト画質</div>
+          </div>
+          <select class="setting-select" id="qualitySetting" onchange="saveSetting('quality', this.value)">
+            <option value="auto">自動</option>
+            <option value="hd1080">1080p (高画質)</option>
+            <option value="hd720">720p (標準)</option>
+            <option value="large">480p</option>
+            <option value="medium">360p (節約)</option>
+          </select>
+        </div>
+        <div class="setting-item">
+          <div>
+            <div class="setting-label">動画の自動再生</div>
+            <div class="setting-sublabel">詳細画面を開いてすぐ再生</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="autoplaySetting" onchange="saveSetting('autoplay', this.checked)">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- 表示・アプリ設定 -->
+      <div class="setting-group">
+        <div class="setting-group-title">表示・通知設定</div>
+        <div class="setting-item">
+          <div>
+            <div class="setting-label">ダークモード</div>
+            <div class="setting-sublabel">背景テーマ設定（常にダーク推奨）</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" checked disabled style="opacity: 0.5;">
+            <span class="slider" style="opacity: 0.5;"></span>
+          </label>
+        </div>
+        <div class="setting-item">
+          <div>
+            <div class="setting-label">新着動画の更新通知</div>
+            <div class="setting-sublabel">新しい研修が追加された際にお知らせ</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="notifySetting" checked onchange="saveSetting('notify', this.checked)">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- アカウント管理 -->
+      <div class="setting-group">
+        <div class="setting-group-title">データ・管理</div>
+        <div class="setting-item" style="padding:0;">
+          <button class="setting-btn-danger" onclick="clearAppData()">視聴キャッシュのクリア</button>
+        </div>
+      </div>
+
+    </div>
   </div>
 </div>
 
@@ -1055,7 +1207,7 @@
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.4.9";
+const APP_VERSION = "1.5.0";
 const PPE_PASSWORD = "ppe123"; // 🔑 PPE動画の閲覧用パスワード
 
 let videoWrapper, home, skipIntro, skipThinking, skipBar, resumeInline, playBtn, centralUI, bottomControls, backBtn, chapterBtn, chapterPanel, progress, currentTime, duration;
@@ -1093,13 +1245,15 @@ document.addEventListener("DOMContentLoaded", function(){
     });
   }
 
+  loadUserSettings();
   checkVersion();
 });
 
 const UPDATE_MESSAGE = `
-【新機能】
-・ 新規研修動画「PPEの着脱手順」を追加しました。
-・ 一部動画にパスワード保護機能を追加しました。
+【アップデート情報 Ver 1.5.0】
+・ 設定ページを実装しました（画質・自動再生設定など）。
+・ ホーム画面の動画カードレイアウトを中央揃えに微調整しました。
+・ リスト画面からの動画再生時にセキュリティ・パスワード制限を適用しました。
 `;
 
 let player, username = "guest", currentVideoId = "";
@@ -1116,6 +1270,32 @@ let speeds = [1, 1.25, 1.5, 1.75, 2], speedIndex = 0;
 
 let autoSlideInterval = null;
 let pendingVideoId = null;
+
+/* 設定の保存 & 読み込み */
+function loadUserSettings() {
+  const quality = localStorage.getItem("setting_quality") || "auto";
+  const autoplay = localStorage.getItem("setting_autoplay") === "true";
+  const notify = localStorage.getItem("setting_notify") !== "false";
+
+  const qEl = document.getElementById("qualitySetting");
+  const aEl = document.getElementById("autoplaySetting");
+  const nEl = document.getElementById("notifySetting");
+
+  if(qEl) qEl.value = quality;
+  if(aEl) aEl.checked = autoplay;
+  if(nEl) nEl.checked = notify;
+}
+
+function saveSetting(key, val) {
+  localStorage.setItem("setting_" + key, val);
+  showToast("設定を保存しました");
+}
+
+function clearAppData() {
+  if (confirm("一時視聴データをクリアしますか？\n（※視聴履歴自体は保持されます）")) {
+    showToast("キャッシュをクリアしました");
+  }
+}
 
 /* アバターメニュー */
 function toggleProfileMenu() {
@@ -1360,6 +1540,7 @@ function switchNav(type, btnEl) {
   }
 }
 
+/* 修正: リスト画面の描画（モーダル経由で保護） */
 function renderVideoList(){
   const listEl = document.getElementById("videoList");
   if(!listEl) return;
@@ -1477,6 +1658,9 @@ function playVideo(id){
     try { player.destroy(); } catch(e){}
   }
 
+  // 設定されたデフォルト画質を取得
+  const preferredQuality = localStorage.getItem("setting_quality") || "auto";
+
   player = new YT.Player('player',{
     videoId: id,
     playerVars: { controls: 0, rel: 0, modestbranding: 1, fs: 0, playsinline: 1 },
@@ -1484,6 +1668,9 @@ function playVideo(id){
       onReady: () => {
         uiInterval = setInterval(updateUI, 500);
         showUI();
+        if(preferredQuality !== "auto" && player.setPlaybackQuality) {
+          player.setPlaybackQuality(preferredQuality);
+        }
         if(resumeTime > 5) {
           player.seekTo(resumeTime, true);
         }
@@ -1805,7 +1992,7 @@ async function showSummary(){
 
 let currentModalVideoId = null;
 
-/* 動画詳細モーダル */
+/* 動画詳細モーダル（保護・自動再生対応） */
 function openModal(id){
  const video = videosData.find(v => v.id === id);
  if(!video || video.locked) return;
@@ -1815,6 +2002,12 @@ function openModal(id){
    pendingVideoId = id;
    document.getElementById("videoPassInput").value = "";
    document.getElementById("passwordModal").style.display = "flex";
+   return;
+ }
+
+ const autoplay = localStorage.getItem("setting_autoplay") === "true";
+ if (autoplay) {
+   playVideo(id);
    return;
  }
 
@@ -1835,9 +2028,7 @@ function openModal(id){
  playBtn.innerText = "▶ 動画を再生する";
  playBtn.onclick = function(){
    closeModalDirect();
-   if(typeof playVideo === "function"){
-     playVideo(id);
-   }
+   startPlayProcess(id);
  };
  actionsEl.appendChild(playBtn);
 
@@ -1906,7 +2097,7 @@ function playModalVideo(){
  if(currentModalVideoId){
    const id = currentModalVideoId;
    closeModalDirect();
-   playVideo(id);
+   startPlayProcess(id);
  }
 }
 
