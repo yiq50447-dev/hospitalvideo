@@ -1142,15 +1142,6 @@ const videosData = [
   }
 ];
 
-/* 無限ループ対応の動画カード描画 */
-function renderRecentVideos() {
-  const container = document.getElementById("recentVideoList");
-  if (!container) return;
-  container.innerHTML = "";
-
-  const playableVideos = videosData.filter(v => !v.locked);
-  if (playableVideos.length === 0) return;
-
  /* 無限ループ対応の動画カード描画（画面幅分のクローンを末尾に追加） */
 function renderRecentVideos() {
   const container = document.getElementById("recentVideoList");
