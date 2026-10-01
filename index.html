@@ -961,7 +961,7 @@
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.3.3";
+const APP_VERSION = "1.3.4";
 const PPE_PASSWORD = "ppe123"; // 🔑 PPE動画の閲覧用パスワード
 
 let videoWrapper, home, skipIntro, skipThinking, skipBar, resumeInline, playBtn, centralUI, bottomControls, backBtn, chapterBtn, chapterPanel, progress, currentTime, duration;
@@ -1181,9 +1181,11 @@ function startAutoSlide() {
 
     if (maxScroll <= 0) return;
 
+    // 端まで到達したら、アニメーションなし(smoothを外す)で先頭へ瞬時にワープ
     if (container.scrollLeft >= maxScroll - 5) {
-      container.scrollTo({ left: 0, behavior: 'smooth' });
+      container.scrollTo({ left: 0, behavior: 'auto' });
     } else {
+      // 通常のスライドはスムーズに左へ移動
       container.scrollBy({ left: cardWidth, behavior: 'smooth' });
     }
   }, 3500);
@@ -1193,6 +1195,7 @@ function startAutoSlide() {
   container.addEventListener('touchstart', stopAutoSlide, { passive: true });
   container.addEventListener('mousedown', stopAutoSlide);
 }
+
 
 function stopAutoSlide() {
   if (autoSlideInterval) {
