@@ -342,24 +342,26 @@
   display: flex;
   gap: 16px;
   overflow-x: auto;
-  padding: 0 20px 20px 20px;
+
+  /* パディングで左右の空間を等しく保ち、配置バランスを整えます */
+  padding: 10px 20px 20px 20px;
+
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
-  scroll-snap-type: x mandatory; /* スライド時にピタッと中央で止まる効果 */
+  scroll-snap-type: x mandatory; /* スライド時にカード単位で中央にピタッと止まります */
 }
 
-/* カード本体：画面幅に合わせて中央に大きく配置 */
 .horizontal-video-card {
-  flex: 0 0 82vw; /* 画面幅の82%に指定して左右均等に余白を見せる */
-  max-width: 340px; /* パソコン等で大きくなりすぎない上限 */
+  /* サイズ固定の設定はそのまま維持 */
+  flex: 0 0 280px; /* 前のサイズのまま */
   background: #1a1a1a;
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid #2a2a2a;
   cursor: pointer;
   position: relative;
-  scroll-snap-align: center; /* スライド移動時に画面中央にフィット */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+
+  scroll-snap-align: center; /* 画面中央に位置合わせ */
 }
 
 .horizontal-thumb {
@@ -758,6 +760,47 @@
   font-size: 16px;
   cursor: pointer;
 }
+/* お知らせバナー用のスタイル */
+.notice-banner-container {
+  padding: 0 20px;
+  margin-top: 10px;
+  margin-bottom: 25px;
+}
+
+.notice-banner {
+  background: linear-gradient(135deg, #221a1a 0%, #161616 100%);
+  border: 1px solid #3d2222;
+  border-left: 4px solid #e50914; /* ブランドカラーのアクセントライン */
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.notice-tag {
+  align-self: flex-start;
+  background: #e50914;
+  color: #fff;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.notice-title {
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.notice-desc {
+  color: #aaaaaa;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
   
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -822,8 +865,18 @@
     <div class="section-title">🔥 研修動画一覧</div>
     <div class="horizontal-scroll-container" id="recentVideoList"></div>
   </div>
-
-  <!-- 管理者用ボタン&集計 -->
+  
+<div class="notice-banner-container">
+  <div class="notice-banner">
+    <div class="notice-tag">お知らせ</div>
+    <div class="notice-content">
+      <div class="notice-title">📢 病棟研修の実施について</div>
+      <div class="notice-desc">今月の感染対策講習動画が追加されました。各自確認をお願いします。</div>
+    </div>
+  </div>
+</div>
+  
+ <!-- 管理者用ボタン&集計 -->
   <button id="summaryBtn" onclick="showSummary()" style="display:none;margin:10px 20px;padding:10px 16px;background:#e50914;color:#fff;border:none;border-radius:6px;font-weight:bold;">
     テスト全体集計
   </button>
@@ -994,7 +1047,7 @@
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.4.4";
+const APP_VERSION = "1.4.5";
 const PPE_PASSWORD = "ppe123"; // 🔑 PPE動画の閲覧用パスワード
 
 let videoWrapper, home, skipIntro, skipThinking, skipBar, resumeInline, playBtn, centralUI, bottomControls, backBtn, chapterBtn, chapterPanel, progress, currentTime, duration;
