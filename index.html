@@ -258,7 +258,7 @@
   }
 
   /* ==========================================================================
-     4. メインコンテンツ & 横スライド
+     4. メインコンテンツ & 確実な自動横スライド
      ========================================================================== */
   #home {
     width: 100%;
@@ -277,21 +277,21 @@
     margin: 16px 20px 10px 20px;
   }
 
+  /* 滑らかな自動横スクロール */
   .horizontal-scroll-container {
     display: flex;
-    gap: 12px;
+    gap: 14px;
     overflow-x: auto;
     padding: 0 20px 10px 20px;
-    scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
   }
   .horizontal-scroll-container::-webkit-scrollbar {
     display: none;
   }
 
   .horizontal-video-card {
-    flex: 0 0 240px;
-    scroll-snap-align: start;
+    flex: 0 0 260px;
     background: #1a1a1a;
     border-radius: 10px;
     overflow: hidden;
@@ -301,7 +301,7 @@
   .horizontal-thumb {
     position: relative;
     width: 100%;
-    height: 135px;
+    height: 146px;
     background: #000;
   }
   .horizontal-thumb img {
@@ -310,7 +310,7 @@
     object-fit: cover;
   }
   .horizontal-info {
-    padding: 10px 12px;
+    padding: 12px;
   }
   .horizontal-title {
     font-size: 13px;
@@ -326,33 +326,7 @@
     margin-top: 4px;
   }
 
-  /* チーム選択タブ */
-  .team-tabs {
-    display: flex;
-    gap: 10px;
-    margin: 10px 20px 10px 20px;
-  }
-
-  .team-tab {
-    flex: 1;
-    padding: 10px;
-    background: #222;
-    color: #aaa;
-    border: 1px solid #333;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: bold;
-    text-align: center;
-    transition: 0.2s;
-  }
-
-  .team-tab.active {
-    background: #e50914;
-    color: #fff;
-    border-color: #e50914;
-  }
-
-  /* 動画リスト */
+  /* 感染・学習チーム用の縦並びリスト */
   #videoList { list-style: none; padding: 0 20px 20px 20px; }
   #videoList li {
     padding: 12px;
@@ -423,6 +397,13 @@
     font-size: 11px;
     color: #aaa;
     margin-top: 4px;
+  }
+
+  .setting-placeholder {
+    padding: 40px 20px;
+    text-align: center;
+    color: #888;
+    font-size: 14px;
   }
 
   /* ==========================================================================
@@ -611,7 +592,7 @@
     font-size: 14px; opacity: 0; transition: 0.3s; z-index: 999;
   }
 
-  /* 動画詳細モーダル */
+  /* モーダル */
   .modal-overlay {
     display: none; position: fixed; top: 0; left: 0;
     width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75);
@@ -654,7 +635,6 @@
   .modal-badge { border: 1px solid #666; color: #ccc; padding: 0px 4px; border-radius: 3px; font-size: 10px; font-weight: bold; }
   .modal-desc { font-size: 13px; color: #ccc; line-height: 1.4; margin-bottom: 16px; }
   .modal-actions { display: flex; flex-direction: column; gap: 8px; }
-  .modal-actions button { width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 14px; }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -687,21 +667,18 @@
     </div>
   </div>
 
-  <!-- 管理者モード用隠しトリガー -->
   <div id="topVersion"></div>
 </div>
 
-<!-- トップバー（ロゴ＋右上にアバターアイコン） -->
+<!-- ヘッダー -->
 <div id="topBarHome">
   <div class="header-brand">
     <div class="header-logo">EFI Pocket</div>
     <div class="header-subtitle">いつでも学べる病棟研修ポータル</div>
   </div>
 
-  <!-- 右上アバターボタン（名前の1文字目が自動反映） -->
   <div class="avatar-btn" id="userAvatar" onclick="toggleProfileMenu()">名</div>
 
-  <!-- アバタータップで開くポップアップメニュー -->
   <div class="profile-popover" id="profileMenu">
     <div class="profile-info">
       <div class="profile-name" id="profileNameDisplay">ゲスト</div>
@@ -711,15 +688,15 @@
   </div>
 </div>
 
-<!-- メインコンテンツ領域 -->
+<!-- メインコンテンツ -->
 <div id="home">
-  <!-- 1. 最新動画（横スライドエリア） -->
-  <div class="section-title">🔥 最新の研修動画</div>
-  <div class="horizontal-scroll-container" id="recentVideoList">
-    <!-- JSで動的に追加されます -->
+  <!-- ホーム画面専用：最新動画エリアのみ -->
+  <div id="recentSection">
+    <div class="section-title">🔥 最新の研修動画</div>
+    <div class="horizontal-scroll-container" id="recentVideoList"></div>
   </div>
 
-  <!-- 管理者用：テスト全体集計ボタン＆エリア -->
+  <!-- 管理者用ボタン&集計 -->
   <button id="summaryBtn" onclick="showSummary()" style="display:none;margin:10px 20px;padding:10px 16px;background:#e50914;color:#fff;border:none;border-radius:6px;font-weight:bold;">
     テスト全体集計
   </button>
@@ -729,17 +706,20 @@
     <canvas id="questionChart" style="margin-top:20px;"></canvas>
   </div>
 
-  <!-- 2. 全動画（チーム別タブ切り替え） -->
-  <div class="section-title" style="margin-top: 15px;">📚 全研修動画</div>
-  <div class="team-tabs">
-    <button class="team-tab active" id="tab_infection" onclick="switchTeam('infection')">感染対策チーム</button>
-    <button class="team-tab" id="tab_study" onclick="switchTeam('study')">学習会チーム</button>
+  <!-- ボトムタブ（感染/学習）選択時のみ表示する動画リスト -->
+  <div id="listSection" style="display:none;">
+    <div class="section-title" id="listSectionTitle">📚 研修動画</div>
+    <ul id="videoList"></ul>
   </div>
 
-  <ul id="videoList"></ul>
+  <!-- 設定画面 -->
+  <div id="settingSection" style="display:none;">
+    <div class="section-title">⚙️ 設定</div>
+    <div class="setting-placeholder">設定項目は準備中です</div>
+  </div>
 </div>
 
-<!-- ボトムナビゲーションバー -->
+<!-- ボトムナビゲーション -->
 <div class="bottom-nav" id="bottomNav" style="display:none;">
   <button class="nav-item active" id="nav-home" onclick="switchNav('home', this)">
     <span class="nav-icon">🏠</span>
@@ -759,7 +739,7 @@
   </button>
 </div>
 
-<!-- 動画詳細モーダル -->
+<!-- モーダル -->
 <div id="videoModal" class="modal-overlay" onclick="closeModal(event)">
   <div class="modal-content">
     <button class="modal-close-btn" onclick="closeModalDirect()">×</button>
@@ -779,15 +759,12 @@
         <span class="modal-badge">HD</span>
       </div>
       <p id="modalDesc" class="modal-desc"></p>
-
-      <div id="modalActions" class="modal-actions">
-        <!-- JSでボタンが挿入されます -->
-      </div>
+      <div id="modalActions" class="modal-actions"></div>
     </div>
   </div>
 </div>
 
-<!-- 動画プレイヤー領域 -->
+<!-- プレイヤー -->
 <div id="videoWrapper">
   <button id="backBtn" onclick="goBack()">ホームに戻る</button>
 
@@ -877,49 +854,35 @@
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.2.8 ";
+const APP_VERSION = "1.2.9";
 document.addEventListener("DOMContentLoaded", function(){
   document.getElementById("topVersion").innerText = "Ver " + APP_VERSION;
 });
 
 const UPDATE_MESSAGE = `
-【機能追加】
-・ 画面の領域変更
-・アンケートへの制限追加
+【機能改善】
+・ 最新動画の滑らかな自動横スライド動作の安定化
+・ ホーム画面を最新動画エリアのみのすっきりとしたデザインに変更
 `;
 
 let player, username = "guest", currentVideoId = "";
 const NORO_VIDEO_ID = "HyyeZRsWGkw";
 
-function isNoroVideo(){
-  return currentVideoId === NORO_VIDEO_ID;
-}
+function isNoroVideo(){ return currentVideoId === NORO_VIDEO_ID; }
 
 let thinkingStarts = [286, 627, 1009, 1375, 1736, 1929];
-let thinkingActive = false;
-let thinkingTimer = null;
-let thinkingStartTime = 0;
-
+let thinkingActive = false, thinkingTimer = null, thinkingStartTime = 0;
 let resumeTime = 0, resumePromptShown = false;
-let uiTimer = null, chapterOpen = false;
-let introActive = false, uiInterval = null;
+let uiTimer = null, chapterOpen = false, introActive = false, uiInterval = null;
+let maxWatchedTime = 0, adminMode = false, adminTapCount = 0, adminTapTimer = null;
+let speeds = [1, 1.25, 1.5, 1.75, 2], speedIndex = 0;
 
-let maxWatchedTime = 0;
-let adminMode = false;
-let adminTapCount = 0;
-let adminTapTimer = null;
+let autoSlideInterval = null;
 
-let speeds = [1, 1.25, 1.5, 1.75, 2];
-let speedIndex = 0;
-
-/* ==========================================
-   アバター＆ポップアップ処理
-   ========================================== */
+/* アバターメニュー */
 function toggleProfileMenu() {
-  const menu = document.getElementById("profileMenu");
-  menu.classList.toggle("active");
+  document.getElementById("profileMenu").classList.toggle("active");
 }
-
 document.addEventListener("click", function(e) {
   const avatar = document.getElementById("userAvatar");
   const menu = document.getElementById("profileMenu");
@@ -928,9 +891,7 @@ document.addEventListener("click", function(e) {
   }
 });
 
-/* ==========================================
-   ログイン処理（名前の反映）
-   ========================================== */
+/* ログイン */
 function setUsername() {
   const input = document.getElementById("usernameInput");
   username = input.value.trim();
@@ -944,30 +905,26 @@ function setUsername() {
   document.getElementById("nameInputModal").style.display = "none";
   document.getElementById("loader").style.display = "none";
 
-  // トップバーとボトムナビの表示
   document.getElementById("topBarHome").style.display = "flex";
   document.getElementById("bottomNav").style.display = "flex";
 
-  // 入力された名前をアバターアイコン（頭文字）とポップアップ（フルネーム）に反映
   document.getElementById("userAvatar").innerText = username.charAt(0);
   document.getElementById("profileNameDisplay").innerText = username;
   document.getElementById("profileStatusDisplay").innerText = "受講中";
 
-  renderVideoList();
   renderRecentVideos();
+  startAutoSlide();
 }
 
 function logout() {
   if(!confirm("ログアウトしますか？")) return;
-  if(player){
-    try{ player.destroy(); }catch(e){}
-  }
+  if(player){ try{ player.destroy(); }catch(e){} }
   sessionStorage.clear();
   location.reload();
 }
 
 /* ==========================================
-   最新動画（横スライド）の生成
+   最新動画の描画 & 確実に動作する自動スライド
    ========================================== */
 function renderRecentVideos() {
   const container = document.getElementById("recentVideoList");
@@ -996,29 +953,79 @@ function renderRecentVideos() {
   });
 }
 
-/* ==========================================
-   ボトムナビ切替処理
-   ========================================== */
-function switchNav(type, btnEl) {
-  document.querySelectorAll(".nav-item").forEach(el => el.classList.remove("active"));
-  btnEl.classList.add("active");
+function startAutoSlide() {
+  stopAutoSlide();
+  const container = document.getElementById("recentVideoList");
+  if (!container) return;
 
-  if (type === "home") {
-    switchTeam('infection');
-  } else if (type === "infection") {
-    switchTeam('infection');
-  } else if (type === "study") {
-    switchTeam('study');
-  } else if (type === "setting") {
-    showToast("設定画面（準備中）");
+  autoSlideInterval = setInterval(() => {
+    const cardWidth = 274; // カード幅 260px + gap 14px
+    const maxScroll = container.scrollWidth - container.clientWidth;
+
+    if (maxScroll <= 0) return;
+
+    if (container.scrollLeft >= maxScroll - 5) {
+      container.scrollTo({ left: 0, behavior: 'smooth' });
+    } else {
+      container.scrollBy({ left: cardWidth, behavior: 'smooth' });
+    }
+  }, 3000); // 3秒間隔で順次スライド
+
+  // ユーザーが手動で触っている間は自動スライドを一旦ストップ
+  container.addEventListener('touchstart', stopAutoSlide, { passive: true });
+  container.addEventListener('mousedown', stopAutoSlide);
+}
+
+function stopAutoSlide() {
+  if (autoSlideInterval) {
+    clearInterval(autoSlideInterval);
+    autoSlideInterval = null;
   }
 }
 
 /* ==========================================
-   動画データ
+   ボトムナビ切り替え
    ========================================== */
 let currentTeam = "infection";
 
+function switchNav(type, btnEl) {
+  document.querySelectorAll(".nav-item").forEach(el => el.classList.remove("active"));
+  btnEl.classList.add("active");
+
+  const recentSec = document.getElementById("recentSection");
+  const listSec = document.getElementById("listSection");
+  const settingSec = document.getElementById("settingSection");
+
+  if (type === "home") {
+    recentSec.style.display = "block";
+    listSec.style.display = "none";
+    settingSec.style.display = "none";
+    startAutoSlide();
+  } else if (type === "infection") {
+    stopAutoSlide();
+    currentTeam = "infection";
+    recentSec.style.display = "none";
+    settingSec.style.display = "none";
+    listSec.style.display = "block";
+    document.getElementById("listSectionTitle").innerText = "🦠 感染対策チームの動画一覧";
+    renderVideoList();
+  } else if (type === "study") {
+    stopAutoSlide();
+    currentTeam = "study";
+    recentSec.style.display = "none";
+    settingSec.style.display = "none";
+    listSec.style.display = "block";
+    document.getElementById("listSectionTitle").innerText = "📖 学習会チームの動画一覧";
+    renderVideoList();
+  } else if (type === "setting") {
+    stopAutoSlide();
+    recentSec.style.display = "none";
+    listSec.style.display = "none";
+    settingSec.style.display = "block";
+  }
+}
+
+/* 動画データ */
 const videosData = [
   {
     id: "HyyeZRsWGkw",
@@ -1046,21 +1053,6 @@ const videosData = [
     publishedAt: "2026/08/05"
   }
 ];
-
-function switchTeam(teamName){
-  currentTeam = teamName;
-  document.getElementById("tab_infection").classList.toggle("active", teamName === "infection");
-  document.getElementById("tab_study").classList.toggle("active", teamName === "study");
-
-  // ボトムナビのハイライトも同期
-  document.getElementById("nav-infection").classList.toggle("active", teamName === "infection");
-  document.getElementById("nav-study").classList.toggle("active", teamName === "study");
-  if(teamName === 'infection' || teamName === 'study'){
-    document.getElementById("nav-home").classList.remove("active");
-  }
-
-  renderVideoList();
-}
 
 function renderVideoList(){
   const listEl = document.getElementById("videoList");
@@ -1123,24 +1115,16 @@ function updateSingleVideoStatus(id, duration){
   }
 }
 
-/* ==========================================
-   動画再生・コントロール関連
-   ========================================== */
+/* 動画再生・プレイヤー制御 */
 function playVideo(id){
   currentVideoId = id;
-
   document.getElementById("chapterBtn").style.display = isNoroVideo() ? "block" : "none";
-
   skipIntro.style.display = "none";
   skipThinking.style.display = "none";
-
   introActive = false;
   thinkingActive = false;
 
-  if(thinkingTimer){
-    clearInterval(thinkingTimer);
-    thinkingTimer = null;
-  }
+  if(thinkingTimer){ clearInterval(thinkingTimer); thinkingTimer = null; }
 
   resumeTime = parseFloat(localStorage.getItem(username+"_"+id)) || 0;
   maxWatchedTime = resumeTime;
@@ -1356,20 +1340,21 @@ function closeUpdateModal(){
 }
 
 function goBack(){
-  if(player){
-    try { player.destroy(); } catch(e){}
-  }
+  if(player){ try { player.destroy(); } catch(e){} }
   videoWrapper.style.display = "none";
   home.style.display = "block";
   chapterPanel.style.right = "-320px";
   chapterOpen = false;
   renderVideoList();
   renderRecentVideos();
+  if (document.getElementById("recentSection").style.display !== "none") {
+    startAutoSlide();
+  }
 }
 
 checkVersion();
 
-/* 管理者モード用 隠しコマンド（バージョン部分を5回タップ） */
+/* 管理者モード用 隠しコマンド */
 const versionArea = document.getElementById("topVersion");
 versionArea.addEventListener("click", function(){
   adminTapCount++;
@@ -1389,8 +1374,8 @@ versionArea.addEventListener("click", function(){
       document.getElementById("profileNameDisplay").innerText = "管理者";
       document.getElementById("profileStatusDisplay").innerText = "管理者モード";
 
-      renderVideoList();
       renderRecentVideos();
+      startAutoSlide();
       alert("管理者モードON");
     }
     adminTapCount = 0;
@@ -1399,9 +1384,7 @@ versionArea.addEventListener("click", function(){
   adminTapTimer = setTimeout(() => { adminTapCount = 0; }, 2000);
 });
 
-/* ==========================================
-   テスト・アンケート・集計処理
-   ========================================== */
+/* テスト・アンケート連携 */
 function startQuiz(videoId){
   if(!localStorage.getItem(username + "_complete_" + videoId)){
     showToast("動画を最後まで視聴するとテストを受けられます");
@@ -1427,9 +1410,7 @@ function skipThinkingClick(e){
   thinkingActive = false;
 }
 
-function showResult(id){
-  window.location.href = "quiz_result.html";
-}
+function showResult(id){ window.location.href = "quiz_result.html"; }
 
 function startReview(videoId){
   if(!localStorage.getItem(username + "_quiz_done_" + videoId)){
@@ -1457,18 +1438,13 @@ function drawChart(data){
     type: 'pie',
     data: {
       labels: worst.map(w => "Q" + w.q),
-      datasets: [{
-        data: worst.map(w => 100 - w.rate)
-      }]
+      datasets: [{ data: worst.map(w => 100 - w.rate) }]
     }
   });
 }
 
 async function showSummary(){
-  if(!adminMode){
-    showToast("管理者のみ閲覧できます");
-    return;
-  }
+  if(!adminMode){ showToast("管理者のみ閲覧できます"); return; }
   try{
     const res = await fetch("https://script.google.com/macros/s/AKfycbxt_kxbO6BITi8GiqZbzvERHrrmjGSf-VsjjLNRpgWLZgLtoprj6EKkqEn_DY0IN9IA/exec?type=summary");
     const data = await res.json();
@@ -1493,13 +1469,10 @@ async function showSummary(){
     drawChart(data);
   }catch(e){
     showToast("取得エラー");
-    console.error(e);
   }
 }
 
-/* ==========================================
-   動画詳細モーダル
-   ========================================== */
+/* モーダル表示 */
 let currentModalVideoId = null;
 
 function openModal(id){
@@ -1523,9 +1496,7 @@ function openModal(id){
   playBtn.innerText = "▶ 動画を再生する";
   playBtn.onclick = function(){
     closeModalDirect();
-    if(typeof playVideo === "function"){
-      playVideo(id);
-    }
+    if(typeof playVideo === "function"){ playVideo(id); }
   };
   actionsEl.appendChild(playBtn);
 
@@ -1597,9 +1568,7 @@ function playModalVideo(){
 }
 
 function closeModal(e){
-  if(e.target.classList.contains("modal-overlay")){
-    closeModalDirect();
-  }
+  if(e.target.classList.contains("modal-overlay")){ closeModalDirect(); }
 }
 
 function closeModalDirect(){
