@@ -961,7 +961,7 @@
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.3.4";
+const APP_VERSION = "1.3.5";
 const PPE_PASSWORD = "ppe123"; // 🔑 PPE動画の閲覧用パスワード
 
 let videoWrapper, home, skipIntro, skipThinking, skipBar, resumeInline, playBtn, centralUI, bottomControls, backBtn, chapterBtn, chapterPanel, progress, currentTime, duration;
@@ -1142,16 +1142,22 @@ const videosData = [
   }
 ];
 
+/* 無限ループ対応の動画カード描画 */
 function renderRecentVideos() {
   const container = document.getElementById("recentVideoList");
   if (!container) return;
   container.innerHTML = "";
 
   const playableVideos = videosData.filter(v => !v.locked);
+  if (playableVideos.length === 0) return;
 
-  playableVideos.forEach(v => {
+  // 無限ループ用に「元の配列 + 先頭の要素（クローン）」を用意
+  const loopVideos = [...playableVideos, playableVideos[0]];
+
+  loopVideos.forEach((v, index) => {
     const card = document.createElement("div");
     card.className = "horizontal-video-card";
+    // クローン要素（一番最後のカード）をクリックした時も正しい動画モーダルを開く
     card.onclick = () => openModal(v.id);
 
     const thumbUrl = `https://img.youtube.com/vi/${v.id}/hqdefault.jpg`;
@@ -1170,23 +1176,32 @@ function renderRecentVideos() {
   });
 }
 
+/* シームレス無限自動スライド */
 function startAutoSlide() {
   stopAutoSlide();
   const container = document.getElementById("recentVideoList");
   if (!container) return;
 
   autoSlideInterval = setInterval(() => {
-    const cardWidth = 274;
-    const maxScroll = container.scrollWidth - container.clientWidth;
+    // カードの幅(260px) + gap(14px) = 274px
+    const cardGapWidth = 274;
+    const playableVideos = videosData.filter(v => !v.locked);
 
-    if (maxScroll <= 0) return;
+    // クローン（最後の要素）の位置に達したかチェック
+    const maxIndex = playableVideos.length;
+    const currentScrollIndex = Math.round(container.scrollLeft / cardGapWidth);
 
-    // 端まで到達したら、アニメーションなし(smoothを外す)で先頭へ瞬時にワープ
-    if (container.scrollLeft >= maxScroll - 5) {
+    if (currentScrollIndex >= maxIndex) {
+      // 見た目が同じ「一番最初のカード」の位置へ一瞬でワープ（アニメーションなし）
       container.scrollTo({ left: 0, behavior: 'auto' });
+
+      // ワープ直後に1コマ分スライドさせる
+      setTimeout(() => {
+        container.scrollBy({ left: cardGapWidth, behavior: 'smooth' });
+      }, 50);
     } else {
-      // 通常のスライドはスムーズに左へ移動
-      container.scrollBy({ left: cardWidth, behavior: 'smooth' });
+      // 通常のスライド
+      container.scrollBy({ left: cardGapWidth, behavior: 'smooth' });
     }
   }, 3500);
 
@@ -1195,6 +1210,7 @@ function startAutoSlide() {
   container.addEventListener('touchstart', stopAutoSlide, { passive: true });
   container.addEventListener('mousedown', stopAutoSlide);
 }
+
 
 
 function stopAutoSlide() {
