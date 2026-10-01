@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
 <style>
-  /* ==========================================================================
+ /* ==========================================================================
      1. ベース設定 & リセット
      ========================================================================== */
   * {
@@ -258,28 +258,28 @@
   }
 
   /* ==========================================================================
-     4. メインコンテンツ & 続きから見るカード
+     4. メインコンテンツ & 各ページレイアウト（上詰め統一）
      ========================================================================== */
-/* ホーム画面全体を画面の高さに対して上下中央にする */
-#home {
-  min-height: calc(100vh - 80px); /* 画面全体の高さからボトムナビ分を引いた高さ */
-  display: flex;
-  flex-direction: column;
-  justify-content: center; /* 縦方向の中央に配置 */
-  padding-bottom: 20px;
-}
+  #home, #infection, #study, #setting {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    padding-top: calc(65px + env(safe-area-inset-top)); /* ヘッダー直下からの配置 */
+    padding-bottom: calc(80px + env(safe-area-inset-bottom)); /* ボトムナビ被り防止 */
+    -webkit-overflow-scrolling: touch;
+  }
 
-
-/* 動画一覧タイトルの上余白も詰める */
-.section-title {
-  margin-top: 10px !important;
-  margin-bottom: 12px;
-  padding: 0 20px;
-}
-
+  .section-title {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 0 20px;
+    font-size: 16px;
+    font-weight: bold;
+  }
 
   .resume-card {
-    margin: 10px 20px 20px 20px;
+    margin: 10px 20px 15px 20px;
     background: linear-gradient(135deg, #1f1f1f 0%, #2a1113 100%);
     border: 1px solid #e50914;
     border-radius: 12px;
@@ -338,39 +338,35 @@
     flex-shrink: 0;
   }
 
-/* カルーセル容器：スクロール時の位置合わせ（スナップ）を追加 */
-.horizontal-scroll-container {
-  display: flex;
-  gap: 16px;
-  overflow-x: auto;
+  /* 横スライド動画コンテナ */
+  .horizontal-scroll-container {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding: 5px 20px 15px 20px;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    align-items: flex-start;
+  }
 
-  /* パディングで左右の空間を等しく保ち、配置バランスを整えます */
-  padding: 10px 20px 20px 20px;
+  /* 動画カード（適切な横幅と縦横比に固定） */
+  .horizontal-video-card {
+    flex: 0 0 280px;
+    width: 280px;
+    background: #1a1a1a;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #2a2a2a;
+    cursor: pointer;
+    position: relative;
+  }
 
-  -webkit-overflow-scrolling: touch;
-  scroll-behavior: smooth;
-  scroll-snap-type: x mandatory; /* スライド時にカード単位で中央にピタッと止まります */
-}
-
-.horizontal-video-card {
-  /* サイズ固定の設定はそのまま維持 */
-  flex: 0 0 280px; /* 前のサイズのまま */
-  background: #1a1a1a;
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid #2a2a2a;
-  cursor: pointer;
-  position: relative;
-
-  scroll-snap-align: center; /* 画面中央に位置合わせ */
-}
-
-.horizontal-thumb {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16 / 9; /* サムネイルの縦横比を16:9で固定して綺麗に見せる */
-  background: #000;
-}
+  .horizontal-thumb {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000;
+  }
 
   .horizontal-thumb img {
     width: 100%;
@@ -482,6 +478,47 @@
     text-align: center;
     color: #888;
     font-size: 14px;
+  }
+
+  /* お知らせバナー */
+  .notice-banner-container {
+    padding: 0 20px;
+    margin-top: 10px;
+    margin-bottom: 15px;
+  }
+
+  .notice-banner {
+    background: linear-gradient(135deg, #221a1a 0%, #161616 100%);
+    border: 1px solid #3d2222;
+    border-left: 4px solid #e50914;
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+
+  .notice-tag {
+    align-self: flex-start;
+    background: #e50914;
+    color: #fff;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  .notice-title {
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  .notice-desc {
+    color: #aaaaaa;
+    font-size: 12px;
+    line-height: 1.4;
   }
 
   /* ==========================================================================
@@ -735,82 +772,31 @@
   .modal-desc { font-size: 13px; color: #ccc; line-height: 1.4; margin-bottom: 16px; }
   .modal-actions { display: flex; flex-direction: column; gap: 8px; }
 
-  
-/* モーダル内ボタンのスタイル */
-.btn-play-red {
-  width: 100%;
-  background-color: #e50914;
-  color: white;
-  border: none;
-  padding: 12px;
-  border-radius: 8px;
-  font-weight: bold;
-  font-size: 16px;
-  margin-bottom: 10px;
-  cursor: pointer;
-}
+  /* モーダル内ボタンのスタイル */
+  .btn-play-red {
+    width: 100%;
+    background-color: #e50914;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
 
-.btn-survey-green {
-  width: 100%;
-  background-color: #2e7d32;
-  color: white;
-  border: none;
-  padding: 12px;
-  border-radius: 8px;
-  font-weight: bold;
-  font-size: 16px;
-  cursor: pointer;
-}
-/* お知らせバナーの上の不要な余白をカット */
-.notice-banner-container {
-  padding: 0 20px;
-  margin-top: 10px !important; /* 上の隙間を詰める */
-  margin-bottom: 20px;
-}
-
-.notice-banner {
-  background: linear-gradient(135deg, #221a1a 0%, #161616 100%);
-  border: 1px solid #3d2222;
-  border-left: 4px solid #e50914; /* ブランドカラーのアクセントライン */
-  border-radius: 10px;
-  padding: 14px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-}
-
-.notice-tag {
-  align-self: flex-start;
-  background: #e50914;
-  color: #fff;
-  font-size: 10px;
-  font-weight: bold;
-  padding: 2px 8px;
-  border-radius: 4px;
-}
-
-.notice-title {
-  color: #ffffff;
-  font-size: 14px;
-  font-weight: bold;
-}
-
-.notice-desc {
-  color: #aaaaaa;
-  font-size: 12px;
-  line-height: 1.4;
-}
-/* タブの切り替えコンテンツ（#infection や #study など）を上詰めに配置 */
-#infection, #study, #home, #setting {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start !important; /* 中央揃えを解除して上詰めに固定 */
-  align-items: stretch;
-  padding-top: 10px !important; /* ヘッダーとの隙間を最小限に */
-  margin-top: 0 !important;
-}
-
+  .btn-survey-green {
+    width: 100%;
+    background-color: #2e7d32;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+  }
   
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -1057,7 +1043,7 @@
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.4.7";
+const APP_VERSION = "1.4.8";
 const PPE_PASSWORD = "ppe123"; // 🔑 PPE動画の閲覧用パスワード
 
 let videoWrapper, home, skipIntro, skipThinking, skipBar, resumeInline, playBtn, centralUI, bottomControls, backBtn, chapterBtn, chapterPanel, progress, currentTime, duration;
