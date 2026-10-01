@@ -989,7 +989,7 @@
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.4.1";
+const APP_VERSION = "1.4.2";
 const PPE_PASSWORD = "ppe123"; // 🔑 PPE動画の閲覧用パスワード
 
 let videoWrapper, home, skipIntro, skipThinking, skipBar, resumeInline, playBtn, centralUI, bottomControls, backBtn, chapterBtn, chapterPanel, progress, currentTime, duration;
@@ -1754,7 +1754,6 @@ function openModal(id){
  document.getElementById("modalTitle").innerText = video.title;
  document.getElementById("modalDesc").innerText = video.desc || "説明はありません。";
 
- // メタ情報（再生時間・公開日）の設定
  document.getElementById("modalDuration").innerText = Math.floor((video.duration || 0) / 60) + "分";
  document.getElementById("modalDate").innerText = video.publishedAt || "公開日未定";
 
@@ -1773,7 +1772,7 @@ function openModal(id){
  };
  actionsEl.appendChild(playBtn);
 
- // 視聴完了およびテスト状態の判定
+ // 視聴完了判定（100%見たか、または管理者モードか）
  const isCompleted = localStorage.getItem(username + "_complete_" + id) === "true";
  const quizDone = localStorage.getItem(username + "_quiz_done_" + id);
  const wrongList = JSON.parse(localStorage.getItem(username + "_wrong_" + id) || "[]");
@@ -1790,8 +1789,8 @@ function openModal(id){
      quizBtn.style.cursor = "pointer";
      quizBtn.innerText = "回答結果を見る";
      quizBtn.onclick = function() { closeModalDirect(); showResult(id); };
-   } else if (isCompleted) {
-     quizBtn.style.background = "#2e7d32"; // 緑色でテスト実施
+   } else if (isCompleted || adminMode) {
+     quizBtn.style.background = "#2e7d32";
      quizBtn.style.color = "#fff";
      quizBtn.style.cursor = "pointer";
      quizBtn.innerText = "確認テストを実施する";
@@ -1801,10 +1800,10 @@ function openModal(id){
      quizBtn.style.color = "#666";
      quizBtn.style.cursor = "not-allowed";
      quizBtn.innerText = "確認テスト（動画視聴後）";
+     quizBtn.onclick = function() { showToast("動画を最後まで視聴するとテストを受けられます"); };
    }
    actionsEl.appendChild(quizBtn);
 
-   // 復習ボタン（間違えた問題がある場合）
    if (quizDone && wrongList.length > 0) {
      const reviewBtn = document.createElement("button");
      reviewBtn.style.cssText = "padding:12px; border-radius:8px; font-weight:bold; background:#ff9800; color:#fff; border:none; width:100%; font-size:14px; cursor:pointer; margin-top:8px;";
@@ -1817,17 +1816,20 @@ function openModal(id){
    const surveyBtn = document.createElement("button");
    surveyBtn.style.cssText = "padding:12px; border-radius:8px; font-weight:bold; width:100%; font-size:14px; border:none; transition:0.2s;";
 
-   if (isCompleted) {
+   // ★最後まで視聴しているか（または管理者モードか）で判定
+   if (isCompleted || adminMode) {
      surveyBtn.style.background = "#2e7d32";
      surveyBtn.style.color = "#fff";
      surveyBtn.style.cursor = "pointer";
      surveyBtn.innerText = "アンケートに答える";
      surveyBtn.onclick = function() { closeModalDirect(); startSurvey(id); };
    } else {
+     // 未視聴時はグレーにして押すと「最後まで視聴すると〜」の案内を出す
      surveyBtn.style.background = "#222";
      surveyBtn.style.color = "#666";
      surveyBtn.style.cursor = "not-allowed";
      surveyBtn.innerText = "アンケートに答える（動画視聴後）";
+     surveyBtn.onclick = function() { showToast("動画を最後まで視聴するとアンケートに回答できます"); };
    }
    actionsEl.appendChild(surveyBtn);
  }
