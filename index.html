@@ -1266,7 +1266,7 @@ document.addEventListener("DOMContentLoaded", function(){
 });
 
 const UPDATE_MESSAGE = `
-【アップデート情報 Ver 1.5.1】
+【アップデート情報 Ver 1.5.2】
 ・ 設定ページを実装しました（画質・自動再生設定など）。
 ・ ホーム画面の動画カードレイアウトを中央揃えに微調整しました。
 ・ リスト画面からの動画再生時にセキュリティ・パスワード制限を適用しました。
@@ -1714,6 +1714,45 @@ function closePasswordModal() {
 }
 
 /* 動画再生処理 */
+/* プレイヤーを画面サイズに合わせて16:9にリサイズする関数（グローバルに配置） */
+function resizePlayer() {
+  const wrapper = document.getElementById("videoWrapper");
+  const container = document.getElementById("playerContainer");
+  if (!wrapper || !container || wrapper.style.display === "none") return;
+
+  const vw = wrapper.clientWidth || window.innerWidth;
+  const vh = wrapper.clientHeight || window.innerHeight;
+  const ratio = 16 / 9;
+
+  let targetW, targetH;
+  if (vw / vh > ratio) {
+    targetH = vh;
+    targetW = Math.floor(vh * ratio);
+  } else {
+    targetW = vw;
+    targetH = Math.floor(vw / ratio);
+  }
+
+  container.style.width = targetW + "px";
+  container.style.height = targetH + "px";
+
+  if (player && typeof player.setSize === "function") {
+    player.setSize(targetW, targetH);
+  }
+  const iframe = container.querySelector("iframe");
+  if (iframe) {
+    iframe.style.width = targetW + "px";
+    iframe.style.height = targetH + "px";
+  }
+}
+
+window.addEventListener("resize", resizePlayer);
+window.addEventListener("orientationchange", () => {
+  setTimeout(resizePlayer, 150);
+  setTimeout(resizePlayer, 400);
+});
+
+/* 動画再生処理 */
 function playVideo(id){
  currentVideoId = id;
  if (chapterBtn) chapterBtn.style.display = isNoroVideo() ? "block" : "none";
@@ -1730,54 +1769,33 @@ function playVideo(id){
 
  if (home) home.style.display = "none";
  if (videoWrapper) videoWrapper.style.display = "block";
- resizePlayer(); //
-    
+ resizePlayer();
+
  if(uiInterval) clearInterval(uiInterval);
 
  if(player && typeof player.destroy === 'function') {
    try { player.destroy(); } catch(e){}
  }
 
-function resizePlayer() {
-  const wrapper = document.getElementById("videoWrapper");
-  const container = document.getElementById("playerContainer");
-  if (!wrapper || !container) return;
+ // プレイヤー生成前に枠の正確なピクセルサイズを確定させる
+ const vw = videoWrapper.clientWidth || window.innerWidth;
+ const vh = videoWrapper.clientHeight || window.innerHeight;
+ const ratio = 16 / 9;
+ const initW = (vw / vh > ratio) ? Math.floor(vh * ratio) : vw;
+ const initH = (vw / vh > ratio) ? vh : Math.floor(vw / ratio);
 
-  // 実際に表示されている枠の正確な幅と高さを取得（iOSのPWAでもズレない）
-  const vw = wrapper.clientWidth || document.documentElement.clientWidth;
-  const vh = wrapper.clientHeight || document.documentElement.clientHeight;
-  const ratio = 16 / 9;
+ const container = document.getElementById("playerContainer");
+ if (container) {
+   container.style.width = initW + "px";
+   container.style.height = initH + "px";
+ }
 
-  let targetW, targetH;
-  if (vw / vh > ratio) {
-    targetH = vh;
-    targetW = Math.floor(vh * ratio);
-  } else {
-    targetW = vw;
-    targetH = Math.floor(vw / ratio);
-  }
-
-  container.style.width = targetW + "px";
-  container.style.height = targetH + "px";
-
-  // YouTubeが生成したiframeにも同じピクセル数を直接セット
-  const iframe = container.querySelector("iframe");
-  if (iframe) {
-    iframe.style.width = targetW + "px";
-    iframe.style.height = targetH + "px";
-  }
-}
-
-window.addEventListener("resize", resizePlayer);
-window.addEventListener("orientationchange", () => {
-  setTimeout(resizePlayer, 150);
-  setTimeout(resizePlayer, 400); // iOSの回転アニメーション完了後にも再計算
-});
-    
  // 設定されたデフォルト画質を取得
  const preferredQuality = localStorage.getItem("setting_quality") || "auto";
 
-player = new YT.Player('player',{
+ player = new YT.Player('player',{
+   width: initW,
+   height: initH,
    videoId: id,
    playerVars: {
      controls: 0,
@@ -1786,12 +1804,12 @@ player = new YT.Player('player',{
      fs: 0,
      playsinline: 1,
      cc_load_policy: 0,
-     cc_lang_pref: "xx", // 存在しない言語コードを指定して自動字幕の選択を防ぐ
+     cc_lang_pref: "xx",
      iv_load_policy: 3
    },
    events: {
-    onReady: () => {
-       resizePlayer(); // ← iframe生成直後にサイズを確定させる
+     onReady: () => {
+       resizePlayer();
        disableCaptions();
        uiInterval = setInterval(updateUI, 500);
        showUI();
@@ -1804,7 +1822,7 @@ player = new YT.Player('player',{
      },
      onStateChange: (e) => {
        if(e.data === YT.PlayerState.PLAYING) {
-         disableCaptions(); // 再生が始まった瞬間にも字幕を強制オフ
+         disableCaptions();
          startUITimer();
        }
      }
