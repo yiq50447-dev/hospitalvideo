@@ -690,9 +690,10 @@
  /* ==========================================================================
     6. 動画プレイヤー・各種モーダル関連
     ========================================================================== */
- #videoWrapper {
+#videoWrapper {
    position: fixed;
-   inset: 0; /* top:0; right:0; bottom:0; left:0; と同じで実画面サイズにピッタリ合う */
+   top: 0;
+   left: 0;
    width: 100%;
    height: 100%;
    display: none;
@@ -706,27 +707,17 @@
    top: 50%;
    left: 50%;
    transform: translate(-50%, -50%);
-   width: 100%;
-   height: auto;
-   aspect-ratio: 16 / 9;
-   max-width: 100%;
-   max-height: 100%;
+   /* 画面幅100% と 高さから計算した16:9幅 の小さい方を採用（絶対に見切れない） */
+   width: min(100%, calc(100vh * 16 / 9));
+   height: min(100%, calc(100vw * 9 / 16));
  }
 
- @media (orientation: landscape) {
-   #playerContainer {
-     position: absolute;
-     top: 50%;
-     left: 50%;
-     transform: translate(-50%, -50%);
-     width: auto;
-     height: 100%;
-     aspect-ratio: 16 / 9;
-     max-width: 100%;
-     max-height: 100%;
-   }
+ #playerContainer #player, #player {
+   width: 100% !important;
+   height: 100% !important;
+   border: none;
+   pointer-events: none;
  }
-
 
  .centralUI {
    position: absolute; top: 50%; left: 50%;
@@ -1229,7 +1220,7 @@
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.5.4";
+const APP_VERSION = "1.5.5";
 const PPE_PASSWORD = "ppe123"; // 🔑 PPE動画の閲覧用パスワード
 
 let videoWrapper, home, skipIntro, skipThinking, skipBar, resumeInline, playBtn, centralUI, bottomControls, backBtn, chapterBtn, chapterPanel, progress, currentTime, duration;
