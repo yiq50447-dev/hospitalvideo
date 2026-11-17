@@ -417,6 +417,32 @@
    margin-top: 6px;
  }
 
+/* スライドインジケーター（シルバーの丸） */
+.carousel-indicators {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+  margin-bottom: 14px;
+}
+
+.indicator-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #444;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.indicator-dot.active {
+  width: 18px;
+  border-radius: 4px;
+  background-color: #d8d8d8; /* シルバー */
+  box-shadow: 0 0 6px rgba(224, 224, 224, 0.5);
+}
+    
  #videoList { list-style: none; padding: 0 16px 20px 16px; }
  #videoList li {
    padding: 12px;
@@ -909,9 +935,9 @@
 <!-- ログイン画面 -->
 <div id="nameInputModal">
  <div class="app-brand">
-   <div class="app-logo">EFI Pocket</div>
-   <div class="app-subtitle">いつでも学べる病棟研修ポータル</div>
- </div>
+  <div class="app-logo">EFI <span style="color:#ffffff;">Pocket</span></div>
+  <div class="app-subtitle">いつでも学べる病棟研修ポータル</div>
+</div>
 
  <h3>視聴する方の名前を入力してください</h3>
  <p style="font-size:13px; color:#888; margin-top:2px; text-align:center;">次回視聴時も続きから再生できます</p>
@@ -936,10 +962,10 @@
 
 <!-- ヘッダー -->
 <div id="topBarHome">
- <div class="header-brand">
-   <div class="header-logo">EFI Pocket</div>
-   <div class="header-subtitle">いつでも学べる病棟研修ポータル</div>
- </div>
+<div class="header-brand">
+  <div class="header-logo">EFI <span style="color:#ffffff;">Pocket</span></div>
+  <div class="header-subtitle">いつでも学べる病棟研修ポータル</div>
+</div>
 
  <div class="avatar-btn" id="userAvatar" onclick="toggleProfileMenu()">名</div>
 
@@ -957,11 +983,12 @@
  <!-- 📌 続きから再生カード -->
  <div id="resumeCardArea"></div>
 
- <!-- 最新の研修動画エリア -->
- <div id="recentSection">
-   <div class="section-title">最新の動画一覧</div>
-   <div class="horizontal-scroll-container" id="recentVideoList"></div>
- </div>
+<!-- 最新の研修動画エリア -->
+<div id="recentSection">
+  <div class="section-title">最新の動画一覧</div>
+  <div class="horizontal-scroll-container" id="recentVideoList"></div>
+  <div class="carousel-indicators" id="carouselIndicators"></div>
+</div>
 
 <div class="notice-banner-container">
  <div class="notice-banner">
@@ -1425,26 +1452,26 @@ const videosData = [
  }
 ];
 
-/* 無限ループ対応の動画カード描画 */
+let currentSlideIndex = 0;
+
+/* クローンなし・インジケーター付きの動画カード描画 */
 function renderRecentVideos() {
  const container = document.getElementById("recentVideoList");
+ const indicatorContainer = document.getElementById("carouselIndicators");
  if (!container) return;
+
  container.innerHTML = "";
+ if (indicatorContainer) indicatorContainer.innerHTML = "";
 
  container.style.paddingLeft = "16px";
+ container.style.paddingRight = "16px";
  container.style.boxSizing = "border-box";
 
  const playableVideos = videosData.filter(v => !v.locked);
  if (playableVideos.length === 0) return;
 
- const clones = [];
- for (let i = 0; i < 50; i++) {
-   clones.push(playableVideos[i % playableVideos.length]);
- }
-
- const loopVideos = [...playableVideos, ...clones];
-
- loopVideos.forEach((v) => {
+ playableVideos.forEach((v, index) => {
+   // 動画カード作成
    const card = document.createElement("div");
    card.className = "horizontal-video-card";
    card.onclick = () => openModal(v.id);
@@ -1462,32 +1489,82 @@ function renderRecentVideos() {
      </div>
    `;
    container.appendChild(card);
+
+   // インジケーター（シルバーの丸）作成
+   if (indicatorContainer) {
+     const dot = document.createElement("div");
+     dot.className = "indicator-dot" + (index === 0 ? " active" : "");
+     dot.onclick = () => {
+       stopAutoSlide();
+       scrollToSlide(index);
+     };
+     indicatorContainer.appendChild(dot);
+   }
+ });
+
+ // 手動スクロール時に現在位置を計算してインジケーターを更新
+ container.onscroll = () => {
+   const cards = container.querySelectorAll(".horizontal-video-card");
+   if (cards.length === 0) return;
+
+   const containerCenter = container.scrollLeft + container.clientWidth / 2;
+   let closestIndex = 0;
+   let minDistance = Infinity;
+
+   cards.forEach((card, idx) => {
+     const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+     const distance = Math.abs(containerCenter - cardCenter);
+     if (distance < minDistance) {
+       minDistance = distance;
+       closestIndex = idx;
+     }
+   });
+
+   if (currentSlideIndex !== closestIndex) {
+     currentSlideIndex = closestIndex;
+     updateIndicators(closestIndex);
+   }
+ };
+}
+
+/* 指定番号のカードへスクロール */
+function scrollToSlide(index) {
+ const container = document.getElementById("recentVideoList");
+ if (!container) return;
+ const cards = container.querySelectorAll(".horizontal-video-card");
+ if (!cards[index]) return;
+
+ const targetCard = cards[index];
+ const scrollPos = targetCard.offsetLeft - (container.clientWidth - targetCard.offsetWidth) / 2;
+ container.scrollTo({ left: scrollPos, behavior: "smooth" });
+ currentSlideIndex = index;
+ updateIndicators(index);
+}
+
+/* シルバーの丸のアクティブ切り替え */
+function updateIndicators(activeIndex) {
+ const dots = document.querySelectorAll("#carouselIndicators .indicator-dot");
+ dots.forEach((dot, idx) => {
+   if (idx === activeIndex) {
+     dot.classList.add("active");
+   } else {
+     dot.classList.remove("active");
+   }
  });
 }
 
-/* シームレス無限自動スライド */
+/* 自動スライド（クローンなし・最後まで行ったら先頭に戻る） */
 function startAutoSlide() {
  stopAutoSlide();
  const container = document.getElementById("recentVideoList");
  if (!container) return;
 
  autoSlideInterval = setInterval(() => {
-   const cardWidth = 274;
    const playableVideos = videosData.filter(v => !v.locked);
-   const originalCount = playableVideos.length;
+   if (playableVideos.length <= 1) return;
 
-   const maxOriginalScroll = cardWidth * originalCount;
-   const currentScroll = container.scrollLeft;
-
-   if (currentScroll >= maxOriginalScroll - 10) {
-     container.scrollTo({ left: currentScroll - maxOriginalScroll, behavior: 'auto' });
-
-     requestAnimationFrame(() => {
-       container.scrollBy({ left: cardWidth, behavior: 'smooth' });
-     });
-   } else {
-     container.scrollBy({ left: cardWidth, behavior: 'smooth' });
-   }
+   const nextIndex = (currentSlideIndex + 1) % playableVideos.length;
+   scrollToSlide(nextIndex);
  }, 3500);
 
  container.removeEventListener('touchstart', stopAutoSlide);
