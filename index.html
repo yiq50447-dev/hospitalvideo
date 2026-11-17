@@ -1223,7 +1223,7 @@
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.6.2";
+const APP_VERSION = "1.6.3";
 const PPE_PASSWORD = "ppe123"; // 🔑 PPE動画の閲覧用パスワード
 
 let videoWrapper, home, skipIntro, skipThinking, skipBar, resumeInline, playBtn, centralUI, bottomControls, backBtn, chapterBtn, chapterPanel, progress, currentTime, duration;
@@ -1722,7 +1722,7 @@ function resizePlayer() {
   // 1280x720 が画面内に完全に収まる倍率を計算（0.90倍にして右端の見切れを完全に防止）
   const scaleX = vw / 1280;
   const scaleY = vh / 720;
-  const scale = Math.min(scaleX, scaleY) * 0.90;
+  const scale = Math.min(scaleX, scaleY) * 0.70;
 
   container.style.transform = `translate(-50%, -50%) scale(${scale})`;
 }
