@@ -756,7 +756,6 @@
  #progress { flex: 1; }
     
 .hideUI { opacity: 0; pointer-events: none; }
-#backBtn.hideUI { opacity: 0.3; pointer-events: auto; } /* 戻すボタンは常に押せるようにする */
 
  #speedBtn {
    background: rgba(255,255,255,0.15);
@@ -1761,16 +1760,13 @@ player = new YT.Player('player',{
      modestbranding: 1,
      fs: 0,
      playsinline: 1,
-     cc_load_policy: 0, // 字幕を初期状態でオフにする
-     iv_load_policy: 3  // 動画内の注釈・カードを非表示にする
+     cc_load_policy: 0,
+     cc_lang_pref: "xx", // 存在しない言語コードを指定して自動字幕の選択を防ぐ
+     iv_load_policy: 3
    },
    events: {
      onReady: () => {
-       // 念のためAPI側からも字幕モジュールをオフにする
-       if (player.unloadModule) {
-         try { player.unloadModule("captions"); } catch(e) {}
-         try { player.unloadModule("cc"); } catch(e) {}
-       }
+       disableCaptions();
        uiInterval = setInterval(updateUI, 500);
        showUI();
        if(preferredQuality !== "auto" && player.setPlaybackQuality) {
@@ -1780,12 +1776,30 @@ player = new YT.Player('player',{
          player.seekTo(resumeTime, true);
        }
      },
-   onStateChange: (e) => {
-       if(e.data === YT.PlayerState.PLAYING) startUITimer();
+     onStateChange: (e) => {
+       if(e.data === YT.PlayerState.PLAYING) {
+         disableCaptions(); // 再生が始まった瞬間にも字幕を強制オフ
+         startUITimer();
+       }
      }
    }
  });
-} // 
+}
+
+// 字幕モジュールを強制的にオフ・アンロードする補助関数
+function disableCaptions() {
+  if (!player) return;
+  try {
+    if (typeof player.setOption === 'function') {
+      player.setOption('captions', 'track', {});
+      player.setOption('cc', 'track', {});
+    }
+    if (typeof player.unloadModule === 'function') {
+      player.unloadModule('captions');
+      player.unloadModule('cc');
+    }
+  } catch (e) {}
+}
 
 function togglePlay(){
  if(!resumePromptShown && resumeTime > 5){
