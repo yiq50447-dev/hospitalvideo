@@ -690,10 +690,12 @@
  /* ==========================================================================
     6. 動画プレイヤー・各種モーダル関連
     ========================================================================== */
- #videoWrapper {
+  #videoWrapper {
    position: fixed;
    top: 0;
    left: 0;
+   right: 0;
+   bottom: 0;
    width: 100%;
    height: 100%;
    display: none;
@@ -704,18 +706,17 @@
 
  #playerContainer {
    position: absolute;
-   top: 0;
-   left: 0;
-   right: 0;
-   bottom: 0;
-   margin: auto;
-   width: 100%;
-   height: 100%;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+   overflow: hidden;
  }
 
  #playerContainer iframe, #playerContainer #player, #player {
    width: 100% !important;
    height: 100% !important;
+   max-width: 100% !important;
+   max-height: 100% !important;
    display: block;
    border: none;
    pointer-events: none;
@@ -1222,7 +1223,7 @@
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.5.6";
+const APP_VERSION = "1.5.7";
 const PPE_PASSWORD = "ppe123"; // 🔑 PPE動画の閲覧用パスワード
 
 let videoWrapper, home, skipIntro, skipThinking, skipBar, resumeInline, playBtn, centralUI, bottomControls, backBtn, chapterBtn, chapterPanel, progress, currentTime, duration;
@@ -1738,26 +1739,39 @@ function playVideo(id){
  }
 
 function resizePlayer() {
+  const wrapper = document.getElementById("videoWrapper");
   const container = document.getElementById("playerContainer");
-  if (!container) return;
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
+  if (!wrapper || !container) return;
+
+  // 実際に表示されている枠の正確な幅と高さを取得（iOSのPWAでもズレない）
+  const vw = wrapper.clientWidth || document.documentElement.clientWidth;
+  const vh = wrapper.clientHeight || document.documentElement.clientHeight;
   const ratio = 16 / 9;
 
+  let targetW, targetH;
   if (vw / vh > ratio) {
-    // 横画面（iPhone横向き・PC）：高さに合わせて16:9にする
-    container.style.height = vh + "px";
-    container.style.width = Math.floor(vh * ratio) + "px";
+    targetH = vh;
+    targetW = Math.floor(vh * ratio);
   } else {
-    // 縦画面（iPhone縦向き）：横幅に合わせて16:9にする
-    container.style.width = vw + "px";
-    container.style.height = Math.floor(vw / ratio) + "px";
+    targetW = vw;
+    targetH = Math.floor(vw / ratio);
+  }
+
+  container.style.width = targetW + "px";
+  container.style.height = targetH + "px";
+
+  // YouTubeが生成したiframeにも同じピクセル数を直接セット
+  const iframe = container.querySelector("iframe");
+  if (iframe) {
+    iframe.style.width = targetW + "px";
+    iframe.style.height = targetH + "px";
   }
 }
 
 window.addEventListener("resize", resizePlayer);
 window.addEventListener("orientationchange", () => {
-  setTimeout(resizePlayer, 100);
+  setTimeout(resizePlayer, 150);
+  setTimeout(resizePlayer, 400); // iOSの回転アニメーション完了後にも再計算
 });
     
  // 設定されたデフォルト画質を取得
@@ -1776,7 +1790,8 @@ player = new YT.Player('player',{
      iv_load_policy: 3
    },
    events: {
-     onReady: () => {
+    onReady: () => {
+       resizePlayer(); // ← iframe生成直後にサイズを確定させる
        disableCaptions();
        uiInterval = setInterval(updateUI, 500);
        showUI();
