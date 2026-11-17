@@ -719,7 +719,10 @@
    display: block;
    border: none;
    pointer-events: none;
+   transform: scale(0.95);
+   transform-origin: center center;
  }
+
  .centralUI {
    position: absolute; top: 50%; left: 50%;
    transform: translate(-50%, -50%);
@@ -1221,7 +1224,7 @@
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.5.9";
+const APP_VERSION = "1.6.0";
 const PPE_PASSWORD = "ppe123"; // 🔑 PPE動画の閲覧用パスワード
 
 let videoWrapper, home, skipIntro, skipThinking, skipBar, resumeInline, playBtn, centralUI, bottomControls, backBtn, chapterBtn, chapterPanel, progress, currentTime, duration;
