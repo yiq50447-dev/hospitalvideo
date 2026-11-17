@@ -716,12 +716,17 @@
  }
 
  #playerContainer iframe, #playerContainer #player, #player {
-   width: 1280px !important;
+   position: absolute !important;
+   top: 0 !important;
+   left: 0 !important;
+   width: 1220px !important;
    height: 720px !important;
+   max-width: none !important;
    display: block;
    border: none;
    pointer-events: none;
  }
+
  .centralUI {
    position: absolute; top: 50%; left: 50%;
    transform: translate(-50%, -50%);
@@ -1722,7 +1727,7 @@ function resizePlayer() {
   // 1280x720 が画面内に完全に収まる倍率を計算（0.90倍にして右端の見切れを完全に防止）
   const scaleX = vw / 1280;
   const scaleY = vh / 720;
-  const scale = Math.min(scaleX, scaleY) * 0.70;
+  const scale = Math.min(scaleX, scaleY) * 0.100;
 
   container.style.transform = `translate(-50%, -50%) scale(${scale})`;
 }
