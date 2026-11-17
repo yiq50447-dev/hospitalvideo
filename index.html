@@ -754,7 +754,9 @@
    gap: 8px; z-index: 40; transition: .3s;
  }
  #progress { flex: 1; }
- .hideUI { opacity: 0; pointer-events: none; }
+    
+.hideUI { opacity: 0; pointer-events: none; }
+#backBtn.hideUI { opacity: 0.3; pointer-events: auto; } /* 戻すボタンは常に押せるようにする */
 
  #speedBtn {
    background: rgba(255,255,255,0.15);
@@ -1277,7 +1279,7 @@ document.addEventListener("DOMContentLoaded", function(){
 });
 
 const UPDATE_MESSAGE = `
-【アップデート情報 Ver 1.5.0】
+【アップデート情報 Ver 1.5.1】
 ・ 設定ページを実装しました（画質・自動再生設定など）。
 ・ ホーム画面の動画カードレイアウトを中央揃えに微調整しました。
 ・ リスト画面からの動画再生時にセキュリティ・パスワード制限を適用しました。
@@ -1751,11 +1753,24 @@ function playVideo(id){
  // 設定されたデフォルト画質を取得
  const preferredQuality = localStorage.getItem("setting_quality") || "auto";
 
- player = new YT.Player('player',{
+player = new YT.Player('player',{
    videoId: id,
-   playerVars: { controls: 0, rel: 0, modestbranding: 1, fs: 0, playsinline: 1 },
+   playerVars: {
+     controls: 0,
+     rel: 0,
+     modestbranding: 1,
+     fs: 0,
+     playsinline: 1,
+     cc_load_policy: 0, // 字幕を初期状態でオフにする
+     iv_load_policy: 3  // 動画内の注釈・カードを非表示にする
+   },
    events: {
      onReady: () => {
+       // 念のためAPI側からも字幕モジュールをオフにする
+       if (player.unloadModule) {
+         try { player.unloadModule("captions"); } catch(e) {}
+         try { player.unloadModule("cc"); } catch(e) {}
+       }
        uiInterval = setInterval(updateUI, 500);
        showUI();
        if(preferredQuality !== "auto" && player.setPlaybackQuality) {
@@ -1770,7 +1785,7 @@ function playVideo(id){
      }
    }
  });
-}
+
 
 function togglePlay(){
  if(!resumePromptShown && resumeTime > 5){
@@ -1963,11 +1978,27 @@ function closeUpdateModal(){
 }
 
 function goBack(){
- if(player){ try { player.destroy(); } catch(e){} }
+ // 定期実行タイマーを確実に停止
+ if(uiInterval){ clearInterval(uiInterval); uiInterval = null; }
+ if(uiTimer){ clearTimeout(uiTimer); uiTimer = null; }
+ if(thinkingTimer){ clearInterval(thinkingTimer); thinkingTimer = null; }
+
+ // プレイヤーを停止してから破棄
+ if(player){
+   try {
+     if(typeof player.stopVideo === 'function') player.stopVideo();
+     if(typeof player.destroy === 'function') player.destroy();
+   } catch(e){}
+   player = null;
+ }
+
  if(videoWrapper) videoWrapper.style.display = "none";
  if(home) home.style.display = "block";
  if(chapterPanel) chapterPanel.style.right = "-320px";
  chapterOpen = false;
+ introActive = false;
+ thinkingActive = false;
+
  checkResumeCard();
  renderVideoList();
  renderRecentVideos();
