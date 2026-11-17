@@ -690,14 +690,11 @@
  /* ==========================================================================
     6. 動画プレイヤー・各種モーダル関連
     ========================================================================== */
-  #videoWrapper {
+ #videoWrapper {
    position: fixed;
-   top: 0;
-   left: 0;
-   right: 0;
-   bottom: 0;
-   width: 100%;
-   height: 100%;
+   inset: 0;
+   width: 100vw;
+   height: 100vh;
    display: none;
    background: #000;
    overflow: hidden;
@@ -708,20 +705,21 @@
    position: absolute;
    top: 50%;
    left: 50%;
-   transform: translate(-50%, -50%);
+   width: 1280px;
+   height: 720px;
+   transform: translate(-50%, -50%) scale(1);
+   transform-origin: center center;
+   background: #000;
    overflow: hidden;
  }
 
  #playerContainer iframe, #playerContainer #player, #player {
-   width: 100% !important;
-   height: 100% !important;
-   max-width: 100% !important;
-   max-height: 100% !important;
+   width: 1280px !important;
+   height: 720px !important;
    display: block;
    border: none;
    pointer-events: none;
  }
-
  .centralUI {
    position: absolute; top: 50%; left: 50%;
    transform: translate(-50%, -50%);
@@ -1223,7 +1221,7 @@
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.5.8";
+const APP_VERSION = "1.5.9";
 const PPE_PASSWORD = "ppe123"; // 🔑 PPE動画の閲覧用パスワード
 
 let videoWrapper, home, skipIntro, skipThinking, skipBar, resumeInline, playBtn, centralUI, bottomControls, backBtn, chapterBtn, chapterPanel, progress, currentTime, duration;
@@ -1713,42 +1711,28 @@ function closePasswordModal() {
  pendingVideoId = null;
 }
 
-/* プレイヤーを画面サイズに合わせて16:9にリサイズする関数（グローバルに配置） */
+/* 1280x720のプレイヤーを画面サイズに合わせて確実に縮小フィットさせる関数 */
 function resizePlayer() {
   const wrapper = document.getElementById("videoWrapper");
   const container = document.getElementById("playerContainer");
   if (!wrapper || !container || wrapper.style.display === "none") return;
 
-  const vw = wrapper.clientWidth || window.innerWidth;
-  const vh = wrapper.clientHeight || window.innerHeight;
-  const ratio = 16 / 9;
+  // 実際に表示可能な画面の幅と高さを取得
+  const vw = document.documentElement.clientWidth || window.innerWidth;
+  const vh = document.documentElement.clientHeight || window.innerHeight;
 
-  let targetW, targetH;
-  if (vw / vh > ratio) {
-    targetH = vh;
-    targetW = Math.floor(vh * ratio);
-  } else {
-    targetW = vw;
-    targetH = Math.floor(vw / ratio);
-  }
+  // 1280x720 が画面内に完全に収まる倍率を計算（少しだけ余白を持たせるため0.96倍）
+  const scaleX = vw / 1280;
+  const scaleY = vh / 720;
+  const scale = Math.min(scaleX, scaleY) * 0.96;
 
-  container.style.width = targetW + "px";
-  container.style.height = targetH + "px";
-
-  if (player && typeof player.setSize === "function") {
-    player.setSize(targetW, targetH);
-  }
-  const iframe = container.querySelector("iframe");
-  if (iframe) {
-    iframe.style.width = targetW + "px";
-    iframe.style.height = targetH + "px";
-  }
+  container.style.transform = `translate(-50%, -50%) scale(${scale})`;
 }
 
 window.addEventListener("resize", resizePlayer);
 window.addEventListener("orientationchange", () => {
-  setTimeout(resizePlayer, 150);
-  setTimeout(resizePlayer, 400);
+  setTimeout(resizePlayer, 100);
+  setTimeout(resizePlayer, 350);
 });
 
 /* 動画再生処理 */
@@ -1776,25 +1760,12 @@ function playVideo(id){
    try { player.destroy(); } catch(e){}
  }
 
- // プレイヤー生成前に枠の正確なピクセルサイズを確定させる
- const vw = videoWrapper.clientWidth || window.innerWidth;
- const vh = videoWrapper.clientHeight || window.innerHeight;
- const ratio = 16 / 9;
- const initW = (vw / vh > ratio) ? Math.floor(vh * ratio) : vw;
- const initH = (vw / vh > ratio) ? vh : Math.floor(vw / ratio);
-
- const container = document.getElementById("playerContainer");
- if (container) {
-   container.style.width = initW + "px";
-   container.style.height = initH + "px";
- }
-
- // 設定されたデフォルト画質を取得
  const preferredQuality = localStorage.getItem("setting_quality") || "auto";
 
+ // 常にPCと同じ1280x720で生成し、iOSのモバイルズーム挙動を完全に封じる
  player = new YT.Player('player',{
-   width: initW,
-   height: initH,
+   width: 1280,
+   height: 720,
    videoId: id,
    playerVars: {
      controls: 0,
@@ -1828,6 +1799,7 @@ function playVideo(id){
    }
  });
 }
+
 // 字幕モジュールを強制的にオフ・アンロードする補助関数
 function disableCaptions() {
   if (!player) return;
