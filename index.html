@@ -1780,12 +1780,12 @@ player = new YT.Player('player',{
          player.seekTo(resumeTime, true);
        }
      },
-     onStateChange: (e) => {
+   onStateChange: (e) => {
        if(e.data === YT.PlayerState.PLAYING) startUITimer();
      }
    }
  });
-
+} // 
 
 function togglePlay(){
  if(!resumePromptShown && resumeTime > 5){
