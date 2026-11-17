@@ -1223,7 +1223,7 @@
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.5.7";
+const APP_VERSION = "1.5.8";
 const PPE_PASSWORD = "ppe123"; // 🔑 PPE動画の閲覧用パスワード
 
 let videoWrapper, home, skipIntro, skipThinking, skipBar, resumeInline, playBtn, centralUI, bottomControls, backBtn, chapterBtn, chapterPanel, progress, currentTime, duration;
@@ -1266,7 +1266,7 @@ document.addEventListener("DOMContentLoaded", function(){
 });
 
 const UPDATE_MESSAGE = `
-【アップデート情報 Ver 1.5.2】
+【アップデート情報 Ver 1.5.8】
 ・ 設定ページを実装しました（画質・自動再生設定など）。
 ・ ホーム画面の動画カードレイアウトを中央揃えに微調整しました。
 ・ リスト画面からの動画再生時にセキュリティ・パスワード制限を適用しました。
@@ -1713,7 +1713,6 @@ function closePasswordModal() {
  pendingVideoId = null;
 }
 
-/* 動画再生処理 */
 /* プレイヤーを画面サイズに合わせて16:9にリサイズする関数（グローバルに配置） */
 function resizePlayer() {
   const wrapper = document.getElementById("videoWrapper");
@@ -1829,7 +1828,6 @@ function playVideo(id){
    }
  });
 }
-
 // 字幕モジュールを強制的にオフ・アンロードする補助関数
 function disableCaptions() {
   if (!player) return;
