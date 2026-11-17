@@ -691,51 +691,37 @@
     6. 動画プレイヤー・各種モーダル関連
     ========================================================================== */
 
-千葉翼
-4:52 AM (3 minutes ago)
-to me
-
-  #videoWrapper {
+#videoWrapper {
    position: fixed;
-   inset: 0;
+   top: 0;
+   left: 0;
    width: 100%;
    height: 100%;
    display: none;
-   align-items: center;
-   justify-content: center;
-   /* 上下左右に確実な黒余白を作り、iOSの自動ズームを防止 */
-   padding: calc(16px + env(safe-area-inset-top)) calc(32px + env(safe-area-inset-right)) calc(16px + env(safe-area-inset-bottom)) calc(32px + env(safe-area-inset-left));
    background: #000;
    overflow: hidden;
-   z-index: 1010;
+   z-index: 9999;
  }
 
  #playerContainer {
-   position: relative;
-   width: 100%;
-   height: 100%;
-   max-width: 100%;
-   max-height: 100%;
-   aspect-ratio: 16 / 9;
-   display: flex;
-   align-items: center;
-   justify-content: center;
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   width: 1280px;
+   height: 720px;
+   transform: translate(-50%, -50%) scale(0.5);
+   transform-origin: center center;
    background: #000;
    overflow: hidden;
  }
 
  #playerContainer iframe, #playerContainer #player, #player {
-   width: 100% !important;
-   height: 100% !important;
-   max-width: 100% !important;
-   max-height: 100% !important;
-   aspect-ratio: 16 / 9;
+   width: 1280px !important;
+   height: 720px !important;
    display: block;
    border: none;
    pointer-events: none;
  }
-
-
  .centralUI {
    position: absolute; top: 50%; left: 50%;
    transform: translate(-50%, -50%);
@@ -1237,7 +1223,7 @@ to me
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.6.1";
+const APP_VERSION = "1.6.2";
 const PPE_PASSWORD = "ppe123"; // 🔑 PPE動画の閲覧用パスワード
 
 let videoWrapper, home, skipIntro, skipThinking, skipBar, resumeInline, playBtn, centralUI, bottomControls, backBtn, chapterBtn, chapterPanel, progress, currentTime, duration;
@@ -1724,6 +1710,29 @@ function closePasswordModal() {
  pendingVideoId = null;
 }
 
+/* 1280x720のプレイヤーを画面サイズに合わせて確実に縮小フィットさせる関数 */
+function resizePlayer() {
+  const wrapper = document.getElementById("videoWrapper");
+  const container = document.getElementById("playerContainer");
+  if (!wrapper || !container || wrapper.style.display === "none") return;
+
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+
+  // 1280x720 が画面内に完全に収まる倍率を計算（0.90倍にして右端の見切れを完全に防止）
+  const scaleX = vw / 1280;
+  const scaleY = vh / 720;
+  const scale = Math.min(scaleX, scaleY) * 0.90;
+
+  container.style.transform = `translate(-50%, -50%) scale(${scale})`;
+}
+
+window.addEventListener("resize", resizePlayer);
+window.addEventListener("orientationchange", () => {
+  setTimeout(resizePlayer, 150);
+  setTimeout(resizePlayer, 400);
+});
+
 /* 動画再生処理 */
 function playVideo(id){
  currentVideoId = id;
@@ -1740,7 +1749,8 @@ function playVideo(id){
  resumePromptShown = false;
 
  if (home) home.style.display = "none";
- if (videoWrapper) videoWrapper.style.display = "flex";
+ if (videoWrapper) videoWrapper.style.display = "block";
+ resizePlayer();
 
  if(uiInterval) clearInterval(uiInterval);
 
@@ -1751,6 +1761,8 @@ function playVideo(id){
  const preferredQuality = localStorage.getItem("setting_quality") || "auto";
 
  player = new YT.Player('player',{
+   width: 1280,
+   height: 720,
    videoId: id,
    playerVars: {
      controls: 0,
@@ -1764,6 +1776,7 @@ function playVideo(id){
    },
    events: {
      onReady: () => {
+       resizePlayer();
        disableCaptions();
        uiInterval = setInterval(updateUI, 500);
        showUI();
@@ -1783,6 +1796,7 @@ function playVideo(id){
    }
  });
 }
+
 
 // 字幕モジュールを強制的にオフ・アンロードする補助関数
 function disableCaptions() {
