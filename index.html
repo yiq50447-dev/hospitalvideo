@@ -1228,7 +1228,7 @@
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.7.1";
+const APP_VERSION = "1.7.2";
 const PPE_PASSWORD = "ppe123";
 
 let videoWrapper, home, skipIntro, skipThinking, skipBar, resumeInline, playBtn, centralUI, bottomControls, backBtn, chapterBtn, chapterPanel, progress, currentTime, duration;
@@ -1316,9 +1316,8 @@ function clearAppData() {
    showToast("キャッシュをクリアしました");
  }
 }
-
-/* ログイン */
-function setUsername() {
+/* ログイン（クラウドから視聴データを同期） */
+async function setUsername() {
  const input = document.getElementById("usernameInput");
  username = input.value.trim();
 
@@ -1328,8 +1327,36 @@ function setUsername() {
  }
 
  document.getElementById("nameError").style.display = "none";
+ document.getElementById("loader").innerText = "視聴データを同期中...";
+ document.getElementById("loader").style.display = "flex";
+
+ try {
+   const res = await fetch(`${GAS_WATCH_URL}?type=getUserProgress&username=${encodeURIComponent(username)}`);
+   const records = await res.json();
+
+   if (Array.isArray(records)) {
+     records.forEach(item => {
+       if (!item.videoId) return;
+       const localTime = parseFloat(localStorage.getItem(username + "_" + item.videoId)) || 0;
+       // クラウド側の再生位置の方が進んでいれば上書き反映
+       if (item.time > localTime) {
+         localStorage.setItem(username + "_" + item.videoId, item.time);
+       }
+       if (item.complete) {
+         localStorage.setItem(username + "_complete_" + item.videoId, "true");
+       }
+       if (item.date) {
+         localStorage.setItem(username + "_date_" + item.videoId, item.date);
+       }
+     });
+   }
+ } catch (e) {
+   console.warn("クラウド同期スキップ（オフラインまたは未設定）:", e);
+ }
+
  document.getElementById("nameInputModal").style.display = "none";
  document.getElementById("loader").style.display = "none";
+ document.getElementById("loader").innerText = "ロード中…";
 
  document.getElementById("topBarHome").style.display = "flex";
  document.getElementById("bottomNav").style.display = "flex";
