@@ -975,7 +975,7 @@
  </div>
 
  <!-- 管理者専用ダッシュボード（全画面モーダル） -->
- <div id="adminDashboardModal" style="display:none; position:fixed; inset:0; background:#111; color:#fff; z-index:9600; overflow-y:auto; padding:20px 16px 60px;">
+ <div id="adminDashboardModal" style="display:none; position:fixed; inset:0; background:#111; color:#fff; z-index:9600; overflow-y:auto; padding: calc(75px + env(safe-area-inset-top)) 16px calc(80px + env(safe-area-inset-bottom));">
    <div style="max-width:720px; margin:0 auto;">
      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; border-bottom:1px solid #333; padding-bottom:12px;">
        <h2 style="margin:0; font-size:18px;">📊 管理者ダッシュボード（視聴データ）</h2>
@@ -1228,7 +1228,7 @@
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.7.0";
+const APP_VERSION = "1.7.1";
 const PPE_PASSWORD = "ppe123";
 
 let videoWrapper, home, skipIntro, skipThinking, skipBar, resumeInline, playBtn, centralUI, bottomControls, backBtn, chapterBtn, chapterPanel, progress, currentTime, duration;
@@ -1553,6 +1553,9 @@ function stopAutoSlide() {
 let currentTeam = "infection";
 
 function switchNav(type, btnEl) {
+ const adminDash = document.getElementById("adminDashboardModal");
+ if (adminDash) adminDash.style.display = "none";
+
  document.querySelectorAll(".nav-item").forEach(el => el.classList.remove("active"));
  btnEl.classList.add("active");
 
@@ -2342,7 +2345,7 @@ async function loadAdminWatchData() {
     }
 
     statusEl.innerText = `全 ${list.length} 件の視聴データ`;
-    list.reverse().forEach(row => {
+list.reverse().forEach(row => {
       const video = videosData.find(v => v.id === row.videoId);
       const totalSec = video ? video.duration : 0;
       const percent = row.complete ? 100 : (totalSec > 0 ? Math.min(99, Math.floor((row.time / totalSec) * 100)) : 0);
@@ -2350,13 +2353,19 @@ async function loadAdminWatchData() {
         ? `<span style="background:#2e7d32; color:#fff; padding:2px 6px; border-radius:4px; font-weight:bold;">完了</span>`
         : `<span style="background:#444; color:#ddd; padding:2px 6px; border-radius:4px;">${percent}%</span>`;
 
+      let formattedDate = "-";
+      if (row.date) {
+        const d = new Date(row.date);
+        formattedDate = isNaN(d.getTime()) ? row.date : d.toLocaleDateString("ja-JP");
+      }
+
       const tr = document.createElement("tr");
       tr.style.borderBottom = "1px solid #2a2a2c";
       tr.innerHTML = `
         <td style="padding:8px; font-weight:bold;">${row.username}</td>
         <td style="padding:8px;">${row.title}</td>
         <td style="padding:8px;">${badge}</td>
-        <td style="padding:8px; color:#aaa;">${row.date || "-"}</td>
+        <td style="padding:8px; color:#aaa;">${formattedDate}</td>
       `;
       tbody.appendChild(tr);
     });
