@@ -954,13 +954,6 @@
  <div id="topVersion"></div>
 </div>
 
-<!-- ヘッダー -->
-<div id="topBarHome">
-<div class="header-brand">
-  <div class="header-logo">EFI <span style="color:#ffffff;">Pocket</span></div>
-  <div class="header-subtitle">いつでも学べる病棟研修ポータル</div>
-</div>
-
  <div class="avatar-btn" id="userAvatar" onclick="toggleProfileMenu()">名</div>
 
  <div class="profile-popover" id="profileMenu">
@@ -1279,7 +1272,7 @@
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.6.7";
+const APP_VERSION = "1.6.8";
 const PPE_PASSWORD = "ppe123"; // 🔑 PPE動画の閲覧用パスワード
 
 let videoWrapper, home, skipIntro, skipThinking, skipBar, resumeInline, playBtn, centralUI, bottomControls, backBtn, chapterBtn, chapterPanel, progress, currentTime, duration;
@@ -2334,7 +2327,7 @@ const GAS_WATCH_URL = "https://script.google.com/macros/s/AKfycbw96W8Q0xgv5-LUpR
 
 /* 視聴データをスプレッドシートへ送信 */
 function sendWatchProgressToSheet(videoId) {
-  if (!username || username === "管理者" || !videoId) return;
+  if (!username || username === "管理者" || username === "guest" || !videoId) return;
   const video = videosData.find(v => v.id === videoId);
   const title = video ? video.title : videoId;
   const time = Math.floor(parseFloat(localStorage.getItem(username + "_" + videoId)) || 0);
@@ -2345,7 +2338,7 @@ function sendWatchProgressToSheet(videoId) {
   fetch(url, { mode: "no-cors", keepalive: true }).catch(() => {});
 }
 
-/* 既存の「ホームに戻る」「一時停止」時に自動送信フックを追加 */
+/* 「ホームに戻る」「一時停止」時に自動送信 */
 const _origGoBack = goBack;
 goBack = function() {
   sendWatchProgressToSheet(currentVideoId);
@@ -2358,6 +2351,22 @@ togglePlay = function() {
   if (player && typeof player.getPlayerState === "function" && player.getPlayerState() === 2) {
     sendWatchProgressToSheet(currentVideoId);
   }
+};
+
+/* 動画を最後まで見終わった瞬間に自動送信 */
+let _sentCompleteFlag = false;
+const _origUpdateUI = updateUI;
+updateUI = function() {
+  _origUpdateUI();
+  if (!_sentCompleteFlag && localStorage.getItem(username + "_complete_" + currentVideoId) === "true") {
+    _sentCompleteFlag = true;
+    sendWatchProgressToSheet(currentVideoId);
+  }
+};
+const _origPlayVideo = playVideo;
+playVideo = function(id) {
+  _sentCompleteFlag = false;
+  _origPlayVideo(id);
 };
 
 /* 右上アバタータップでアカウントメニューを開く */
