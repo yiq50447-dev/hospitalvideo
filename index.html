@@ -172,7 +172,7 @@
  }
 
  /* ==========================================================================
-    3. メイン画面：ヘッダー & アバターポップアップ
+    3. メイン画面：ヘッダー
     ========================================================================== */
  #topBarHome {
    display: none;
@@ -212,49 +212,6 @@
    justify-content: center;
    cursor: pointer;
    border: 2px solid #333;
- }
-
- .profile-popover {
-   display: none;
-   position: fixed;
-   top: calc(60px + env(safe-area-inset-top));
-   right: calc(16px + env(safe-area-inset-right));
-   width: 220px;
-   background: #1e1e1e;
-   border: 1px solid #333;
-   border-radius: 12px;
-   box-shadow: 0 8px 24px rgba(0,0,0,0.6);
-   z-index: 200;
-   padding: 16px;
- }
- .profile-popover.active {
-   display: block;
- }
- .profile-info {
-   border-bottom: 1px solid #333;
-   padding-bottom: 12px;
-   margin-bottom: 12px;
- }
- .profile-name {
-   font-size: 15px;
-   font-weight: bold;
-   color: #fff;
- }
- .profile-status {
-   font-size: 11px;
-   color: #888;
-   margin-top: 2px;
- }
- .profile-logout-btn {
-   width: 100%;
-   padding: 10px;
-   background: rgba(229, 9, 20, 0.15);
-   color: #e50914;
-   border: 1px solid rgba(229, 9, 20, 0.4);
-   border-radius: 6px;
-   font-weight: bold;
-   font-size: 13px;
-   cursor: pointer;
  }
 
  /* ==========================================================================
@@ -439,10 +396,10 @@
 .indicator-dot.active {
   width: 18px;
   border-radius: 4px;
-  background-color: #d8d8d8; /* シルバー */
+  background-color: #d8d8d8;
   box-shadow: 0 0 6px rgba(224, 224, 224, 0.5);
 }
-    
+
  #videoList { list-style: none; padding: 0 16px 20px 16px; }
  #videoList li {
    padding: 12px;
@@ -747,7 +704,7 @@
    gap: 8px; z-index: 40; transition: .3s;
  }
  #progress { flex: 1; }
-    
+
 .hideUI { opacity: 0; pointer-events: none; }
 
  #speedBtn {
@@ -931,7 +888,7 @@
  <div class="app-brand">
   <div class="app-logo">EFI <span style="color:#ffffff;">Pocket</span></div>
   <div class="app-subtitle">いつでも学べる病棟研修ポータル</div>
-</div>
+ </div>
 
  <h3>視聴する方の名前を入力してください</h3>
  <p style="font-size:13px; color:#888; margin-top:2px; text-align:center;">次回視聴時も続きから再生できます</p>
@@ -953,6 +910,7 @@
 
  <div id="topVersion"></div>
 </div>
+
 <!-- ヘッダー -->
 <div id="topBarHome">
  <div class="header-brand">
@@ -962,31 +920,30 @@
 
  <div class="avatar-btn" id="userAvatar">名</div>
 </div>
-    
 
 <!-- メインコンテンツ -->
 <div id="home">
  <!-- 📌 続きから再生カード -->
  <div id="resumeCardArea"></div>
 
-<!-- 最新の研修動画エリア -->
-<div id="recentSection">
-  <div class="section-title">最新の動画一覧</div>
-  <div class="horizontal-scroll-container" id="recentVideoList"></div>
-  <div class="carousel-indicators" id="carouselIndicators"></div>
-</div>
-
-<div class="notice-banner-container">
- <div class="notice-banner">
-   <div class="notice-tag">お知らせ</div>
-   <div class="notice-content">
-     <div class="notice-title">オンライン病棟研修の実施について</div>
-     <div class="notice-desc">今月中にPPE着脱手順の解説動画を公開予定です。各自確認お願いします。</div>
-   </div>
+ <!-- 最新の研修動画エリア -->
+ <div id="recentSection">
+   <div class="section-title">最新の動画一覧</div>
+   <div class="horizontal-scroll-container" id="recentVideoList"></div>
+   <div class="carousel-indicators" id="carouselIndicators"></div>
  </div>
-</div>
 
-<!-- 管理者用ボタン&集計 -->
+ <div class="notice-banner-container">
+  <div class="notice-banner">
+    <div class="notice-tag">お知らせ</div>
+    <div class="notice-content">
+      <div class="notice-title">オンライン病棟研修の実施について</div>
+      <div class="notice-desc">今月中にPPE着脱手順の解説動画を公開予定です。各自確認お願いします。</div>
+    </div>
+  </div>
+ </div>
+
+ <!-- 管理者用ボタン&集計 -->
  <button id="summaryBtn" onclick="showSummary()" style="display:none;margin:10px 20px;padding:10px 16px;background:#e50914;color:#fff;border:none;border-radius:6px;font-weight:bold;">
    テスト全体集計
  </button>
@@ -995,57 +952,57 @@
    <div id="summaryTable" style="margin-top:20px;"></div>
    <canvas id="questionChart" style="margin-top:20px;"></canvas>
  </div>
-    
-<!-- アカウントメニューモーダル（右上アイコンタップで開く） -->
-<div id="accountMenuModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:9500; align-items:center; justify-content:center;" onclick="if(event.target===this)this.style.display='none'">
-  <div style="background:#1c1c1e; color:#fff; width:88%; max-width:340px; border-radius:16px; padding:22px; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,0.6);">
-    <div id="accountMenuName" style="font-size:18px; font-weight:bold; margin-bottom:4px;">ユーザー名</div>
-    <div id="accountMenuRole" style="font-size:12px; color:#aaa; margin-bottom:18px;">一般アカウント</div>
 
-    <!-- 管理者モード時だけ表示される専用ボタン -->
-    <button id="openAdminDashBtn" onclick="openAdminDashboard()" style="display:none; width:100%; padding:13px; margin-bottom:10px; border:none; border-radius:10px; background:#e50914; color:#fff; font-weight:bold; font-size:14px; cursor:pointer;">
-      📊 管理者専用ダッシュボード
-    </button>
+ <!-- アカウントメニューモーダル（右上アイコンタップで開く） -->
+ <div id="accountMenuModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:9500; align-items:center; justify-content:center;" onclick="if(event.target===this)this.style.display='none'">
+   <div style="background:#1c1c1e; color:#fff; width:88%; max-width:340px; border-radius:16px; padding:22px; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,0.6);">
+     <div id="accountMenuName" style="font-size:18px; font-weight:bold; margin-bottom:4px;">ユーザー名</div>
+     <div id="accountMenuRole" style="font-size:12px; color:#aaa; margin-bottom:18px;">一般アカウント</div>
 
-    <button onclick="logoutUser()" style="width:100%; padding:12px; margin-bottom:10px; border:1px solid #444; border-radius:10px; background:#2c2c2e; color:#fff; font-size:14px; cursor:pointer;">
-      ログアウト（名前を変更）
-    </button>
+     <!-- 管理者モード時だけ表示される専用ボタン -->
+     <button id="openAdminDashBtn" onclick="openAdminDashboard()" style="display:none; width:100%; padding:13px; margin-bottom:10px; border:none; border-radius:10px; background:#e50914; color:#fff; font-weight:bold; font-size:14px; cursor:pointer;">
+       📊 管理者専用ダッシュボード
+     </button>
 
-    <button onclick="document.getElementById('accountMenuModal').style.display='none'" style="width:100%; padding:10px; border:none; border-radius:10px; background:transparent; color:#888; font-size:13px; cursor:pointer;">
-      閉じる
-    </button>
-  </div>
-</div>
+     <button onclick="logoutUser()" style="width:100%; padding:12px; margin-bottom:10px; border:1px solid #444; border-radius:10px; background:#2c2c2e; color:#fff; font-size:14px; cursor:pointer;">
+       ログアウト（名前を変更）
+     </button>
 
-<!-- 管理者専用ダッシュボード（全画面モーダル） -->
-<div id="adminDashboardModal" style="display:none; position:fixed; inset:0; background:#111; color:#fff; z-index:9600; overflow-y:auto; padding:20px 16px 60px;">
-  <div style="max-width:720px; margin:0 auto;">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; border-bottom:1px solid #333; padding-bottom:12px;">
-      <h2 style="margin:0; font-size:18px;">📊 管理者ダッシュボード（視聴データ）</h2>
-      <button onclick="document.getElementById('adminDashboardModal').style.display='none'" style="background:#333; color:#fff; border:none; padding:8px 14px; border-radius:8px; font-size:13px; cursor:pointer;">閉じる</button>
-    </div>
+     <button onclick="document.getElementById('accountMenuModal').style.display='none'" style="width:100%; padding:10px; border:none; border-radius:10px; background:transparent; color:#888; font-size:13px; cursor:pointer;">
+       閉じる
+     </button>
+   </div>
+ </div>
 
-    <div style="display:flex; gap:8px; margin-bottom:14px;">
-      <button onclick="loadAdminWatchData()" style="background:#2e7d32; color:#fff; border:none; padding:9px 14px; border-radius:8px; font-size:13px; font-weight:bold; cursor:pointer;">🔄 最新データに更新</button>
-    </div>
+ <!-- 管理者専用ダッシュボード（全画面モーダル） -->
+ <div id="adminDashboardModal" style="display:none; position:fixed; inset:0; background:#111; color:#fff; z-index:9600; overflow-y:auto; padding:20px 16px 60px;">
+   <div style="max-width:720px; margin:0 auto;">
+     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; border-bottom:1px solid #333; padding-bottom:12px;">
+       <h2 style="margin:0; font-size:18px;">📊 管理者ダッシュボード（視聴データ）</h2>
+       <button onclick="document.getElementById('adminDashboardModal').style.display='none'" style="background:#333; color:#fff; border:none; padding:8px 14px; border-radius:8px; font-size:13px; cursor:pointer;">閉じる</button>
+     </div>
 
-    <div id="adminWatchStatus" style="font-size:13px; color:#aaa; margin-bottom:10px;">読み込み中...</div>
+     <div style="display:flex; gap:8px; margin-bottom:14px;">
+       <button onclick="loadAdminWatchData()" style="background:#2e7d32; color:#fff; border:none; padding:9px 14px; border-radius:8px; font-size:13px; font-weight:bold; cursor:pointer;">🔄 最新データに更新</button>
+     </div>
 
-    <div style="overflow-x:auto; background:#1c1c1e; border-radius:12px; padding:8px;">
-      <table style="width:100%; border-collapse:collapse; font-size:12px; text-align:left;">
-        <thead>
-          <tr style="border-bottom:1px solid #333; color:#aaa;">
-            <th style="padding:8px;">氏名</th>
-            <th style="padding:8px;">動画</th>
-            <th style="padding:8px;">状況</th>
-            <th style="padding:8px;">最終視聴日</th>
-          </tr>
-        </thead>
-        <tbody id="adminWatchTableBody"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
+     <div id="adminWatchStatus" style="font-size:13px; color:#aaa; margin-bottom:10px;">読み込み中...</div>
+
+     <div style="overflow-x:auto; background:#1c1c1e; border-radius:12px; padding:8px;">
+       <table style="width:100%; border-collapse:collapse; font-size:12px; text-align:left;">
+         <thead>
+           <tr style="border-bottom:1px solid #333; color:#aaa;">
+             <th style="padding:8px;">氏名</th>
+             <th style="padding:8px;">動画</th>
+             <th style="padding:8px;">状況</th>
+             <th style="padding:8px;">最終視聴日</th>
+           </tr>
+         </thead>
+         <tbody id="adminWatchTableBody"></tbody>
+       </table>
+     </div>
+   </div>
+ </div>
 
  <!-- ボトムタブ（感染/学習）選択時表示リスト -->
  <div id="listSection" style="display:none;">
@@ -1272,7 +1229,7 @@
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
 const APP_VERSION = "1.7.0";
-const PPE_PASSWORD = "ppe123"; // 🔑 PPE動画の閲覧用パスワード
+const PPE_PASSWORD = "ppe123";
 
 let videoWrapper, home, skipIntro, skipThinking, skipBar, resumeInline, playBtn, centralUI, bottomControls, backBtn, chapterBtn, chapterPanel, progress, currentTime, duration;
 
@@ -1314,10 +1271,9 @@ document.addEventListener("DOMContentLoaded", function(){
 });
 
 const UPDATE_MESSAGE = `
-【アップデート情報 Ver 1.5.8】
-・ 設定ページを実装しました（画質・自動再生設定など）。
-・ ホーム画面の動画カードレイアウトを中央揃えに微調整しました。
-・ リスト画面からの動画再生時にセキュリティ・パスワード制限を適用しました。
+【アップデート情報 Ver 1.7.0】
+・ 視聴データのクラウド記録機能を追加しました。
+・ 管理者ダッシュボードを実装しました。
 `;
 
 let player, username = "guest", currentVideoId = "";
@@ -1361,18 +1317,6 @@ function clearAppData() {
  }
 }
 
-/* アバターメニュー */
-function toggleProfileMenu() {
- document.getElementById("profileMenu").classList.toggle("active");
-}
-document.addEventListener("click", function(e) {
- const avatar = document.getElementById("userAvatar");
- const menu = document.getElementById("profileMenu");
- if (avatar && menu && !avatar.contains(e.target) && !menu.contains(e.target)) {
-   menu.classList.remove("active");
- }
-});
-
 /* ログイン */
 function setUsername() {
  const input = document.getElementById("usernameInput");
@@ -1391,19 +1335,10 @@ function setUsername() {
  document.getElementById("bottomNav").style.display = "flex";
 
  document.getElementById("userAvatar").innerText = username.charAt(0);
- document.getElementById("profileNameDisplay").innerText = username;
- document.getElementById("profileStatusDisplay").innerText = "受講中";
 
  checkResumeCard();
  renderRecentVideos();
  startAutoSlide();
-}
-
-function logout() {
- if(!confirm("ログアウトしますか？")) return;
- if(player){ try{ player.destroy(); }catch(e){} }
- sessionStorage.clear();
- location.reload();
 }
 
 /* 📌 続きから再生カード */
@@ -1767,7 +1702,6 @@ function resizePlayer() {
   const vw = window.innerWidth;
   const vh = window.innerHeight;
 
-  // 1280x720 が画面内に完全に収まる倍率を計算（0.90倍にして右端の見切れを完全に防止）
   const scaleX = vw / 1280;
   const scaleY = vh / 720;
   const scale = Math.min(scaleX, scaleY) * 1.0;
@@ -1844,7 +1778,6 @@ function playVideo(id){
    }
  });
 }
-
 
 // 字幕モジュールを強制的にオフ・アンロードする補助関数
 function disableCaptions() {
@@ -2097,8 +2030,6 @@ if(versionArea) {
        document.getElementById("bottomNav").style.display = "flex";
 
        document.getElementById("userAvatar").innerText = "管";
-       document.getElementById("profileNameDisplay").innerText = "管理者";
-       document.getElementById("profileStatusDisplay").innerText = "管理者モード";
 
        checkResumeCard();
        renderRecentVideos();
@@ -2193,122 +2124,122 @@ let currentModalVideoId = null;
 
 /* 動画詳細モーダル */
 function openModal(id){
-const video = videosData.find(v => v.id === id);
-if(!video || video.locked) return;
+ const video = videosData.find(v => v.id === id);
+ if(!video || video.locked) return;
 
-const isUnlocked = localStorage.getItem(username + "_pass_unlocked_" + id) === "true";
-if (video.protected && !isUnlocked && !adminMode) {
-  pendingVideoId = id;
-  document.getElementById("videoPassInput").value = "";
-  document.getElementById("passwordModal").style.display = "flex";
-  return;
-}
+ const isUnlocked = localStorage.getItem(username + "_pass_unlocked_" + id) === "true";
+ if (video.protected && !isUnlocked && !adminMode) {
+   pendingVideoId = id;
+   document.getElementById("videoPassInput").value = "";
+   document.getElementById("passwordModal").style.display = "flex";
+   return;
+ }
 
-const autoplay = localStorage.getItem("setting_autoplay") === "true";
-if (autoplay) {
-  playVideo(id);
-  return;
-}
+ const autoplay = localStorage.getItem("setting_autoplay") === "true";
+ if (autoplay) {
+   playVideo(id);
+   return;
+ }
 
-currentModalVideoId = id;
+ currentModalVideoId = id;
 
-document.getElementById("modalThumb").src = `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
-document.getElementById("modalTitle").innerText = video.title;
-document.getElementById("modalDesc").innerText = video.desc || "説明はありません。";
+ document.getElementById("modalThumb").src = `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+ document.getElementById("modalTitle").innerText = video.title;
+ document.getElementById("modalDesc").innerText = video.desc || "説明はありません。";
 
-document.getElementById("modalDuration").innerText = Math.floor((video.duration || 0) / 60) + "分";
-document.getElementById("modalDate").innerText = video.publishedAt || "公開日未定";
+ document.getElementById("modalDuration").innerText = Math.floor((video.duration || 0) / 60) + "分";
+ document.getElementById("modalDate").innerText = video.publishedAt || "公開日未定";
 
-const actionsEl = document.getElementById("modalActions");
-actionsEl.innerHTML = "";
+ const actionsEl = document.getElementById("modalActions");
+ actionsEl.innerHTML = "";
 
-const playBtn = document.createElement("button");
-playBtn.style.cssText = "background:#e50914; color:#fff; border:none; cursor:pointer; font-weight:bold; padding:12px; border-radius:8px; width:100%; font-size:15px; box-shadow: 0 4px 10px rgba(229, 9, 20, 0.4);";
-playBtn.innerText = "▶ 動画を再生する";
-playBtn.onclick = function(){
-  closeModalDirect();
-  startPlayProcess(id);
-};
-actionsEl.appendChild(playBtn);
+ const playBtn = document.createElement("button");
+ playBtn.style.cssText = "background:#e50914; color:#fff; border:none; cursor:pointer; font-weight:bold; padding:12px; border-radius:8px; width:100%; font-size:15px; box-shadow: 0 4px 10px rgba(229, 9, 20, 0.4);";
+ playBtn.innerText = "▶ 動画を再生する";
+ playBtn.onclick = function(){
+   closeModalDirect();
+   startPlayProcess(id);
+ };
+ actionsEl.appendChild(playBtn);
 
-const isCompleted = localStorage.getItem(username + "_complete_" + id) === "true";
-const quizDone = localStorage.getItem(username + "_quiz_done_" + id);
-const wrongList = JSON.parse(localStorage.getItem(username + "_wrong_" + id) || "[]");
+ const isCompleted = localStorage.getItem(username + "_complete_" + id) === "true";
+ const quizDone = localStorage.getItem(username + "_quiz_done_" + id);
+ const wrongList = JSON.parse(localStorage.getItem(username + "_wrong_" + id) || "[]");
 
-if (video.type === "quiz") {
-  const quizBtn = document.createElement("button");
-  quizBtn.style.cssText = "padding:12px; border-radius:8px; font-weight:bold; width:100%; font-size:14px; border:none; transition:0.2s; margin-top:8px;";
+ if (video.type === "quiz") {
+   const quizBtn = document.createElement("button");
+   quizBtn.style.cssText = "padding:12px; border-radius:8px; font-weight:bold; width:100%; font-size:14px; border:none; transition:0.2s; margin-top:8px;";
 
-  if (quizDone) {
-    quizBtn.style.background = "#333";
-    quizBtn.style.color = "#fff";
-    quizBtn.style.border = "1px solid #555";
-    quizBtn.style.cursor = "pointer";
-    quizBtn.innerText = "回答結果を見る";
-    quizBtn.onclick = function() { closeModalDirect(); showResult(id); };
-  } else if (isCompleted || adminMode) {
-    quizBtn.style.background = "#2e7d32";
-    quizBtn.style.color = "#fff";
-    quizBtn.style.cursor = "pointer";
-    quizBtn.innerText = "確認テストを実施する";
-    quizBtn.onclick = function() { closeModalDirect(); startQuiz(id); };
-  } else {
-    quizBtn.style.background = "#222";
-    quizBtn.style.color = "#666";
-    quizBtn.style.cursor = "not-allowed";
-    quizBtn.innerText = "確認テスト（動画視聴後）";
-    quizBtn.onclick = function() { showToast("動画を最後まで視聴するとテストを受けられます"); };
-  }
-  actionsEl.appendChild(quizBtn);
+   if (quizDone) {
+     quizBtn.style.background = "#333";
+     quizBtn.style.color = "#fff";
+     quizBtn.style.border = "1px solid #555";
+     quizBtn.style.cursor = "pointer";
+     quizBtn.innerText = "回答結果を見る";
+     quizBtn.onclick = function() { closeModalDirect(); showResult(id); };
+   } else if (isCompleted || adminMode) {
+     quizBtn.style.background = "#2e7d32";
+     quizBtn.style.color = "#fff";
+     quizBtn.style.cursor = "pointer";
+     quizBtn.innerText = "確認テストを実施する";
+     quizBtn.onclick = function() { closeModalDirect(); startQuiz(id); };
+   } else {
+     quizBtn.style.background = "#222";
+     quizBtn.style.color = "#666";
+     quizBtn.style.cursor = "not-allowed";
+     quizBtn.innerText = "確認テスト（動画視聴後）";
+     quizBtn.onclick = function() { showToast("動画を最後まで視聴するとテストを受けられます"); };
+   }
+   actionsEl.appendChild(quizBtn);
 
-  if (quizDone && wrongList.length > 0) {
-    const reviewBtn = document.createElement("button");
-    reviewBtn.style.cssText = "padding:12px; border-radius:8px; font-weight:bold; background:#ff9800; color:#fff; border:none; width:100%; font-size:14px; cursor:pointer; margin-top:8px;";
-    reviewBtn.innerText = "復習する";
-    reviewBtn.onclick = function() { closeModalDirect(); startReview(id); };
-    actionsEl.appendChild(reviewBtn);
-  }
+   if (quizDone && wrongList.length > 0) {
+     const reviewBtn = document.createElement("button");
+     reviewBtn.style.cssText = "padding:12px; border-radius:8px; font-weight:bold; background:#ff9800; color:#fff; border:none; width:100%; font-size:14px; cursor:pointer; margin-top:8px;";
+     reviewBtn.innerText = "復習する";
+     reviewBtn.onclick = function() { closeModalDirect(); startReview(id); };
+     actionsEl.appendChild(reviewBtn);
+   }
 
-} else if (video.type === "survey") {
-  const surveyBtn = document.createElement("button");
-  surveyBtn.style.cssText = "padding:12px; border-radius:8px; font-weight:bold; width:100%; font-size:14px; border:none; transition:0.2s; margin-top:8px;";
+ } else if (video.type === "survey") {
+   const surveyBtn = document.createElement("button");
+   surveyBtn.style.cssText = "padding:12px; border-radius:8px; font-weight:bold; width:100%; font-size:14px; border:none; transition:0.2s; margin-top:8px;";
 
-  if (isCompleted || adminMode) {
-    surveyBtn.style.background = "#2e7d32";
-    surveyBtn.style.color = "#fff";
-    surveyBtn.style.cursor = "pointer";
-    surveyBtn.innerText = "アンケートに答える";
-    surveyBtn.onclick = function() { closeModalDirect(); startSurvey(id); };
-  } else {
-    surveyBtn.style.background = "#222";
-    surveyBtn.style.color = "#666";
-    surveyBtn.style.cursor = "not-allowed";
-    surveyBtn.innerText = "アンケートに答える（動画視聴後）";
-    surveyBtn.onclick = function() { showToast("動画を最後まで視聴するとアンケートに回答できます"); };
-  }
-  actionsEl.appendChild(surveyBtn);
-}
+   if (isCompleted || adminMode) {
+     surveyBtn.style.background = "#2e7d32";
+     surveyBtn.style.color = "#fff";
+     surveyBtn.style.cursor = "pointer";
+     surveyBtn.innerText = "アンケートに答える";
+     surveyBtn.onclick = function() { closeModalDirect(); startSurvey(id); };
+   } else {
+     surveyBtn.style.background = "#222";
+     surveyBtn.style.color = "#666";
+     surveyBtn.style.cursor = "not-allowed";
+     surveyBtn.innerText = "アンケートに答える（動画視聴後）";
+     surveyBtn.onclick = function() { showToast("動画を最後まで視聴するとアンケートに回答できます"); };
+   }
+   actionsEl.appendChild(surveyBtn);
+ }
 
-document.getElementById("videoModal").classList.add("active");
+ document.getElementById("videoModal").classList.add("active");
 }
 
 function playModalVideo(){
-if(currentModalVideoId){
-  const id = currentModalVideoId;
-  closeModalDirect();
-  startPlayProcess(id);
-}
+ if(currentModalVideoId){
+   const id = currentModalVideoId;
+   closeModalDirect();
+   startPlayProcess(id);
+ }
 }
 
 function closeModal(e){
-if(e.target.classList.contains("modal-overlay")){
-  closeModalDirect();
-}
+ if(e.target.classList.contains("modal-overlay")){
+   closeModalDirect();
+ }
 }
 
 function closeModalDirect(){
-document.getElementById("videoModal").classList.remove("active");
-currentModalVideoId = null;
+ document.getElementById("videoModal").classList.remove("active");
+ currentModalVideoId = null;
 }
 
 function startSurvey(videoId){
@@ -2321,7 +2252,7 @@ function startSurvey(videoId){
 
  window.location.href = "https://docs.google.com/forms/d/e/1FAIpQLSc7J4cA9X8WkHXmv6KITaTR3SE23LXhxzyZHyQbCq_eZRuohQ/viewform?usp=header";
 }
-    
+
 const GAS_WATCH_URL = "https://script.google.com/macros/s/AKfycbw96W8Q0xgv5-LUpRCylWPwuw6keDS0R6n7ezNu9cOrwMBzL90PPbJgjDDK4wyr5gJt/exec";
 
 /* 視聴データをスプレッドシートへ送信 */
@@ -2433,7 +2364,6 @@ async function loadAdminWatchData() {
     statusEl.innerText = "データの取得に失敗しました（GASのデプロイ設定を確認してください）。";
   }
 }
-
 </script>
 </body>
 </html>
