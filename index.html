@@ -953,7 +953,16 @@
 
  <div id="topVersion"></div>
 </div>
+<!-- ヘッダー -->
+<div id="topBarHome">
+ <div class="header-brand">
+   <div class="header-logo">EFI <span style="color:#ffffff;">Pocket</span></div>
+   <div class="header-subtitle">いつでも学べる病棟研修ポータル</div>
+ </div>
 
+ <div class="avatar-btn" id="userAvatar">名</div>
+</div>
+    
  <div class="avatar-btn" id="userAvatar" onclick="toggleProfileMenu()">名</div>
 
  <div class="profile-popover" id="profileMenu">
@@ -1272,7 +1281,7 @@
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.6.8";
+const APP_VERSION = "1.6.9";
 const PPE_PASSWORD = "ppe123"; // 🔑 PPE動画の閲覧用パスワード
 
 let videoWrapper, home, skipIntro, skipThinking, skipBar, resumeInline, playBtn, centralUI, bottomControls, backBtn, chapterBtn, chapterPanel, progress, currentTime, duration;
