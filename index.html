@@ -1228,7 +1228,7 @@
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.7.2";
+const APP_VERSION = "1.7.3";
 const PPE_PASSWORD = "ppe123";
 
 let videoWrapper, home, skipIntro, skipThinking, skipBar, resumeInline, playBtn, centralUI, bottomControls, backBtn, chapterBtn, chapterPanel, progress, currentTime, duration;
@@ -1882,10 +1882,6 @@ function updateUI(){
 
  if(c >= d - 2){
    localStorage.setItem(username + "_complete_" + currentVideoId, "true");
-   if(isNoroVideo()){
-     localStorage.setItem("quizUser", username);
-     window.location.href = "quiz.html";
-   }
  }
 
  if (currentTime) currentTime.innerText = formatTime(c);
@@ -2283,7 +2279,7 @@ function startSurvey(videoId){
  window.location.href = "https://docs.google.com/forms/d/e/1FAIpQLSc7J4cA9X8WkHXmv6KITaTR3SE23LXhxzyZHyQbCq_eZRuohQ/viewform?usp=header";
 }
 
-const GAS_WATCH_URL = "https://script.google.com/macros/s/AKfycbw96W8Q0xgv5-LUpRCylWPwuw6keDS0R6n7ezNu9cOrwMBzL90PPbJgjDDK4wyr5gJt/exec";
+const GAS_WATCH_URL = "https://script.google.com/macros/s/AKfycbwjrrDPTXp6KqCHZLBoAROiLRAzt--pCauNqoOWc2AIDaNXtREA2T6TwRKYFnt36x0V/exec";
 
 /* 視聴データをスプレッドシートへ送信 */
 function sendWatchProgressToSheet(videoId) {
