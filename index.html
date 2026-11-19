@@ -933,21 +933,33 @@
    <div class="carousel-indicators" id="carouselIndicators"></div>
  </div>
 
-<!-- ノロウイルステスト 成績棒グラフエリア -->
+<!-- テスト成績推移 折れ線グラフエリア -->
  <div id="noroScoreSection" style="padding: 0 16px; margin-top: 12px; margin-bottom: 18px;">
    <div style="background: #1c1c1e; border: 1px solid #2c2c2e; border-radius: 12px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
-     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-       <div style="font-size: 14px; font-weight: bold; color: #fff;">📊 ノロウイルステスト結果比較</div>
-       <span id="noroScoreBadge" style="font-size: 11px; background: #2c2c2e; color: #aaa; padding: 3px 8px; border-radius: 4px;">データ待機中</span>
+     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+       <div style="font-size: 14px; font-weight: bold; color: #fff;">📈 テスト成績の推移</div>
+       <span id="noroScoreBadge" style="font-size: 11px; background: #2c2c2e; color: #aaa; padding: 3px 8px; border-radius: 4px;">読込中...</span>
      </div>
-     <div style="position: relative; height: 180px; width: 100%;">
+
+     <!-- 枠内のスコア・平均点表示ボックス -->
+     <div style="display: flex; gap: 10px; margin-bottom: 14px;">
+       <div style="flex: 1; background: #252528; border-left: 3px solid #e50914; border-radius: 8px; padding: 10px 12px;">
+         <div style="font-size: 11px; color: #aaa;">あなたのスコア</div>
+         <div id="myScoreDisplay" style="font-size: 20px; font-weight: bold; color: #fff; margin-top: 2px;">-- <span style="font-size: 12px; font-weight: normal; color: #aaa;">点</span></div>
+       </div>
+       <div style="flex: 1; background: #252528; border-left: 3px solid #8e8e93; border-radius: 8px; padding: 10px 12px;">
+         <div style="font-size: 11px; color: #aaa;">全体平均点</div>
+         <div id="avgScoreDisplay" style="font-size: 20px; font-weight: bold; color: #fff; margin-top: 2px;">-- <span style="font-size: 12px; font-weight: normal; color: #aaa;">点</span></div>
+       </div>
+     </div>
+
+     <!-- 折れ線グラフ描画エリア -->
+     <div style="position: relative; height: 190px; width: 100%;">
        <canvas id="noroScoreBarChart"></canvas>
-     </div>
-     <div id="noroScoreNote" style="font-size: 11px; color: #888; margin-top: 8px; text-align: center;">
-       ※テスト未受験またはデータ未登録の場合は 0点 で表示されます
      </div>
    </div>
  </div>
+    
     
  <!-- 管理者用ボタン&集計 -->
  <button id="summaryBtn" onclick="showSummary()" style="display:none;margin:10px 20px;padding:10px 16px;background:#e50914;color:#fff;border:none;border-radius:6px;font-weight:bold;">
@@ -1234,7 +1246,7 @@
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.7.4";
+const APP_VERSION = "1.7.5";
 const PPE_PASSWORD = "ppe123";
 
 let videoWrapper, home, skipIntro, skipThinking, skipBar, resumeInline, playBtn, centralUI, bottomControls, backBtn, chapterBtn, chapterPanel, progress, currentTime, duration;
@@ -2407,31 +2419,49 @@ list.reverse().forEach(row => {
 const GAS_QUIZ_URL = "https://script.google.com/macros/s/AKfycbxt_kxbO6BITi8GiqZbzvERHrrmjGSf-VsjjLNRpgWLZgLtoprj6EKkqEn_DY0IN9IA/exec";
 let noroBarChartInstance = null;
 
-/* ノロウイルステストの個人スコアと平均点を棒グラフで描画 */
+/* テスト成績の推移を折れ線グラフで描画（左に新しいテストを追加する設計） */
 async function renderNoroScoreChart() {
   const canvas = document.getElementById("noroScoreBarChart");
   const badge = document.getElementById("noroScoreBadge");
+  const myScoreEl = document.getElementById("myScoreDisplay");
+  const avgScoreEl = document.getElementById("avgScoreDisplay");
   if (!canvas) return;
 
-  // 初期値（データがない場合の枠表示）
-  let myScore = Number(localStorage.getItem(username + "_score_" + NORO_VIDEO_ID)) || 0;
-  let avgScore = 0;
+  // 1個目：ノロウイルスのデータ取得
+  let noroMyScore = Number(localStorage.getItem(username + "_score_" + NORO_VIDEO_ID)) || 0;
+  let noroAvgScore = 0;
 
   try {
-    // テスト用GASから全体平均と個人スコアを取得（GAS側に対応処理がある場合）
     const res = await fetch(`${GAS_QUIZ_URL}?type=userScore&username=${encodeURIComponent(username)}`);
     const data = await res.json();
     if (data && typeof data.avg === "number") {
-      avgScore = data.avg;
+      noroAvgScore = data.avg;
       if (typeof data.myScore === "number" && data.myScore > 0) {
-        myScore = data.myScore;
+        noroMyScore = data.myScore;
       }
-      badge.innerText = myScore > 0 ? `あなた: ${myScore}点 / 平均: ${avgScore}点` : `全体平均: ${avgScore}点`;
+      badge.innerText = "同期済み";
     } else {
-      badge.innerText = "データ未登録（枠表示）";
+      badge.innerText = "データなし";
     }
   } catch (e) {
-    badge.innerText = "データ未接続（枠表示）";
+    badge.innerText = "未接続";
+  }
+
+  // ▼ テスト一覧（左＝新しい順、右＝古い順）
+  // ※今後新しいテストが増えたら、この配列の【一番上】にオブジェクトを追加すると左側に追加されます
+  const testHistory = [
+    // 例：2個目のテストを追加するときはここに書く
+    // { label: "第2回 排泄ケア", myScore: 85, avgScore: 78 },
+    { label: "第1回 ノロウイルス", myScore: noroMyScore, avgScore: noroAvgScore }
+  ];
+
+  // 枠内の数値表示を更新（一番左＝最新テストのスコアを表示）
+  const latestTest = testHistory[0];
+  if (myScoreEl) {
+    myScoreEl.innerHTML = `${latestTest.myScore} <span style="font-size: 12px; font-weight: normal; color: #aaa;">点</span>`;
+  }
+  if (avgScoreEl) {
+    avgScoreEl.innerHTML = `${latestTest.avgScore} <span style="font-size: 12px; font-weight: normal; color: #aaa;">点</span>`;
   }
 
   if (noroBarChartInstance) {
@@ -2439,22 +2469,52 @@ async function renderNoroScoreChart() {
   }
 
   noroBarChartInstance = new Chart(canvas, {
-    type: "bar",
+    type: "line",
     data: {
-      labels: ["あなたのスコア", "全体平均点"],
-      datasets: [{
-        label: "点数（100点満点）",
-        data: [myScore, avgScore],
-        backgroundColor: ["#e50914", "#555555"],
-        borderRadius: 6,
-        barThickness: 42
-      }]
+      labels: testHistory.map(t => t.label),
+      datasets: [
+        {
+          label: "あなたのスコア",
+          data: testHistory.map(t => t.myScore),
+          borderColor: "#e50914",
+          backgroundColor: "rgba(229, 9, 20, 0.15)",
+          pointBackgroundColor: "#e50914",
+          pointBorderColor: "#fff",
+          pointRadius: 6,
+          pointHoverRadius: 8,
+          borderWidth: 3,
+          tension: 0.2,
+          fill: false
+        },
+        {
+          label: "全体平均点",
+          data: testHistory.map(t => t.avgScore),
+          borderColor: "#8e8e93",
+          backgroundColor: "rgba(142, 142, 147, 0.15)",
+          pointBackgroundColor: "#8e8e93",
+          pointBorderColor: "#fff",
+          pointRadius: 5,
+          pointHoverRadius: 7,
+          borderWidth: 2,
+          borderDash: [5, 5],
+          tension: 0.2,
+          fill: false
+        }
+      ]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: { display: false }
+        legend: {
+          display: true,
+          position: "bottom",
+          labels: {
+            color: "#ccc",
+            boxWidth: 12,
+            font: { size: 11 }
+          }
+        }
       },
       scales: {
         y: {
@@ -2464,13 +2524,14 @@ async function renderNoroScoreChart() {
           grid: { color: "#2c2c2e" }
         },
         x: {
-          ticks: { color: "#fff", font: { weight: "bold" } },
-          grid: { display: false }
+          ticks: { color: "#fff", font: { weight: "bold", size: 11 } },
+          grid: { color: "#2c2c2e" }
         }
       }
     }
   });
 }
+
 </script>
 </body>
 </html>
