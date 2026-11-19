@@ -933,16 +933,22 @@
    <div class="carousel-indicators" id="carouselIndicators"></div>
  </div>
 
- <div class="notice-banner-container">
-  <div class="notice-banner">
-    <div class="notice-tag">お知らせ</div>
-    <div class="notice-content">
-      <div class="notice-title">オンライン病棟研修の実施について</div>
-      <div class="notice-desc">今月中にPPE着脱手順の解説動画を公開予定です。各自確認お願いします。</div>
-    </div>
-  </div>
+<!-- ノロウイルステスト 成績棒グラフエリア -->
+ <div id="noroScoreSection" style="padding: 0 16px; margin-top: 12px; margin-bottom: 18px;">
+   <div style="background: #1c1c1e; border: 1px solid #2c2c2e; border-radius: 12px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+       <div style="font-size: 14px; font-weight: bold; color: #fff;">📊 ノロウイルステスト結果比較</div>
+       <span id="noroScoreBadge" style="font-size: 11px; background: #2c2c2e; color: #aaa; padding: 3px 8px; border-radius: 4px;">データ待機中</span>
+     </div>
+     <div style="position: relative; height: 180px; width: 100%;">
+       <canvas id="noroScoreBarChart"></canvas>
+     </div>
+     <div id="noroScoreNote" style="font-size: 11px; color: #888; margin-top: 8px; text-align: center;">
+       ※テスト未受験またはデータ未登録の場合は 0点 で表示されます
+     </div>
+   </div>
  </div>
-
+    
  <!-- 管理者用ボタン&集計 -->
  <button id="summaryBtn" onclick="showSummary()" style="display:none;margin:10px 20px;padding:10px 16px;background:#e50914;color:#fff;border:none;border-radius:6px;font-weight:bold;">
    テスト全体集計
@@ -1228,7 +1234,7 @@
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const APP_VERSION = "1.7.3";
+const APP_VERSION = "1.7.4";
 const PPE_PASSWORD = "ppe123";
 
 let videoWrapper, home, skipIntro, skipThinking, skipBar, resumeInline, playBtn, centralUI, bottomControls, backBtn, chapterBtn, chapterPanel, progress, currentTime, duration;
@@ -1366,6 +1372,7 @@ async function setUsername() {
  checkResumeCard();
  renderRecentVideos();
  startAutoSlide();
+ renderNoroScoreChart();
 }
 
 /* 📌 続きから再生カード */
@@ -2395,6 +2402,74 @@ list.reverse().forEach(row => {
   } catch (e) {
     statusEl.innerText = "データの取得に失敗しました（GASのデプロイ設定を確認してください）。";
   }
+}
+    
+const GAS_QUIZ_URL = "https://script.google.com/macros/s/AKfycbxt_kxbO6BITi8GiqZbzvERHrrmjGSf-VsjjLNRpgWLZgLtoprj6EKkqEn_DY0IN9IA/exec";
+let noroBarChartInstance = null;
+
+/* ノロウイルステストの個人スコアと平均点を棒グラフで描画 */
+async function renderNoroScoreChart() {
+  const canvas = document.getElementById("noroScoreBarChart");
+  const badge = document.getElementById("noroScoreBadge");
+  if (!canvas) return;
+
+  // 初期値（データがない場合の枠表示）
+  let myScore = Number(localStorage.getItem(username + "_score_" + NORO_VIDEO_ID)) || 0;
+  let avgScore = 0;
+
+  try {
+    // テスト用GASから全体平均と個人スコアを取得（GAS側に対応処理がある場合）
+    const res = await fetch(`${GAS_QUIZ_URL}?type=userScore&username=${encodeURIComponent(username)}`);
+    const data = await res.json();
+    if (data && typeof data.avg === "number") {
+      avgScore = data.avg;
+      if (typeof data.myScore === "number" && data.myScore > 0) {
+        myScore = data.myScore;
+      }
+      badge.innerText = myScore > 0 ? `あなた: ${myScore}点 / 平均: ${avgScore}点` : `全体平均: ${avgScore}点`;
+    } else {
+      badge.innerText = "データ未登録（枠表示）";
+    }
+  } catch (e) {
+    badge.innerText = "データ未接続（枠表示）";
+  }
+
+  if (noroBarChartInstance) {
+    noroBarChartInstance.destroy();
+  }
+
+  noroBarChartInstance = new Chart(canvas, {
+    type: "bar",
+    data: {
+      labels: ["あなたのスコア", "全体平均点"],
+      datasets: [{
+        label: "点数（100点満点）",
+        data: [myScore, avgScore],
+        backgroundColor: ["#e50914", "#555555"],
+        borderRadius: 6,
+        barThickness: 42
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 100,
+          ticks: { color: "#aaa", stepSize: 20 },
+          grid: { color: "#2c2c2e" }
+        },
+        x: {
+          ticks: { color: "#fff", font: { weight: "bold" } },
+          grid: { display: false }
+        }
+      }
+    }
+  });
 }
 </script>
 </body>
